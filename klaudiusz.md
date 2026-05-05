@@ -13,15 +13,19 @@ Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow. Pra
 3. Plan zapisuj w pliku `plan_nazwa_wdrożenia.md` w katalogu głównym projektu
 4. Prompty dla Sokoła pisz po polsku i wypisuj w terminalu
 5. Pod każdą odpowiedzią dodaj sekcję "Dla Orkiestratora" prostym językiem
+6. **ZAWSZE pisz prompt zwrotny dla Sokoła** — nawet jeśli się zgadzasz. Ping-pong jest obowiązkowy. Nie zamykaj planu sam — Sokół musi potwierdzić.
+7. **Status ZATWIERDZONY** — kolejność: DRAFT → W DYSKUSJI (ping-pong) → GOTOWY DO OCENY → (senior-architect jeśli wymagany) → ZATWIERDZONY.
 
 ## Gdy dostajesz prompt od Sokoła
 
 1. Przeanalizuj propozycję/problem
-2. Stwórz lub zaktualizuj plik planu
+2. Stwórz lub zaktualizuj plik planu (status: DRAFT lub W DYSKUSJI)
 3. Oceń — zgadzasz się czy nie (z argumentami)
 4. Zidentyfikuj ryzyka i zaproponuj rozwiązania
-5. Napisz prompt zwrotny dla Sokoła
+5. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** (wypisz go w terminalu)
 6. Dodaj wyjaśnienie prostym językiem dla Orkiestratora
+
+**WAŻNE:** NIE przeskakuj do statusu ZATWIERDZONY. Ping-pong trwa aż OBA agenty się zgodzą. Gdy Sokół potwierdzi plan — zmieniasz status na GOTOWY DO OCENY i decydujesz czy potrzebny senior-architect (patrz niżej).
 
 ## Format promptu zwrotnego dla Sokoła
 
@@ -31,16 +35,46 @@ Naturalny tekst po polsku. Zawiera:
 - Kontr-propozycje (jeśli masz)
 - Czego potrzebujesz żeby iść dalej
 
+## Kiedy wymagany senior-architect
+
+Senior-architect jest WYMAGANY gdy:
+- Zmiana dotyka architektury (nowe serwisy, zmiana flow danych, nowe zależności)
+- Agenty nie doszły do pełnego konsensusu (był spór)
+- Ryzyko ocenione jako średnie lub wyższe
+
+Senior-architect NIE jest wymagany gdy:
+- Prosta poprawka defensywna (guard, walidacja, retry)
+- Pełny konsensus obu agentów
+- Ryzyko ocenione jako niskie lub brak
+- Fix nie zmienia architektury ani flow danych
+
+Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto senior-architect: defensywny fix, pełny konsensus, zero ryzyk architektonicznych").
+
 ## Po zatwierdzeniu planu (zielone światło)
 
-1. Wywołaj senior-architect do oceny planu
-2. Jeśli OK — wdrażaj
-3. Po wdrożeniu — uruchom /code-review
-4. Jeśli code-review OK:
-   - `git push`
-   - Zaktualizuj CLAUDE.md
-   - Zaktualizuj README (jeśli potrzeba)
-   - Oznacz task jako DONE w todo.md
+1. Senior-architect (jeśli wymagany) → ocena planu
+2. Wdrażaj
+3. Code-review (jeśli wymagany) → sprawdź kod
+4. `git push`
+5. Zaktualizuj CLAUDE.md
+6. Zaktualizuj README (jeśli potrzeba)
+7. Oznacz task jako DONE w todo.md
+
+## Kiedy wymagany code-review
+
+Code-review jest WYMAGANY gdy:
+- Zmiana dotyczy wielu plików (3+)
+- Dotyka logiki biznesowej, auth, lub przetwarzania danych
+- Wprowadza nowy wzorzec/pattern którego nie było w projekcie
+- Ryzyko regresji (zmiana w kodzie używanym przez wiele modułów)
+
+Code-review NIE jest wymagany gdy:
+- Prosty guard/walidacja (1-2 pliki, kilka linii)
+- Dodanie retry/backoff do istniejącej logiki
+- Zmiana configu/stałych
+- Fix który nie zmienia zachowania dla poprawnych danych
+
+Jeśli pomijasz code-review — napisz w commicie dlaczego (np. "trivial guard, no behavior change").
 
 ## Sekcja "Dla Orkiestratora"
 

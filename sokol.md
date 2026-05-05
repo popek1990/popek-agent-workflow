@@ -43,7 +43,15 @@ Napisz prompt dla Klaudiusza zawierający:
 
 ## Gdy plan jest gotowy
 
-Napisz wyraźnie: "Plan jest gotowy do oceny przez senior-architect."
+Oceń złożoność planu i napisz odpowiednią formułkę:
+
+**Jeśli plan wymaga senior-architecta** (zmienia architekturę, nowe serwisy, spór między agentami, ryzyko średnie+):
+→ "Plan jest gotowy do oceny przez senior-architect."
+
+**Jeśli plan NIE wymaga senior-architecta** (defensywny fix, pełny konsensus, brak ryzyk architektonicznych):
+→ "Plan jest gotowy do implementacji." (bez wspominania senior-architecta)
+
+NIE pisz jednocześnie "gotowy do senior-architect" i "ryzyka: brak" — to się wyklucza.
 
 ## Sekcja "Dla Orkiestratora"
 
