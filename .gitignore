@@ -1,0 +1,6 @@
+# Plan files are project-specific, not for this repo
+# (they live in target projects, not here)
+
+.DS_Store
+*.swp
+*~
