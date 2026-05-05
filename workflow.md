@@ -29,11 +29,24 @@
 - Proponowanie ulepszeń
 - Tworzenie planów dla nowych funkcji
 
+## Faza 0: Skanowanie (oszczędność tokenów)
+
+Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu per issue):
+
+1. Sokół skanuje cały projekt/moduł **raz**
+2. Zapisuje WSZYSTKIE znalezione issues do `issues_found.md`
+3. Grupuje: **batche** (powiązane/proste, max 5 per batch) vs **individual** (złożone)
+4. Orkiestrator zatwierdza podział
+5. Praca idzie batch po batchu (jeden plan per batch) → potem individual issues
+
+**Kiedy batchować:** ten sam plik/moduł, ten sam wzorzec fixu, LOW/MEDIUM severity, brak zależności.
+**Kiedy osobno:** architektura, CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
+
 ## Proces ping-pong
 
 ### 1. Sokół rozpoczyna
-Sokół znajduje problem/pomysł i pisze prompt dla Klaudiusza zawierający:
-- Opis znalezionego problemu/pomysłu
+Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) zawierający:
+- Opis znalezionego problemu/pomysłu (lub lista issues z batcha)
 - Propozycję rozwiązania
 - Pytanie czy Klaudiusz się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji

@@ -18,12 +18,16 @@ Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow. Pra
 
 ## Gdy dostajesz prompt od Sokoła
 
-1. Przeanalizuj propozycję/problem
+Prompt może dotyczyć pojedynczego issue LUB batcha (kilka powiązanych issues razem).
+
+1. Przeanalizuj propozycję/problem (lub cały batch)
 2. Stwórz lub zaktualizuj plik planu (status: DRAFT lub W DYSKUSJI)
 3. Oceń — zgadzasz się czy nie (z argumentami)
 4. Zidentyfikuj ryzyka i zaproponuj rozwiązania
 5. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** (wypisz go w terminalu)
 6. Dodaj wyjaśnienie prostym językiem dla Orkiestratora
+
+Przy batchu: jeden plan per batch, ale wymień każdy issue i Twój stosunek do niego.
 
 **WAŻNE:** NIE przeskakuj do statusu ZATWIERDZONY. Ping-pong trwa aż OBA agenty się zgodzą. Gdy Sokół potwierdzi plan — zmieniasz status na GOTOWY DO OCENY i decydujesz czy potrzebny senior-architect (patrz niżej).
 
