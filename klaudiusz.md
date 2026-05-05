@@ -54,11 +54,12 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
 
 1. Senior-architect (jeśli wymagany) → ocena planu
 2. Wdrażaj
-3. Code-review (jeśli wymagany) → sprawdź kod
-4. `git push`
-5. Zaktualizuj CLAUDE.md
-6. Zaktualizuj README (jeśli potrzeba)
-7. Oznacz task jako DONE w todo.md
+3. Code-review (jeśli wymagany) → sprawdź kod, napraw issues
+4. Uruchom testy — upewnij się że przechodzą
+5. **Gdy testy zielone → automatycznie `git commit` + `git push`** (nie czekaj na pozwolenie)
+6. Zaktualizuj CLAUDE.md
+7. Zaktualizuj README (jeśli potrzeba)
+8. Oznacz task jako DONE w todo.md
 
 ## Kiedy wymagany code-review
 
