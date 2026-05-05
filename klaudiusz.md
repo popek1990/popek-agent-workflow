@@ -61,9 +61,15 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
 3. Code-review (jeśli wymagany) → sprawdź kod, napraw issues
 4. Uruchom testy — upewnij się że przechodzą
 5. **Gdy testy zielone → automatycznie `git commit` + `git push`** (nie czekaj na pozwolenie)
-6. Zaktualizuj CLAUDE.md
-7. Zaktualizuj README (jeśli potrzeba)
-8. Oznacz task jako DONE w todo.md
+6. **Przejrzyj i zaktualizuj powiązane pliki** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
+   - Plik planu (zmień status na WDROŻONY)
+   - Lista zadań / TODO (oznacz task jako DONE)
+   - Dokumentacja API (jeśli zmiana dotyczy endpointów)
+   - Dokumentacja użytkownika / explainer (jeśli zmiana wpływa na zachowanie widoczne dla użytkownika)
+   - CLAUDE.md / GEMINI.md (jeśli zmieniły się konwencje, reguły, architektura)
+   - README (jeśli potrzeba)
+   
+   Sprawdź w CLAUDE.md projektu jakie pliki dokumentacyjne istnieją i które mogą wymagać aktualizacji.
 
 ## Kiedy wymagany code-review
 
