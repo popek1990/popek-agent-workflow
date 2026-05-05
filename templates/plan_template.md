@@ -1,6 +1,6 @@
 # Plan: [nazwa wdrożenia]
 
-**Status:** DRAFT | W DYSKUSJI | ZATWIERDZONY | WDROŻONY
+**Status:** DRAFT | W DYSKUSJI | GOTOWY DO OCENY | ZATWIERDZONY | WDROŻONY
 **Data:** [data]
 **Inicjator:** Sokół / Klaudiusz / Orkiestrator
 
@@ -32,7 +32,7 @@
 
 - **Sokół:** [zgadza się / ma uwagi]
 - **Klaudiusz:** [zgadza się / ma uwagi]
-- **Senior-architect:** [ocena]
+- **Senior-architect:** [ocena — lub "pominięty: prostry fix, pełny konsensus"]
 
 ## Dla Orkiestratora
 

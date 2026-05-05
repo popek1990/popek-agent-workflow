@@ -40,28 +40,58 @@ Sokół znajduje problem/pomysł i pisze prompt dla Klaudiusza zawierający:
 
 ### 2. Klaudiusz odpowiada
 Klaudiusz NIE implementuje — zamiast tego:
-- Tworzy/aktualizuje plik `plan_nazwa_wdrożenia.md`
+- Tworzy/aktualizuje plik `plan_nazwa_wdrożenia.md` (status: DRAFT lub W DYSKUSJI)
 - Mówi czy się zgadza z Sokołem (jeśli nie — dlaczego)
 - Proponuje alternatywy jeśli widzi lepsze rozwiązanie
 - Identyfikuje ryzyka
-- Pisze prompt zwrotny dla Sokoła (wypisany w terminalu)
+- **OBOWIĄZKOWO pisze prompt zwrotny dla Sokoła** (wypisany w terminalu)
 
 ### 3. Iteracja
-Orkiestrator kopiuje prompt do Sokoła. Proces się powtarza bez limitu rund — aż oba agenty są zadowolone z planu.
+Orkiestrator kopiuje prompt do Sokoła. Proces się powtarza aż oba agenty są zadowolone z planu.
 
 ### 4. Zatwierdzenie
-- Senior-architect (@/a/senior-architect/) ocenia finalny plan
-- Jeśli OK → Klaudiusz wdraża
-- Jeśli zastrzeżenia → powrót do ping-pongu
+
+Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
+
+**Prosty fix** (defensywny, pełny konsensus, brak ryzyk architektonicznych):
+→ Sokół pisze: "Plan jest gotowy do implementacji."
+→ Klaudiusz zmienia status na ZATWIERDZONY i wdraża.
+
+**Złożona zmiana** (architektura, nowe serwisy, spór, ryzyko średnie+):
+→ Sokół pisze: "Plan jest gotowy do oceny przez senior-architect."
+→ Klaudiusz wywołuje senior-architecta → jeśli OK: wdraża. Jeśli nie: powrót do ping-pongu.
 
 ### 5. Po wdrożeniu
-- `/code-review` sprawdza kod
-- Jeśli OK:
-  - `git push` na GitHub
-  - Aktualizacja CLAUDE.md
-  - Aktualizacja plików referencyjnych (jeśli potrzeba)
-  - Aktualizacja README (jeśli potrzeba)
-  - Oznaczenie tasku jako DONE w todo.md
+- Testy muszą przejść (zielone)
+- Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
+- `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
+- Aktualizacja CLAUDE.md (jeśli potrzeba)
+- Aktualizacja README (jeśli potrzeba)
+- Oznaczenie tasku jako DONE w todo.md
+
+### 6. Gdy coś pójdzie nie tak
+
+**Testy padają po wdrożeniu:**
+- Klaudiusz naprawia i puszcza testy ponownie
+- Jeśli fix jest nietrywalny (zmiana podejścia) → nowa runda ping-pong z Sokołem
+
+**Code-review znajduje HIGH issues:**
+- Klaudiusz naprawia → ponowne testy → push
+
+**Senior-architect odrzuca plan:**
+- Powrót do ping-pongu z uwagami architecta jako nowym inputem
+
+## Statusy planu
+
+```
+DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
+```
+
+- DRAFT: Klaudiusz tworzy plan na podstawie pierwszego promptu Sokoła
+- W DYSKUSJI: ping-pong trwa
+- GOTOWY DO OCENY: oba agenty potwierdziły, czeka na senior-architect (lub pomijamy)
+- ZATWIERDZONY: gotowy do implementacji (po zielonym świetle Orkiestratora)
+- WDROŻONY: kod wdrożony, testy zielone, pushnięty
 
 ## Wyjaśnienie dla Orkiestratora
 

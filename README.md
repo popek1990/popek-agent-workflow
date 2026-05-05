@@ -24,27 +24,24 @@ Sokół (odpowiedź → iteracja...)
 ```
 
 Ping-pong trwa aż oba agenty są zadowolone z planu. Potem:
-1. Senior-architect ocenia
+1. Senior-architect ocenia (jeśli zmiana architektoniczna)
 2. Klaudiusz wdraża
-3. Code-review
-4. Push na GitHub
+3. Code-review (jeśli zmiana złożona)
+4. Testy zielone → auto push na GitHub
 
 ## Instalacja w nowym projekcie
 
 ```bash
-curl -sL https://raw.githubusercontent.com/popek1990/popek-agent-workflow/main/install.sh | bash
+git clone https://github.com/popek1990/popek-agent-workflow.git /tmp/workflow
+bash /tmp/workflow/install.sh /ścieżka/do/twojego/projektu
 ```
 
-Lub ręcznie:
-```bash
-git clone https://github.com/popek1990/popek-agent-workflow.git /tmp/workflow
-cd /tmp/workflow && bash install.sh /ścieżka/do/twojego/projektu
-```
+Skrypt kopiuje pełne instrukcje do `CLAUDE.md` i `GEMINI.md` w Twoim projekcie.
 
 ## Pliki
 
 - `workflow.md` — pełny opis procesu (referencja)
-- `klaudiusz.md` — instrukcje dla Claude Code (dodawane do CLAUDE.md)
-- `sokol.md` — instrukcje dla Gemini/Codex
+- `klaudiusz.md` — instrukcje dla Claude Code (kopiowane do CLAUDE.md)
+- `sokol.md` — instrukcje dla Gemini/Codex (kopiowane do GEMINI.md)
 - `install.sh` — skrypt instalacyjny
 - `templates/plan_template.md` — szablon planu wdrożenia

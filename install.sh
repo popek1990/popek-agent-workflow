@@ -2,14 +2,17 @@
 
 # Instalacja workflow Klaudiusz + Sokół w projekcie
 # Użycie: bash install.sh [ścieżka_do_projektu]
+#
+# UWAGA: Ten skrypt musi być uruchamiany z lokalnego klonu repo.
+# Nie działa z 'curl | bash' — potrzebuje plików źródłowych.
 
-set -e
+set -euo pipefail
 
 PROJECT_DIR="${1:-.}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "=== Instalacja Popek Agent Workflow ==="
-echo "Projekt: $PROJECT_DIR"
+echo "Projekt: $(realpath "$PROJECT_DIR")"
 echo ""
 
 # Sprawdź czy katalog istnieje
@@ -18,60 +21,51 @@ if [ ! -d "$PROJECT_DIR" ]; then
     exit 1
 fi
 
-cd "$PROJECT_DIR"
-
-# --- CLAUDE.md (dla Klaudiusza) ---
-CLAUDE_SECTION="
-# Agent Workflow: Klaudiusz + Sokół
-
-## Rola
-Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow.
-Pracujesz w parze z **Sokołem** (Gemini/Codex), koordynuje Was Orkiestrator (człowiek).
-
-## Zasady
-- NIGDY nie ruszaj kodu bez zielonego światła od Orkiestratora
-- Gdy dostajesz prompt od Sokoła — twórz plan (plan_*.md), nie implementuj
-- Prompty dla Sokoła pisz po polsku i wypisuj w terminalu
-- Pod każdą odpowiedzią dodaj sekcję prostym językiem dla Orkiestratora
-- Po zatwierdzeniu planu: senior-architect → wdrożenie → code-review → push
-
-## Format odpowiedzi
-Na końcu każdej odpowiedzi:
----
-**Dla Orkiestratora:** [wyjaśnienie prostym językiem — co, jak, dlaczego, ryzyka]
-"
-
-if [ -f "CLAUDE.md" ]; then
-    if grep -q "Klaudiusz" "CLAUDE.md"; then
-        echo "[SKIP] CLAUDE.md już zawiera instrukcje workflow"
-    else
-        echo "" >> "CLAUDE.md"
-        echo "$CLAUDE_SECTION" >> "CLAUDE.md"
-        echo "[OK] Dodano instrukcje workflow do CLAUDE.md"
-    fi
-else
-    echo "$CLAUDE_SECTION" > "CLAUDE.md"
-    echo "[OK] Utworzono CLAUDE.md z instrukcjami workflow"
+# Sprawdź czy pliki źródłowe są dostępne
+if [ ! -f "$SCRIPT_DIR/klaudiusz.md" ] || [ ! -f "$SCRIPT_DIR/sokol.md" ]; then
+    echo "Błąd: Nie znaleziono plików źródłowych workflow."
+    echo "Ten skrypt musi być uruchamiany z lokalnego klonu repo:"
+    echo "  git clone https://github.com/popek1990/popek-agent-workflow.git"
+    echo "  bash popek-agent-workflow/install.sh $PROJECT_DIR"
+    exit 1
 fi
 
-# --- GEMINI.md (dla Sokoła) ---
+cd "$PROJECT_DIR"
+
+# --- CLAUDE.md (pełne instrukcje dla Klaudiusza) ---
+CLAUDE_MARKER="## Twoja rola"
+CLAUDE_CONTENT="$(cat "$SCRIPT_DIR/klaudiusz.md")"
+
+if [ -f "CLAUDE.md" ]; then
+    if grep -qF "$CLAUDE_MARKER" "CLAUDE.md"; then
+        echo "[SKIP] CLAUDE.md już zawiera instrukcje workflow"
+    else
+        printf "\n\n%s" "$CLAUDE_CONTENT" >> "CLAUDE.md"
+        echo "[OK] Dodano pełne instrukcje workflow do CLAUDE.md"
+    fi
+else
+    echo "$CLAUDE_CONTENT" > "CLAUDE.md"
+    echo "[OK] Utworzono CLAUDE.md z pełnymi instrukcjami workflow"
+fi
+
+# --- GEMINI.md (pełne instrukcje dla Sokoła) ---
+GEMINI_MARKER="## Twoja rola"
+
 if [ ! -f "GEMINI.md" ]; then
     cp "$SCRIPT_DIR/sokol.md" "GEMINI.md"
     echo "[OK] Utworzono GEMINI.md (instrukcje dla Sokoła)"
 else
-    if grep -q "Sokół" "GEMINI.md"; then
+    if grep -qF "$GEMINI_MARKER" "GEMINI.md"; then
         echo "[SKIP] GEMINI.md już zawiera instrukcje workflow"
     else
-        echo "" >> "GEMINI.md"
+        printf "\n\n" >> "GEMINI.md"
         cat "$SCRIPT_DIR/sokol.md" >> "GEMINI.md"
         echo "[OK] Dodano instrukcje workflow do GEMINI.md"
     fi
 fi
 
 # --- Szablon planu ---
-if [ ! -d "templates" ]; then
-    mkdir -p templates
-fi
+mkdir -p templates
 
 if [ ! -f "templates/plan_template.md" ]; then
     cp "$SCRIPT_DIR/templates/plan_template.md" "templates/plan_template.md"
@@ -82,6 +76,11 @@ fi
 
 echo ""
 echo "=== Gotowe! ==="
+echo ""
+echo "Co zainstalowano:"
+echo "  - CLAUDE.md    ← pełne instrukcje dla Klaudiusza"
+echo "  - GEMINI.md    ← pełne instrukcje dla Sokoła"
+echo "  - templates/   ← szablon planu wdrożenia"
 echo ""
 echo "Następne kroki:"
 echo "  1. Otwórz terminal z Claude Code → Klaudiusz gotowy"
