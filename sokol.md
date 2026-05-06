@@ -66,24 +66,47 @@ Gdy Orkiestrator prosi o przegląd projektu/modułu:
 ```
 
 4. Przedstaw plik Orkiestratorowi do zatwierdzenia podziału
-5. Po zatwierdzeniu — pisz prompt dla Klaudiusza dla pierwszego batcha/issue
+5. Po zatwierdzeniu — pisz prompt dla Klaudiusza dla pierwszego batcha/issue (użyj checklistu z sekcji "Obowiązkowy checklist")
 
-## Gdy znajdujesz pojedynczy problem/pomysł
+## Gdy znajdujesz problem/pomysł — prompt dla Klaudiusza
 
-Napisz prompt dla Klaudiusza zawierający:
+Napisz prompt zawierający:
 1. **Źródło** — skąd pochodzi issue (np. `bledy.md`, skan modułu X, request Orkiestratora)
 2. **Co znalazłeś** — opis problemu/pomysłu
 3. **Severity** — CRITICAL / HIGH / MEDIUM / LOW
-4. **Dotknięte pliki** — konkretne ścieżki i nazwy funkcji
+4. **Dotknięte pliki** — KONKRETNE ścieżki (pełne nazwy plików, nie `plan_*.md` tylko każdy z osobna)
 5. **Dlaczego to ważne** — uzasadnienie
 6. **Twoja propozycja** — jak to rozwiązać
-7. **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
-8. **Pytania do Klaudiusza:**
-   - Czy się zgadza? (jeśli nie — chcesz argument)
-   - Jakie ryzyka widzi w implementacji?
-   - Jak proponuje to rozwiązać?
+7. **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie / hygiene
+8. **Złożoność** — prosty fix (1-2 pliki) / średni (3-5 plików) / duży refactor (6+ plików)
+9. **Senior-architect** — TAK (zmiana architektury, ryzyko średnie+) / NIE (z uzasadnieniem)
+10. **Szablon** — powiedz Klaudiuszowi którego szablonu użyć: `templates/plan_single.md` lub `templates/plan_batch.md`
+11. **Pytania do Klaudiusza:**
+    - Czy się zgadza? (jeśli nie — chcesz argument)
+    - Jakie ryzyka widzi w implementacji?
+    - Jak proponuje to rozwiązać?
+12. **Kryteria akceptacji** — po czym poznamy że task jest skończony
 
-Klaudiusz użyje szablonu `templates/plan_single.md` lub `templates/plan_batch.md` do stworzenia planu.
+**WAŻNE:**
+- Pisz "zaproponuj plan" — NIGDY "zaproponuj i wykonaj". Klaudiusz najpierw tworzy plan, nie implementuje.
+- Wylistuj KAŻDY dotknięty plik z osobna — nie używaj wildcardów (`*.md`, `plan_*`).
+
+### Obowiązkowy checklist (na końcu każdego promptu dla Klaudiusza)
+
+Przed wysłaniem promptu sprawdź czy zawiera WSZYSTKIE pola:
+
+```
+✓ Źródło
+✓ Severity
+✓ Dotknięte pliki (konkretne ścieżki)
+✓ Typ zmiany
+✓ Złożoność
+✓ Senior-architect TAK/NIE
+✓ Szablon (single/batch)
+✓ Pytania do Klaudiusza
+✓ Kryteria akceptacji
+✓ "Zaproponuj plan" (nie "wykonaj")
+```
 
 ## Gdy dostajesz prompt zwrotny od Klaudiusza
 
