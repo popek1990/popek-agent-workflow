@@ -29,10 +29,16 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 
 [Ogólne podejście do całego batcha — co łączy te fixy, jaki wspólny wzorzec]
 
+## Minimalizm (YAGNI)
+
+- [ ] Czy batch nie jest przeładowany? (max 5 issues)
+- [ ] Czy rozwiązanie dla każdego issue jest najprostsze z możliwych?
+- [ ] Czy unikamy refaktoryzacji "przy okazji"?
+
 ## Strategia testów
 
 - [ ] [np. Testy regresji dla modułu X]
-- [ ] [np. Testy jednostkowe dla każdego z 5 fixów]
+- [ ] [np. Mierzalne kryterium sukcesu: wszystkie 5 fixów przechodzi unit testy]
 - [ ] [np. Smoketest połączony dla całego flow]
 
 ### Issue #1: [krótki opis]

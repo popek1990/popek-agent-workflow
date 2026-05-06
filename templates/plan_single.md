@@ -14,7 +14,7 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 ## Problem / Cel
 
-[Opis problemu — co jest nie tak i dlaczego to ważne. Uwzględnij obecny stan (jak to działa teraz) jako kontekst problemu.]
+[Opis problemu — co jest nie tak i dlaczego to ważne. Konsekwencje zaniechania.]
 
 ## Dotknięte pliki / moduły
 
@@ -26,11 +26,17 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 [Co proponujemy zrobić — konkretne kroki techniczne]
 
+## Minimalizm (YAGNI)
+
+- [ ] Czy to rozwiązanie jest najprostsze z możliwych?
+- [ ] Czy modyfikuję tylko niezbędne pliki i linie?
+- [ ] Czy unikam "gold-platingu" i przyszłościowych funkcji?
+
 ## Strategia testów
 
-- [ ] [np. Test jednostkowy dla walidacji inputu]
-- [ ] [np. Integracyjny test zapisu do bazy]
-- [ ] [np. Manualny smoketest endpointu /api/cache]
+- [ ] [np. Test jednostkowy: metoda X zwraca 400 dla inputu Y]
+- [ ] [np. Integracja: baza danych zapisuje rekord Z]
+- [ ] [np. Mierzalne kryterium sukcesu: czas odpowiedzi < 100ms]
 
 ## Plan implementacji
 

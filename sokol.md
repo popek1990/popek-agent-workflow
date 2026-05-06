@@ -48,7 +48,8 @@ Dla poleceń Orkiestratora: wykonaj zadanie, użyj sekcji "Gdy znajdujesz proble
 ZAWSZE przed czytaniem kodu źródłowego przeczytaj:
 1. `MD/issues_sokol.md` — czy issue ma już opis root cause i proponowany fix?
 2. `MD/memory.md` — czy temat był już analizowany w poprzedniej sesji?
-3. Komentarze w kodzie — czy plik zawiera NOTE/TODO/FIXME opisujące znany problem?
+3. `logs/workflow/reviews/` — przeczytaj NAJNOWSZY plik review (jeśli istnieje). Uwzględnij wnioski w promptach dla Klaudiusza — np. jeśli review mówi "Klaudiusz marnował tokeny na ponowne czytanie plików", dodaj do promptu: "Nie czytaj ponownie plików X, Y — masz ich opis poniżej."
+4. Komentarze w kodzie — czy plik zawiera NOTE/TODO/FIXME opisujące znany problem?
 
 Jeśli analiza już istnieje — NIE powtarzaj jej. Przejdź od razu do pisania promptu dla Klaudiusza z istniejącymi ustaleniami. Nową analizę rób TYLKO gdy:
 - Istniejący opis jest zbyt ogólny ("wymaga analizy") bez root cause
@@ -133,20 +134,22 @@ Jeśli nie jesteś pewien czy coś to Quick fix — to nie jest Quick fix. Przek
 Napisz prompt zawierający:
 1. **Źródło** — skąd pochodzi issue (np. `MD/issues_sokol.md`, skan modułu X, request Orkiestratora)
 2. **Co znalazłeś** — opis problemu/pomysłu
-3. **Severity** — CRITICAL / HIGH / MEDIUM / LOW
-4. **Dotknięte pliki** — KONKRETNE ścieżki (pełne nazwy plików, nie `plan_*.md` tylko każdy z osobna)
-5. **Dlaczego to ważne** — uzasadnienie
-6. **Twoja propozycja** — jak to rozwiązać
-7. **Strategia testów** — jakie konkretne przypadki muszą zostać sprawdzone (np. brzegowe, błędy, wydajność)
-8. **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie / hygiene
-9. **Złożoność** — prosty fix (1-2 pliki) / średni (3-5 plików) / duży refactor (6+ plików)
-10. **Senior-architect** — TAK (zmiana architektury, ryzyko średnie+) / NIE (z uzasadnieniem)
-11. **Szablon** — powiedz Klaudiuszowi którego szablonu użyć: `templates/plan_single.md` lub `templates/plan_batch.md`
-12. **Pytania do Klaudiusza:**
+3. **Konsekwencje zaniechania** — co się stanie, jeśli tego nie naprawimy? (ułatwia priorytetyzację)
+4. **Severity** — CRITICAL / HIGH / MEDIUM / LOW
+5. **Dotknięte pliki** — KONKRETNE ścieżki (pełne nazwy plików, nie `plan_*.md` tylko każdy z osobna)
+6. **Czego NIE robić** — zakazy, np. "Nie refaktoruj otaczającego kodu", "Nie dodawaj nowych zależności"
+7. **Dlaczego to ważne** — uzasadnienie biznesowe/techniczne
+8. **Twoja propozycja** — jak to rozwiązać
+9. **Strategia testów** — jakie KONKRETNE przypadki testowe muszą zostać sprawdzone (zdefiniuj kryteria jako testy, np. "metoda X zwraca Y dla inputu Z")
+10. **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie / hygiene
+11. **Złożoność** — prosty fix (1-2 pliki) / średni (3-5 plików) / duży refactor (6+ plików)
+12. **Senior-architect** — TAK (zmiana architektury, ryzyko średnie+) / NIE (z uzasadnieniem)
+13. **Szablon** — powiedz Klaudiuszowi którego szablonu użyć: `templates/plan_single.md` lub `templates/plan_batch.md`
+14. **Pytania do Klaudiusza:**
     - Czy się zgadza? (jeśli nie — chcesz argument)
     - Jakie ryzyka widzi w implementacji?
-    - Jak proponuje to rozwiązać?
-13. **Kryteria akceptacji** — po czym poznamy że task jest skończony
+    - Jak proponuje to rozwiązać (szczegóły)?
+15. **Kryteria akceptacji** — mierzalne, weryfikowalne punkty (nie ogólniki)
 
 **WAŻNE:**
 - Pisz "zaproponuj plan" — NIGDY "zaproponuj i wykonaj". Klaudiusz najpierw tworzy plan, nie implementuje.
@@ -158,14 +161,16 @@ Przed wysłaniem promptu z nowym issue/batchem sprawdź czy zawiera WSZYSTKIE po
 
 ```
 ✓ Źródło
+✓ Konsekwencje zaniechania
 ✓ Severity
 ✓ Dotknięte pliki (konkretne ścieżki)
+✓ Czego NIE robić
 ✓ Typ zmiany
 ✓ Złożoność
 ✓ Senior-architect TAK/NIE
 ✓ Szablon (single/batch)
 ✓ Pytania do Klaudiusza
-✓ Kryteria akceptacji
+✓ Kryteria akceptacji (jako testy)
 ✓ "Zaproponuj plan" (nie "wykonaj")
 ```
 
