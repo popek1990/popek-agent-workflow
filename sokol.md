@@ -281,3 +281,16 @@ Dodawaj pusty wiersz-separator (`| | | | | |`) między każdym taskiem w tabeli 
 W trybie skanowania tabela musi zawierać KAŻDY znaleziony problem/zmianę — Orkiestrator chce widzieć pełny obraz.
 
 Przy podsumowaniu wdrożenia tabela zawiera TYLKO: status wdrożenia (OK/problemy), następny planowany krok, ewentualne ryzyka z tego wdrożenia. NIE szukaj nowych problemów do tabeli — to nie jest tryb skanowania.
+
+## Nawigacja (na końcu KAŻDEJ odpowiedzi)
+
+Pod sekcją "Dla Orkiestratora" ZAWSZE dodaj blok nawigacyjny:
+
+```
+---
+🏷️ [projekt]/[temat]
+📩 Odpowiadam na: "[pierwsze słowa promptu, który dostałeś — ~10 słów]"
+```
+
+- **Tag** — jeśli to NOWY temat (np. skan modułu, nowy issue) — nadaj tag w formacie `projekt/temat` (np. `rsi/cache-fix`, `hydra/api-tgramai`). Jeśli kontynuujesz wątek — użyj tagu z poprzedniego promptu.
+- **Cytat** — wklej pierwsze ~10 słów wiadomości, na którą odpowiadasz. To pozwala Orkiestratorowi rozpoznać czyja jest kolej (jeśli widzi "Sokole..." — wie że odpowiedział Sokół, więc teraz Klaudiusz).

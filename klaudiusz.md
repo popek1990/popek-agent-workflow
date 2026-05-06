@@ -167,3 +167,16 @@ Gdy task zostanie wdrożony, zamiast zwykłego statusu, użyj tego formatu (wkle
 Dodawaj pusty wiersz-separator (`| | | | | |`) między każdym taskiem w tabeli — poprawia czytelność przy dłuższych opisach.
 
 Tabela musi zawierać KAŻDY problem/zmianę — nawet jeśli jest ich dużo. Orkiestrator chce widzieć pełny obraz w jednym miejscu.
+
+## Nawigacja (na końcu KAŻDEJ odpowiedzi)
+
+Pod sekcją "Dla Orkiestratora" ZAWSZE dodaj blok nawigacyjny:
+
+```
+---
+🏷️ [projekt]/[temat] 
+📩 Odpowiadam na: "[pierwsze słowa promptu, który dostałeś — ~10 słów]"
+```
+
+- **Tag** — użyj tagu który przyszedł w prompcie. Jeśli to NOWY temat (np. Orkiestrator daje polecenie) — sam nadaj tag w formacie `projekt/temat` (np. `rsi/cache-fix`, `hydra/api-tgramai`).
+- **Cytat** — wklej pierwsze ~10 słów wiadomości, na którą odpowiadasz. To pozwala Orkiestratorowi rozpoznać czyja jest kolej (jeśli widzi "Klaudiuszu..." — wie że odpowiedział Klaudiusz, więc teraz Sokół).
