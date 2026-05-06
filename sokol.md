@@ -156,6 +156,7 @@ Napisz prompt zawierający:
 **WAŻNE:**
 - Pisz "zaproponuj plan" — NIGDY "zaproponuj i wykonaj". Klaudiusz najpierw tworzy plan, nie implementuje.
 - Wylistuj KAŻDY dotknięty plik z osobna — nie używaj wildcardów (`*.md`, `plan_*`).
+- **Formatowanie promptów:** Pisz czysty tekst — BEZ numerów linii, BEZ formatowania edytorowego (`cat -n`, numery po lewej stronie). Numery linii to szum, który zaciemnia treść i myli Klaudiusza przy parsowaniu.
 
 ### Obowiązkowy checklist (dla NOWYCH issues i batchy)
 
