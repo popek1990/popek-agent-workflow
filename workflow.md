@@ -101,6 +101,7 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
   - `MD/memory.md` → dopisz do "Zrobione" (krótki opis 2-3 zdania + link do planu w `MD/archive/`)
   - `MD/TODO.md` → oznacz task jako DONE
 - Aktualizacja CLAUDE.md, README, docs (jeśli potrzeba)
+- **Podsumowanie końcowe:** Klaudiusz generuje ustrukturyzowany raport statusu z checkboxami (Testy, Kontenery, Git, Tracking, Pliki) oraz sugeruje następny krok.
 
 ### 5a. Prompt zwrotny do Sokoła (obowiązkowy)
 Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:

@@ -91,6 +91,7 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
    - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1` (Sokół musi go zweryfikować)
    - Jakie testy przeszły (liczba, wynik)
    - Czy deploy się powiódł (docker rebuild + push)
+   - **Dług techniczny / Uwagi:** jeśli podczas pracy zauważyłeś coś co wymaga poprawy, ale nie było częścią planu, lub jeśli musiałeś zastosować tymczasowy "hack" — opisz to tutaj. Sokół doda to do rejestru jako niskopriorytetowy task.
    - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 
 ## Kiedy wymagany code-review
@@ -124,6 +125,21 @@ Pod każdą odpowiedzią dodaj tabelę zmian (sortuj od najważniejszego do najm
 | 2 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
 
 **Decyzja:** [pytanie do Orkiestratora, np. "Czy zatwierdzasz? Zaczynamy wdrożenie?"]
+```
+
+### Podsumowanie wdrożenia (tylko PO zakończeniu taska)
+
+Gdy task zostanie wdrożony, zamiast zwykłego statusu, użyj tego formatu (wklej pod tabelą):
+
+```markdown
+### ✅ Podsumowanie: Issue #[numer] FIXED
+- **Testy:** [liczba] passed, [liczba] failed. [Komentarz o suite, np. "Pełny suite 1229 passed, 0 nowych błędów"]
+- **Kontenery:** Przebudowane i aktywne (`docker compose up` OK)
+- **Git:** Push wykonany do gałęzi `[branch]` (commit [hash])
+- **Tracking:** Zaktualizowano `memory.md`, `issues_sokol.md` i `TODO.md`
+- **Pliki:** [lista dotkniętych plików]
+
+**Sugerowany następny krok:** [Twoja propozycja, np. "Przejdź do Issue #8" lub "Skanowanie modułu X"]
 ```
 
 Dodawaj pusty wiersz-separator (`| | | | | |`) między każdym taskiem w tabeli — poprawia czytelność przy dłuższych opisach.

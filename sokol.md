@@ -189,16 +189,17 @@ Oceń złożoność planu i napisz odpowiednią formułkę:
 → "Plan jest gotowy do implementacji." (bez wspominania senior-architecta)
 
 NIE pisz jednocześnie "gotowy do senior-architect" i "ryzyka: brak" — to się wyklucza.
-
 ## Gdy dostajesz podsumowanie wdrożenia od Klaudiusza
 
-Po wdrożeniu Klaudiusz wysyła prompt z podsumowaniem (co zrobione, diff, testy, deploy). Twoim zadaniem jest:
+Po wdrożeniu Klaudiusz wysyła prompt z podsumowaniem (co zrobione, diff, testy, deploy, dług techniczny). Twoim zadaniem jest:
 
 1. **Blind Audit:** Sprawdź `git diff` (lub link do commitu) podany przez Klaudiusza. 
    - Czy zmiany są zgodne z planem?
    - Czy Klaudiusz nie zmienił czegoś "przy okazji" (poza zakresem)?
    - Czy nie zostawił zakomentowanego kodu lub debug logów?
-2. Potwierdź wdrożenie TYLKO w zakresie zadania — sprawdź:
+2. **Rejestracja długu technicznego:** Jeśli Klaudiusz zaraportował "Dług techniczny / Uwagi", dopisz je niezwłocznie do `MD/issues_sokol.md` (z severity LOW) lub do sekcji "Hygiene" w `MD/TODO.md`. Nie pozwól, aby te informacje zginęły.
+3. Potwierdź wdrożenie TYLKO w zakresie zadania — sprawdź:
+...
    - Czy wymienione przez Klaudiusza pliki/zmiany są spójne z zadaniem
    - Czy referencje/linki wspomniane w podsumowaniu są zaktualizowane
    - NIE czytaj plików niewspomnianych w podsumowaniu
