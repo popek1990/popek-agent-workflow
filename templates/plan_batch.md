@@ -82,13 +82,15 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
 - [ ] [dodatkowe kryteria specyficzne dla tego batcha]
 
-## Post-deploy weryfikacja
+## Checklista finalizacji (BLOKUJĄCA — odhacz PRZED promptem zwrotnym)
 
 - [ ] Aplikacja działa poprawnie po deploy
-- [ ] Plik planu → status WDROŻONY → przenieś do `MD/archive/`
+- [ ] Ten plik → status zmieniony na WDROŻONY
+- [ ] Ten plik → przeniesiony do `MD/archive/` (MUSI istnieć w archive)
+- [ ] `MD/memory.md` → dopisano do "Zrobione" z linkiem do `MD/archive/` (NIE `MD/plans/`)
 - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
-- [ ] `MD/memory.md` → dopisz do "Zrobione" (z linkiem do planu w `MD/archive/`)
 - [ ] `MD/TODO.md` → taski oznaczone jako DONE
+- [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego batcha]
 
 ## Dla Orkiestratora

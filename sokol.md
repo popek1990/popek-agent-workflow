@@ -222,18 +222,23 @@ Po wdrożeniu Klaudiusz wysyła prompt z podsumowaniem (co zrobione, diff, testy
    - Czy zmiany są zgodne z planem?
    - Czy Klaudiusz nie zmienił czegoś "przy okazji" (poza zakresem)?
    - Czy nie zostawił zakomentowanego kodu lub debug logów?
-2. **Rejestracja długu technicznego:** Jeśli Klaudiusz zaraportował "Dług techniczny / Uwagi", dopisz je niezwłocznie do `MD/issues_sokol.md` (z severity LOW) lub do sekcji "Hygiene" w `MD/TODO.md`. Nie pozwól, aby te informacje zginęły.
-3. **Weryfikacja zakresu** — sprawdź TYLKO w kontekście zadania:
+2. **Weryfikacja finalizacji:** Sprawdź czy Klaudiusz odhaczył checklistę:
+   - Czy plan jest w `MD/archive/` (NIE w `MD/plans/`)?
+   - Czy `MD/memory.md` linkuje do `MD/archive/plan_*.md` (nie do `MD/plans/`)?
+   - Czy `MD/issues_sokol.md` ma status FIXED dla wdrożonych issues?
+   - Jeśli cokolwiek brakuje → **BLOKUJ** przejście do następnego taska i zażądaj uzupełnienia.
+3. **Rejestracja długu technicznego:** Jeśli Klaudiusz zaraportował "Dług techniczny / Uwagi", dopisz je niezwłocznie do `MD/issues_sokol.md` (z severity LOW) lub do sekcji "Hygiene" w `MD/TODO.md`. Nie pozwól, aby te informacje zginęły.
+4. **Weryfikacja zakresu** — sprawdź TYLKO w kontekście zadania:
    - Czy wymienione przez Klaudiusza pliki/zmiany są spójne z zadaniem
    - Czy referencje/linki wspomniane w podsumowaniu są zaktualizowane
    - NIE czytaj plików niewspomnianych w podsumowaniu
    - NIE rób audytu bezpieczeństwa ani performance review
    - Jeśli Klaudiusz podał logi testów lub smoketesty — zaufaj wynikom
-4. Sprawdź `MD/issues_sokol.md` — czy są kolejne OPEN issues do rozwiązania
-5. Wskaż **kolejny etap** — następny batch/issue lub nowe zadanie
-6. Napisz prompt dla Klaudiusza z kolejnym zadaniem (lub potwierdź że plan jest zakończony)
+5. Sprawdź `MD/issues_sokol.md` — czy są kolejne OPEN issues do rozwiązania
+6. Wskaż **kolejny etap** — następny batch/issue lub nowe zadanie
+7. Napisz prompt dla Klaudiusza z kolejnym zadaniem (lub potwierdź że plan jest zakończony)
 
-**SZYBKA ŚCIEŻKA:** Jeśli Klaudiusz podał zielone testy, brak ryzyk, i podsumowanie jest spójne z zadaniem → potwierdź krótko (2-3 zdania) i przejdź od razu do punktu 4.
+**SZYBKA ŚCIEŻKA:** Jeśli Klaudiusz podał zielone testy, brak ryzyk, checklista finalizacji kompletna, i podsumowanie jest spójne z zadaniem → potwierdź krótko (2-3 zdania) i przejdź od razu do punktu 5.
 
 Przykład SZYBKIEJ ŚCIEŻKI:
 > "Wdrożenie OK — pliki przeniesione, referencje zaktualizowane, testy przeszły. Kolejny issue z planu: [batch/issue]."

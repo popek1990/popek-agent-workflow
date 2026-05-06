@@ -108,23 +108,24 @@ Przed i w trakcie implementacji obowiązują:
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
-- **Tracking** (obowiązkowo):
-  - `MD/plans/plan_*.md` → status WDROŻONY → przenieś do `MD/archive/`
-  - `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
-  - `MD/memory.md` → dopisz do "Zrobione" (krótki opis 2-3 zdania + link do planu w `MD/archive/`)
-  - `MD/TODO.md` → oznacz task jako DONE
-- Aktualizacja CLAUDE.md, README, docs (jeśli potrzeba)
-- **Podsumowanie końcowe:** Klaudiusz generuje ustrukturyzowany raport statusu z checkboxami (Testy, Kontenery, Git, Tracking, Pliki) oraz sugeruje następny krok.
+- **Checklista finalizacji (BLOKUJĄCA)** — Klaudiusz NIE pisze promptu zwrotnego dopóki nie odhaczył:
+  - [ ] Plan → status WDROŻONY → przeniesiony do `MD/archive/`
+  - [ ] `MD/memory.md` → link do `MD/archive/` (nie `MD/plans/`)
+  - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
+  - [ ] `MD/TODO.md` → task DONE
+  - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
+- **Plan jest OBOWIĄZKOWY** gdy: severity >= MEDIUM, >2 plików, lub logika biznesowa/auth/dane.
 
 ### 6a. Prompt zwrotny do Sokoła (obowiązkowy)
-Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
+Po odhaczeniu CAŁEJ checklisty Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
 - Co zostało zrobione (podsumowanie zmian)
 - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1`
 - Jakie testy przeszły (liczba, wynik)
 - Czy deploy się powiódł (docker rebuild + push)
+- **Odhaczona checklista finalizacji** (Sokół ją zweryfikuje)
 - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 
-Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, czy nie ma zmian poza planem, i wskazuje kolejne zadanie → cykl się powtarza.
+Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, weryfikuje checklistę finalizacji (plan w archive, memory linkuje do archive, issues FIXED), i wskazuje kolejne zadanie → cykl się powtarza.
 
 ### 7. Gdy coś pójdzie nie tak
 
