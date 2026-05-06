@@ -54,8 +54,9 @@ Gdy odkryjesz że task z TODO.md jest już wdrożony w kodzie (ale nie przeszed�
 
 1. Potwierdź istnienie kodu (ls/grep — max 2 komendy)
 2. Zaktualizuj tracking (Quick fix — nie wymaga planu ani ping-pongu):
+   - `MD/archive/` → stwórz minimalny stub: `plan_retro_nazwa.md` z treścią: status WDROŻONY, data, notatka "Retroaktywna finalizacja — kod istniał przed workflow", lista plików które istnieją
+   - `MD/memory.md` → dopisz do "Zrobione" z linkiem do `MD/archive/plan_retro_*.md`
    - `MD/TODO.md` → oznacz task jako DONE
-   - `MD/memory.md` → dopisz do "Zrobione" z notatką: "Retroaktywna finalizacja — kod istniał przed workflow"
    - `MD/issues_sokol.md` → jeśli issue istnieje → FIXED, jeśli nie → nie dodawaj
 3. Raportuj w tabeli "Dla Orkiestratora" co zamknąłeś retroaktywnie
 4. Przejdź do następnego taska z TODO
