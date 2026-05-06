@@ -78,9 +78,19 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 - Testy muszą przejść (zielone)
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
+- `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
 - Aktualizacja CLAUDE.md (jeśli potrzeba)
 - Aktualizacja README (jeśli potrzeba)
 - Oznaczenie tasku jako DONE w todo.md
+
+### 5a. Prompt zwrotny do Sokoła (obowiązkowy)
+Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
+- Co zostało zrobione (podsumowanie zmian)
+- Jakie testy przeszły (liczba, wynik)
+- Czy deploy się powiódł (docker rebuild + push)
+- **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
+
+Orkiestrator kopiuje ten prompt do Sokoła → Sokół wskazuje kolejne zadanie → cykl się powtarza.
 
 ### 6. Gdy coś pójdzie nie tak
 

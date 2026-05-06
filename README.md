@@ -27,7 +27,8 @@ Ping-pong trwa aż oba agenty są zadowolone z planu. Potem:
 1. Senior-architect ocenia (jeśli zmiana architektoniczna)
 2. Klaudiusz wdraża
 3. Code-review (jeśli zmiana złożona)
-4. Testy zielone → auto push na GitHub
+4. Testy zielone → auto push na GitHub + `docker compose up -d --build`
+5. Klaudiusz pisze prompt zwrotny do Sokoła (co zrobiono, co dalej?)
 
 ## Instalacja w nowym projekcie
 

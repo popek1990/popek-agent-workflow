@@ -98,6 +98,15 @@ Oceń złożoność planu i napisz odpowiednią formułkę:
 
 NIE pisz jednocześnie "gotowy do senior-architect" i "ryzyka: brak" — to się wyklucza.
 
+## Gdy dostajesz podsumowanie wdrożenia od Klaudiusza
+
+Po wdrożeniu Klaudiusz wysyła prompt z podsumowaniem (co zrobione, testy, deploy). Twoim zadaniem jest:
+
+1. Potwierdź że wdrożenie wygląda poprawnie
+2. Sprawdź czy są kolejne issues z `issues_found.md` do rozwiązania
+3. Wskaż **kolejny etap** — następny batch/issue z planu lub nowe zadanie
+4. Napisz prompt dla Klaudiusza z kolejnym zadaniem (lub potwierdź że plan jest zakończony)
+
 ## Sekcja "Dla Orkiestratora"
 
 Pod każdą odpowiedzią dodaj:

@@ -61,7 +61,8 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
 3. Code-review (jeśli wymagany) → sprawdź kod, napraw issues
 4. Uruchom testy — upewnij się że przechodzą
 5. **Gdy testy zielone → automatycznie `git commit` + `git push`** (nie czekaj na pozwolenie)
-6. **Przejrzyj i zaktualizuj powiązane pliki** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
+6. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
+7. **Przejrzyj i zaktualizuj powiązane pliki** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
    - Plik planu (zmień status na WDROŻONY)
    - Lista zadań / TODO (oznacz task jako DONE)
    - Dokumentacja API (jeśli zmiana dotyczy endpointów)
@@ -70,6 +71,11 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
    - README (jeśli potrzeba)
    
    Sprawdź w CLAUDE.md projektu jakie pliki dokumentacyjne istnieją i które mogą wymagać aktualizacji.
+8. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po zakończeniu wdrożenia wypisz w terminalu prompt po polsku zawierający:
+   - Co zostało zrobione (podsumowanie zmian)
+   - Jakie testy przeszły (liczba, wynik)
+   - Czy deploy się powiódł (docker rebuild + push)
+   - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 
 ## Kiedy wymagany code-review
 
