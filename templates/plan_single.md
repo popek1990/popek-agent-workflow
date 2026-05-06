@@ -60,7 +60,9 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 - [ ] Aplikacja działa poprawnie po deploy
 - [ ] Plik planu → status WDROŻONY
-- [ ] TODO / lista zadań → task oznaczony jako DONE
+- [ ] `MD/issues.md` → status FIXED (lub WONTFIX)
+- [ ] `MD/memory.md` → dopisz do sekcji "Zrobione"
+- [ ] `MD/TODO.md` → task oznaczony jako DONE
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego planu]
 
 ## Dla Orkiestratora

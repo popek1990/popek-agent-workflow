@@ -10,7 +10,7 @@ Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow. Pra
 
 1. **NIGDY nie ruszaj kodu bez zielonego światła od Orkiestratora**
 2. Gdy dostajesz prompt od Sokoła — twórz plan, nie implementuj
-3. Plan zapisuj w pliku `plan_nazwa_wdrożenia.md` w katalogu głównym projektu
+3. Plan zapisuj w pliku `MD/plans/plan_nazwa_wdrożenia.md`
 4. Prompty dla Sokoła pisz po polsku i wypisuj w terminalu
 5. Pod każdą odpowiedzią dodaj sekcję "Dla Orkiestratora" prostym językiem
 6. **ZAWSZE pisz prompt zwrotny dla Sokoła** — nawet jeśli się zgadzasz. Ping-pong jest obowiązkowy. Nie zamykaj planu sam — Sokół musi potwierdzić.
@@ -71,16 +71,19 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
 4. Uruchom testy — upewnij się że przechodzą
 5. **Gdy testy zielone → automatycznie `git commit` + `git push`** (nie czekaj na pozwolenie)
 6. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
-7. **Przejrzyj i zaktualizuj powiązane pliki** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
-   - Plik planu (zmień status na WDROŻONY)
-   - Lista zadań / TODO (oznacz task jako DONE)
+7. **Zaktualizuj tracking** — po każdym wdrożeniu OBOWIĄZKOWO:
+   - `MD/plans/plan_*.md` → zmień status na WDROŻONY
+   - `MD/issues.md` → zmień status issues na FIXED (lub WONTFIX z uzasadnieniem)
+   - `MD/memory.md` → dopisz wiersz do sekcji "Zrobione" (data, co, plan, kto)
+   - `MD/TODO.md` → oznacz task jako DONE (jeśli istnieje)
+8. **Przejrzyj inne pliki dokumentacyjne** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
    - Dokumentacja API (jeśli zmiana dotyczy endpointów)
    - Dokumentacja użytkownika / explainer (jeśli zmiana wpływa na zachowanie widoczne dla użytkownika)
    - CLAUDE.md / GEMINI.md (jeśli zmieniły się konwencje, reguły, architektura)
    - README (jeśli potrzeba)
    
    Sprawdź w CLAUDE.md projektu jakie pliki dokumentacyjne istnieją i które mogą wymagać aktualizacji.
-8. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po zakończeniu wdrożenia wypisz w terminalu prompt po polsku zawierający:
+9. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po zakończeniu wdrożenia wypisz w terminalu prompt po polsku zawierający:
    - Co zostało zrobione (podsumowanie zmian)
    - Jakie testy przeszły (liczba, wynik)
    - Czy deploy się powiódł (docker rebuild + push)

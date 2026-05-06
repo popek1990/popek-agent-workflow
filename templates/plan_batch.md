@@ -74,8 +74,9 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 
 - [ ] Aplikacja działa poprawnie po deploy
 - [ ] Plik planu → status WDROŻONY
-- [ ] TODO / lista zadań → taski oznaczone jako DONE
-- [ ] `issues_found.md` → issues oznaczone jako rozwiązane
+- [ ] `MD/issues.md` → status FIXED (lub WONTFIX)
+- [ ] `MD/memory.md` → dopisz do sekcji "Zrobione"
+- [ ] `MD/TODO.md` → taski oznaczone jako DONE
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego batcha]
 
 ## Dla Orkiestratora

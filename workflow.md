@@ -17,7 +17,7 @@
 
 ### Klaudiusz (Claude Code)
 - Pisze i wdraża kod
-- Tworzy plany wdrożeń (`plan_nazwa.md` w katalogu głównym projektu)
+- Tworzy plany wdrożeń (`MD/plans/plan_nazwa.md`)
 - Pushuje na GitHub
 - Aktualizuje dokumentację (CLAUDE.md, README, todo.md)
 - Ma dostęp do sub-agentów: senior-architect, code-reviewer, planner, tdd-guide
@@ -29,15 +29,22 @@
 - Proponowanie ulepszeń
 - Tworzenie planów dla nowych funkcji
 
-## Faza 0: Skanowanie (oszczędność tokenów)
+## Faza 0: Pamięć i skanowanie (oszczędność tokenów)
 
+### 0a. Sprawdź pamięć
+Przed skanem Sokół czyta:
+- `MD/memory.md` — co zrobione, co odrzucone (nie proponuj ponownie)
+- `MD/issues.md` — co OPEN (do zrobienia), co FIXED (nie wracaj)
+
+### 0b. Skanowanie
 Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu per issue):
 
-1. Sokół skanuje cały projekt/moduł **raz**
-2. Zapisuje WSZYSTKIE znalezione issues do `issues_found.md`
-3. Grupuje: **batche** (powiązane/proste, max 5 per batch) vs **individual** (złożone)
-4. Orkiestrator zatwierdza podział
-5. Praca idzie batch po batchu (jeden plan per batch) → potem individual issues
+1. Sokół sprawdza pamięć (patrz 0a)
+2. Skanuje projekt/moduł (pomija już skanowane — sprawdza header w `MD/issues.md`)
+3. Zapisuje WSZYSTKIE issues do `MD/issues.md` (ze statusem OPEN)
+4. Grupuje: **batche** (powiązane/proste, max 5 per batch) vs **individual** (złożone)
+5. Orkiestrator zatwierdza podział
+6. Praca idzie batch po batchu → potem individual issues
 
 **Kiedy batchować:** ten sam plik/moduł, ten sam wzorzec fixu, LOW/MEDIUM severity, brak zależności.
 **Kiedy osobno:** architektura, CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
@@ -57,7 +64,7 @@ Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) 
 ### 2. Klaudiusz odpowiada
 Klaudiusz NIE implementuje — zamiast tego:
 - Wybiera szablon: `templates/plan_single.md` (1 issue) lub `templates/plan_batch.md` (batch)
-- Tworzy plik `plan_nazwa_wdrożenia.md` w katalogu głównym (status: DRAFT lub W DYSKUSJI)
+- Tworzy plik `MD/plans/plan_nazwa_wdrożenia.md` (status: DRAFT lub W DYSKUSJI)
 - Wypełnia wszystkie pola szablonu (źródło, pliki, severity, złożoność, senior-architect TAK/NIE)
 - Mówi czy się zgadza z Sokołem (jeśli nie — dlaczego)
 - Proponuje alternatywy jeśli widzi lepsze rozwiązanie
@@ -84,9 +91,12 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
-- Aktualizacja CLAUDE.md (jeśli potrzeba)
-- Aktualizacja README (jeśli potrzeba)
-- Oznaczenie tasku jako DONE w todo.md
+- **Tracking** (obowiązkowo):
+  - `MD/plans/plan_*.md` → status WDROŻONY
+  - `MD/issues.md` → status FIXED (lub WONTFIX)
+  - `MD/memory.md` → dopisz do "Zrobione"
+  - `MD/TODO.md` → oznacz task jako DONE
+- Aktualizacja CLAUDE.md, README, docs (jeśli potrzeba)
 
 ### 5a. Prompt zwrotny do Sokoła (obowiązkowy)
 Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:

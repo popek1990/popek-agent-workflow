@@ -186,6 +186,14 @@ else
     inc INSTALLED
 fi
 
+# --- Struktura MD/ ---
+echo -e "  ${FOLDER} ${BOLD}MD/${NC} ${DIM}(struktura dokumentów)${NC}"
+mkdir -p MD/plans MD/research
+if [ ! -d "MD/plans" ] 2>/dev/null; then
+    log_ok "MD/plans/ — utworzono"
+    inc INSTALLED
+fi
+
 # --- Szablony planów ---
 mkdir -p templates
 
@@ -231,6 +239,8 @@ smoke_check() {
     fi
 }
 
+smoke_check "MD/plans/ istnieje"                     "[ -d MD/plans ]"
+smoke_check "MD/research/ istnieje"                  "[ -d MD/research ]"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md zawiera rolę Klaudiusza"     "grep -qF 'Klaudiusz' CLAUDE.md 2>/dev/null"
