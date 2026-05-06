@@ -80,7 +80,9 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 
 ## Dla Orkiestratora
 
-[Co to za zestaw zmian] — [jak działają teraz] → [co proponujemy] → [co to zmieni].
-Ryzyka: [jakie ryzyka widzisz lub "brak"].
+| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
+|---|---|---|---|---|
+| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+| 2 | ... | ... | ... | ... |
 
-**Decyzja do podjęcia:** [np. "Czy zatwierdzasz kolejność? Czy zaczynamy od issue #1?"]
+**Decyzja:** [np. "Czy zatwierdzasz kolejność? Zaczynamy od #1?"]

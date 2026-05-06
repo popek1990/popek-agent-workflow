@@ -138,11 +138,18 @@ Po wdrożeniu Klaudiusz wysyła prompt z podsumowaniem (co zrobione, testy, depl
 
 ## Sekcja "Dla Orkiestratora"
 
-Pod każdą odpowiedzią dodaj:
+Pod każdą odpowiedzią dodaj tabelę zmian (sortuj od najważniejszego do najmniej ważnego):
 
 ```
 ---
 **Dla Orkiestratora:**
-[Co to za zmiana] — [jak działa teraz] → [co proponujemy] → [co to zmieni].
-Ryzyka: [jakie ryzyka widzisz lub "brak"].
+
+| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
+|---|---|---|---|---|
+| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+| 2 | ... | ... | ... | ... |
+
+**Decyzja:** [pytanie do Orkiestratora, np. "Czy zatwierdzasz kolejność? Zaczynamy od #1?"]
 ```
+
+Tabela musi zawierać KAŻDY znaleziony problem/zmianę — nawet jeśli jest ich dużo. Orkiestrator chce widzieć pełny obraz w jednym miejscu.

@@ -123,9 +123,12 @@ DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 
 ## Wyjaśnienie dla Orkiestratora
 
-Pod każdą odpowiedzią agenta — sekcja prostym językiem:
-- Co to za zmiana/błąd/ulepszenie
-- Jak działa teraz
-- Jaka jest propozycja
-- Co to zmieni
-- Jakie są ryzyka
+Pod każdą odpowiedzią agenta — tabela zmian (sortowana od najważniejszego):
+
+```
+| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
+|---|---|---|---|---|
+| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+```
+
+Pod tabelą — pytanie decyzyjne do Orkiestratora (np. "Czy zatwierdzasz? Zaczynamy?").
