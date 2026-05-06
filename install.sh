@@ -216,12 +216,12 @@ if [ ! -f "MD/memory.md" ]; then
 # Memory — [nazwa projektu]
 
 ## Zrobione
-| Data | Co | Plan | Kto |
-|------|----|------|-----|
+| Data | Co | Opis (2-3 zdania) | Plan | Kto |
+|------|----|-------------------|------|-----|
 
 ## Odrzucone / Debunked
-| Data | Propozycja | Powód odrzucenia | Kto odrzucił |
-|------|-----------|------------------|--------------|
+| Data | Propozycja | Powód odrzucenia (2-3 zdania) | Kto odrzucił |
+|------|-----------|-------------------------------|--------------|
 MEMORY
     log_ok "MD/memory.md — utworzono"
     inc INSTALLED

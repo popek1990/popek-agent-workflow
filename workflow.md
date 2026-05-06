@@ -80,6 +80,8 @@ Klaudiusz NIE implementuje — zamiast tego:
 ### 3. Iteracja
 Orkiestrator kopiuje prompt do Sokoła. Proces się powtarza aż oba agenty są zadowolone z planu.
 
+**Zasada 3 rund:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Agenty eskalują do Orkiestratora z podsumowaniem stanowisk i pytaniem decyzyjnym.
+
 ### 4. Zatwierdzenie
 
 Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
@@ -92,13 +94,15 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 → Sokół pisze: "Plan jest gotowy do oceny przez senior-architect."
 → Klaudiusz wywołuje senior-architecta → jeśli OK: wdraża. Jeśli nie: powrót do ping-pongu.
 
-### 4a. Zasady Karpathy'ego (obowiązują przed i w trakcie implementacji)
+### 5. Implementacja (zasady Karpathy'ego)
+
+Przed i w trakcie implementacji obowiązują:
 
 - **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Problemy poza planem → dług techniczny.
 - **Test minimalizmu:** Przed implementacją: (1) Czy ≤20 linii wystarczy? (2) Czy dodaję coś, o co nikt nie prosił? (3) Czy to overcomplicated?
 - **Prawo do pushbacku:** Klaudiusz MUSI odrzucić zbyt złożoną propozycję i zaproponować prostszą alternatywę NAJPIERW.
 
-### 5. Po wdrożeniu
+### 6. Po wdrożeniu
 - Testy muszą przejść (zielone)
   - **Zasada 3 prób:** Jeśli testy padną 3 razy pod rząd, Klaudiusz przerywa pracę i wraca do Sokoła po nową strategię.
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
@@ -112,7 +116,7 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 - Aktualizacja CLAUDE.md, README, docs (jeśli potrzeba)
 - **Podsumowanie końcowe:** Klaudiusz generuje ustrukturyzowany raport statusu z checkboxami (Testy, Kontenery, Git, Tracking, Pliki) oraz sugeruje następny krok.
 
-### 5a. Prompt zwrotny do Sokoła (obowiązkowy)
+### 6a. Prompt zwrotny do Sokoła (obowiązkowy)
 Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
 - Co zostało zrobione (podsumowanie zmian)
 - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1`
@@ -122,7 +126,7 @@ Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po pol
 
 Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, czy nie ma zmian poza planem, i wskazuje kolejne zadanie → cykl się powtarza.
 
-### 6. Gdy coś pójdzie nie tak
+### 7. Gdy coś pójdzie nie tak
 
 **Testy padają po wdrożeniu:**
 - Klaudiusz naprawia i puszcza testy ponownie

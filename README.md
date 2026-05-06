@@ -46,7 +46,10 @@ bash /tmp/workflow/install.sh /ścieżka/do/twojego/projektu
 Skrypt tworzy w Twoim projekcie:
 - `CLAUDE.md` — instrukcje dla Klaudiusza (z `klaudiusz.md`)
 - `GEMINI.md` — instrukcje dla Sokoła (z `sokol.md`)
-- `templates/plan_template.md` — szablon planu wdrożenia
+- `templates/plan_single.md` — szablon planu — pojedynczy issue
+- `templates/plan_batch.md` — szablon planu — batch (kilka issues)
+- `MD/issues_sokol.md` — tracking issues ze statusami
+- `MD/memory.md` — pamięć agentów (co zrobione, co odrzucone)
 
 ## Szybki start
 
