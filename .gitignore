@@ -4,3 +4,6 @@
 .DS_Store
 *.swp
 *~
+
+# Local agent instructions — not tracked in git
+CLAUDE.md
