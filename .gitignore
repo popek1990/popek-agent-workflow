@@ -7,3 +7,6 @@
 
 # Local agent instructions — not tracked in git
 CLAUDE.md
+
+# Local diagnostic scripts — not part of the template
+scripts/

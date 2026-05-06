@@ -29,6 +29,12 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 
 [Ogólne podejście do całego batcha — co łączy te fixy, jaki wspólny wzorzec]
 
+## Strategia testów
+
+- [ ] [np. Testy regresji dla modułu X]
+- [ ] [np. Testy jednostkowe dla każdego z 5 fixów]
+- [ ] [np. Smoketest połączony dla całego flow]
+
 ### Issue #1: [krótki opis]
 
 [Konkretne kroki techniczne dla tego issue]
@@ -73,9 +79,9 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 ## Post-deploy weryfikacja
 
 - [ ] Aplikacja działa poprawnie po deploy
-- [ ] Plik planu → status WDROŻONY
-- [ ] `MD/issues.md` → status FIXED (lub WONTFIX)
-- [ ] `MD/memory.md` → dopisz do sekcji "Zrobione"
+- [ ] Plik planu → status WDROŻONY → przenieś do `MD/archive/`
+- [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
+- [ ] `MD/memory.md` → dopisz do "Zrobione" (z linkiem do planu w `MD/archive/`)
 - [ ] `MD/TODO.md` → taski oznaczone jako DONE
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego batcha]
 

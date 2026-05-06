@@ -190,9 +190,9 @@ fi
 echo -e "  ${FOLDER} ${BOLD}MD/${NC} ${DIM}(struktura dokumentów)${NC}"
 mkdir -p MD/plans MD/research
 
-# issues.md — tracking issues ze statusami
-if [ ! -f "MD/issues.md" ]; then
-    cat > "MD/issues.md" << 'ISSUES'
+# issues_sokol.md — tracking issues ze statusami
+if [ ! -f "MD/issues_sokol.md" ]; then
+    cat > "MD/issues_sokol.md" << 'ISSUES'
 # Issues — [nazwa projektu]
 
 ## Ostatni skan
@@ -203,10 +203,10 @@ if [ ! -f "MD/issues.md" ]; then
 
 (Brak issues — Sokół nie wykonał jeszcze pierwszego skanu)
 ISSUES
-    log_ok "MD/issues.md — utworzono"
+    log_ok "MD/issues_sokol.md — utworzono"
     inc INSTALLED
 else
-    log_skip "MD/issues.md — już istnieje"
+    log_skip "MD/issues_sokol.md — już istnieje"
     inc SKIPPED
 fi
 
@@ -277,7 +277,7 @@ smoke_check() {
 
 smoke_check "MD/plans/ istnieje"                     "[ -d MD/plans ]"
 smoke_check "MD/research/ istnieje"                  "[ -d MD/research ]"
-smoke_check "MD/issues.md istnieje"                  "[ -f MD/issues.md ]"
+smoke_check "MD/issues_sokol.md istnieje"                  "[ -f MD/issues_sokol.md ]"
 smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"

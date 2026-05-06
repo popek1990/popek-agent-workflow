@@ -26,6 +26,12 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 [Co proponujemy zrobić — konkretne kroki techniczne]
 
+## Strategia testów
+
+- [ ] [np. Test jednostkowy dla walidacji inputu]
+- [ ] [np. Integracyjny test zapisu do bazy]
+- [ ] [np. Manualny smoketest endpointu /api/cache]
+
 ## Plan implementacji
 
 1. [ ] Krok 1
@@ -59,9 +65,9 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 ## Post-deploy weryfikacja
 
 - [ ] Aplikacja działa poprawnie po deploy
-- [ ] Plik planu → status WDROŻONY
-- [ ] `MD/issues.md` → status FIXED (lub WONTFIX)
-- [ ] `MD/memory.md` → dopisz do sekcji "Zrobione"
+- [ ] Plik planu → status WDROŻONY → przenieś do `MD/archive/`
+- [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
+- [ ] `MD/memory.md` → dopisz do "Zrobione" (z linkiem do planu w `MD/archive/`)
 - [ ] `MD/TODO.md` → task oznaczony jako DONE
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego planu]
 

@@ -33,31 +33,34 @@
 
 ### 0a. Sprawdź pamięć
 Przed skanem Sokół czyta:
-- `MD/memory.md` — co zrobione, co odrzucone (nie proponuj ponownie)
-- `MD/issues.md` — co OPEN (do zrobienia), co FIXED (nie wracaj)
+- `MD/memory.md` — skondensowana historia: 2-3 zdania opisu per rozwiązany/odrzucony problem + link do pełnego planu w `MD/archive/`.
+- `MD/issues_sokol.md` — co OPEN (do zrobienia), co FIXED (nie wracaj)
 
 ### 0b. Skanowanie
 Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu per issue):
 
 1. Sokół sprawdza pamięć (patrz 0a)
-2. Skanuje projekt/moduł (pomija już skanowane — sprawdza header w `MD/issues.md`)
-3. Zapisuje WSZYSTKIE issues do `MD/issues.md` (ze statusem OPEN)
-4. Grupuje: **batche** (powiązane/proste, max 5 per batch) vs **individual** (złożone)
-5. Orkiestrator zatwierdza podział
-6. Praca idzie batch po batchu → potem individual issues
+2. Skanuje projekt/moduł (pomija już skanowane — sprawdza header w `MD/issues_sokol.md`)
+3. Zapisuje WSZYSTKIE issues do `MD/issues_sokol.md` (ze statusem OPEN)
+4. Grupuje: **Quick fix** (Sokół robi sam, max 3 pliki, LOW, zero logiki), **batche** (powiązane/proste, max 5 per batch), **individual** (złożone)
+5. Quick fixy wykonuje od razu (bez zatwierdzenia), raportuje w "Dla Orkiestratora"
+6. Orkiestrator zatwierdza podział Batche + Individual
+7. Praca idzie batch po batchu → potem individual issues
 
+**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka.
 **Kiedy batchować:** ten sam plik/moduł, ten sam wzorzec fixu, LOW/MEDIUM severity, brak zależności.
-**Kiedy osobno:** architektura, CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
+**Kiedy osobno:** architektura, HIGH/CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
 
 ## Proces ping-pong
 
 ### 1. Sokół rozpoczyna
 Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) zawierający:
-- **Źródło** — skąd pochodzi issue (np. `bledy.md`, skan modułu)
+- **Źródło** — skąd pochodzi issue (np. `MD/issues_sokol.md`, skan modułu)
 - **Severity** — CRITICAL / HIGH / MEDIUM / LOW
 - **Dotknięte pliki** — konkretne ścieżki i funkcje
 - **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
 - Opis problemu i propozycję rozwiązania
+- **Strategia testów** — jakie konkretne przypadki muszą zostać sprawdzone
 - Pytanie czy Klaudiusz się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji
 
@@ -88,24 +91,26 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 
 ### 5. Po wdrożeniu
 - Testy muszą przejść (zielone)
+  - **Zasada 3 prób:** Jeśli testy padną 3 razy pod rząd, Klaudiusz przerywa pracę i wraca do Sokoła po nową strategię.
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
 - **Tracking** (obowiązkowo):
-  - `MD/plans/plan_*.md` → status WDROŻONY
-  - `MD/issues.md` → status FIXED (lub WONTFIX)
-  - `MD/memory.md` → dopisz do "Zrobione"
+  - `MD/plans/plan_*.md` → status WDROŻONY → przenieś do `MD/archive/`
+  - `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
+  - `MD/memory.md` → dopisz do "Zrobione" (krótki opis 2-3 zdania + link do planu w `MD/archive/`)
   - `MD/TODO.md` → oznacz task jako DONE
 - Aktualizacja CLAUDE.md, README, docs (jeśli potrzeba)
 
 ### 5a. Prompt zwrotny do Sokoła (obowiązkowy)
 Po zakończeniu wdrożenia Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
 - Co zostało zrobione (podsumowanie zmian)
+- **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1`
 - Jakie testy przeszły (liczba, wynik)
 - Czy deploy się powiódł (docker rebuild + push)
 - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 
-Orkiestrator kopiuje ten prompt do Sokoła → Sokół wskazuje kolejne zadanie → cykl się powtarza.
+Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, czy nie ma zmian poza planem, i wskazuje kolejne zadanie → cykl się powtarza.
 
 ### 6. Gdy coś pójdzie nie tak
 
