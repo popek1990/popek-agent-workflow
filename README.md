@@ -64,4 +64,6 @@ Skrypt tworzy w Twoim projekcie:
 | `workflow.md` | Pełny opis procesu (referencja) |
 | `cel.md` | Opis workflow z perspektywy orkiestratora |
 | `install.sh` | Skrypt instalacyjny |
-| `templates/plan_template.md` | Szablon planu wdrożenia |
+| `templates/plan_single.md` | Szablon planu — pojedynczy issue |
+| `templates/plan_batch.md` | Szablon planu — batch (kilka issues) |
+| `update-all.sh` | Aktualizacja workflow we wszystkich projektach |

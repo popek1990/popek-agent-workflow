@@ -60,7 +60,7 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 
 4. Ja kopiuję prompt Sokoła → wklejam do Klaudiusza
 5. Klaudiusz **nie rusza kodu** — zamiast tego:
-   - Tworzy plan w pliku `plan_nazwa_wdrożenia.md`
+   - Tworzy plan z szablonu (`templates/plan_single.md` lub `templates/plan_batch.md`)
    - Jeśli się zgadza z Sokołem — potwierdza
    - Jeśli się nie zgadza — pisze dlaczego
    - Jeśli rozwiązałby inaczej — pisze jak i dlaczego

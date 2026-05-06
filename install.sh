@@ -171,23 +171,31 @@ else
     inc INSTALLED
 fi
 
-# --- Szablon planu ---
-echo -e "  ${FILE} ${BOLD}templates/plan_template.md${NC}"
+# --- Szablony planów ---
 mkdir -p templates
 
-if [ ! -f "templates/plan_template.md" ] || $FORCE; then
-    cp "$SCRIPT_DIR/templates/plan_template.md" "templates/plan_template.md"
-    if $FORCE; then
-        log_update "plan_template.md — zaktualizowano"
-        inc UPDATED
-    else
-        log_ok "plan_template.md — skopiowano"
-        inc INSTALLED
-    fi
-else
-    log_skip "plan_template.md — już istnieje"
-    inc SKIPPED
+# Usuń stary szablon jeśli istnieje (zastąpiony przez single + batch)
+if [ -f "templates/plan_template.md" ]; then
+    rm "templates/plan_template.md"
+    echo -e "  🗑️  ${DIM}Usunięto stary plan_template.md (zastąpiony przez single + batch)${NC}"
 fi
+
+for tpl in plan_single.md plan_batch.md; do
+    echo -e "  ${FILE} ${BOLD}templates/${tpl}${NC}"
+    if [ ! -f "templates/${tpl}" ] || $FORCE; then
+        cp "$SCRIPT_DIR/templates/${tpl}" "templates/${tpl}"
+        if $FORCE; then
+            log_update "${tpl} — zaktualizowano"
+            inc UPDATED
+        else
+            log_ok "${tpl} — skopiowano"
+            inc INSTALLED
+        fi
+    else
+        log_skip "${tpl} — już istnieje"
+        inc SKIPPED
+    fi
+done
 
 # --- Smoketest ---
 echo ""
@@ -216,8 +224,12 @@ smoke_check "CLAUDE.md zawiera prompt zwrotny"      "grep -qF 'prompt zwrotny' C
 smoke_check "GEMINI.md istnieje"                    "[ -f GEMINI.md ]"
 smoke_check "GEMINI.md zawiera marker workflow"     "grep -qF '## Twoja rola' GEMINI.md 2>/dev/null"
 smoke_check "GEMINI.md zawiera rolę Sokoła"         "grep -qF 'Sokół' GEMINI.md 2>/dev/null"
-smoke_check "templates/plan_template.md istnieje"   "[ -f templates/plan_template.md ]"
-smoke_check "plan_template zawiera statusy"         "grep -qF 'DRAFT' templates/plan_template.md 2>/dev/null"
+smoke_check "templates/plan_single.md istnieje"     "[ -f templates/plan_single.md ]"
+smoke_check "plan_single zawiera severity"          "grep -qF 'Severity' templates/plan_single.md 2>/dev/null"
+smoke_check "plan_single zawiera źródło"            "grep -qF 'Źródło' templates/plan_single.md 2>/dev/null"
+smoke_check "templates/plan_batch.md istnieje"      "[ -f templates/plan_batch.md ]"
+smoke_check "plan_batch zawiera kolejność"          "grep -qF 'Kolejność' templates/plan_batch.md 2>/dev/null"
+smoke_check "plan_batch zawiera tabelę issues"      "grep -qF 'Issues w tym batchu' templates/plan_batch.md 2>/dev/null"
 
 # --- Podsumowanie ---
 echo ""

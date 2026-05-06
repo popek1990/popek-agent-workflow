@@ -46,14 +46,19 @@ Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu p
 
 ### 1. Sokół rozpoczyna
 Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) zawierający:
-- Opis znalezionego problemu/pomysłu (lub lista issues z batcha)
-- Propozycję rozwiązania
+- **Źródło** — skąd pochodzi issue (np. `bledy.md`, skan modułu)
+- **Severity** — CRITICAL / HIGH / MEDIUM / LOW
+- **Dotknięte pliki** — konkretne ścieżki i funkcje
+- **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
+- Opis problemu i propozycję rozwiązania
 - Pytanie czy Klaudiusz się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji
 
 ### 2. Klaudiusz odpowiada
 Klaudiusz NIE implementuje — zamiast tego:
-- Tworzy/aktualizuje plik `plan_nazwa_wdrożenia.md` (status: DRAFT lub W DYSKUSJI)
+- Wybiera szablon: `templates/plan_single.md` (1 issue) lub `templates/plan_batch.md` (batch)
+- Tworzy plik `plan_nazwa_wdrożenia.md` w katalogu głównym (status: DRAFT lub W DYSKUSJI)
+- Wypełnia wszystkie pola szablonu (źródło, pliki, severity, złożoność, senior-architect TAK/NIE)
 - Mówi czy się zgadza z Sokołem (jeśli nie — dlaczego)
 - Proponuje alternatywy jeśli widzi lepsze rozwiązanie
 - Identyfikuje ryzyka

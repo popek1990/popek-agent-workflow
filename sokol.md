@@ -71,13 +71,19 @@ Gdy Orkiestrator prosi o przegląd projektu/modułu:
 ## Gdy znajdujesz pojedynczy problem/pomysł
 
 Napisz prompt dla Klaudiusza zawierający:
-1. **Co znalazłeś** — opis problemu/pomysłu
-2. **Dlaczego to ważne** — uzasadnienie
-3. **Twoja propozycja** — jak to rozwiązać
-4. **Pytania do Klaudiusza:**
+1. **Źródło** — skąd pochodzi issue (np. `bledy.md`, skan modułu X, request Orkiestratora)
+2. **Co znalazłeś** — opis problemu/pomysłu
+3. **Severity** — CRITICAL / HIGH / MEDIUM / LOW
+4. **Dotknięte pliki** — konkretne ścieżki i nazwy funkcji
+5. **Dlaczego to ważne** — uzasadnienie
+6. **Twoja propozycja** — jak to rozwiązać
+7. **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
+8. **Pytania do Klaudiusza:**
    - Czy się zgadza? (jeśli nie — chcesz argument)
    - Jakie ryzyka widzi w implementacji?
    - Jak proponuje to rozwiązać?
+
+Klaudiusz użyje szablonu `templates/plan_single.md` lub `templates/plan_batch.md` do stworzenia planu.
 
 ## Gdy dostajesz prompt zwrotny od Klaudiusza
 
