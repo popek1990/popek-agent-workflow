@@ -76,27 +76,27 @@ Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto 
 4. **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Jeśli zauważysz problem w innym miejscu — zaraportuj go w prompcie zwrotnym jako dług techniczny, ale NIE naprawiaj go "przy okazji".
 5. Wdrażaj
 6. Code-review (jeśli wymagany) → sprawdź kod, napraw issues
-4. Uruchom testy — upewnij się że przechodzą.
+7. Uruchom testy — upewnij się że przechodzą.
    - **Zasada 3 prób:** Jeśli nie możesz naprawić testów w 3 podejściach, PRZERWIJ i poproś Sokoła o nową strategię.
    - **Błędy pre-existing:** Jeśli testy FAILED, a błędy nie dotyczą bezpośrednio Twoich zmian, MASZ ZAKAZ ich naprawiania bez wyraźnej zgody Orkiestratora. Raportuj je w podsumowaniu i kontynuuj lub przerwij zgodnie z sytuacją.
-5. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
+8. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
    - Na branchu: `git checkout main && git merge task/nazwa && git push && git branch -d task/nazwa`
    - Na main: `git commit` + `git push`
-6. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
-7. **Powiadom Orkiestratora** — po zakończeniu rebuildu: `powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null; [System.Windows.Forms.MessageBox]::Show('Wdrożenie zakończone — prompt zwrotny gotowy do skopiowania do Sokoła','Klaudiusz: Zadanie skończone')" && echo -e "\a"`
-8. **Zaktualizuj tracking** — po każdym wdrożeniu OBOWIĄZKOWO:
-   - `MD/plans/plan_*.md` → zmień status na WDROŻONY, przenieś plik do `MD/archive/`
-   - `MD/issues_sokol.md` → zmień status issues na FIXED (lub WONTFIX z uzasadnieniem)
-   - `MD/memory.md` → dopisz wiersz do sekcji "Zrobione" (data, co, krótki opis 2-3 zdania, link do planu w `MD/archive/`, kto)
-   - `MD/TODO.md` → oznacz task jako DONE (jeśli istnieje)
-9. **Przejrzyj inne pliki dokumentacyjne** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
-   - Dokumentacja API (jeśli zmiana dotyczy endpointów)
-   - Dokumentacja użytkownika / explainer (jeśli zmiana wpływa na zachowanie widoczne dla użytkownika)
-   - CLAUDE.md / GEMINI.md (jeśli zmieniły się konwencje, reguły, architektura)
-   - README (jeśli potrzeba)
-   
-   Sprawdź w CLAUDE.md projektu jakie pliki dokumentacyjne istnieją i które mogą wymagać aktualizacji.
-10. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po zakończeniu wdrożenia wypisz w terminalu prompt po polsku zawierający:
+9. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
+10. **Powiadom Orkiestratora** — po zakończeniu rebuildu: `powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null; [System.Windows.Forms.MessageBox]::Show('Wdrożenie zakończone — prompt zwrotny gotowy do skopiowania do Sokoła','Klaudiusz: Zadanie skończone')" && echo -e "\a"`
+11. **Zaktualizuj tracking** — po każdym wdrożeniu OBOWIĄZKOWO:
+    - `MD/plans/plan_*.md` → zmień status na WDROŻONY, przenieś plik do `MD/archive/`
+    - `MD/issues_sokol.md` → zmień status issues na FIXED (lub WONTFIX z uzasadnieniem)
+    - `MD/memory.md` → dopisz wiersz do sekcji "Zrobione" (data, co, krótki opis 2-3 zdania, link do planu w `MD/archive/`, kto)
+    - `MD/TODO.md` → oznacz task jako DONE (jeśli istnieje)
+12. **Przejrzyj inne pliki dokumentacyjne** — po każdym wdrożeniu sprawdź co wymaga aktualizacji:
+    - Dokumentacja API (jeśli zmiana dotyczy endpointów)
+    - Dokumentacja użytkownika / explainer (jeśli zmiana wpływa na zachowanie widoczne dla użytkownika)
+    - CLAUDE.md / GEMINI.md (jeśli zmieniły się konwencje, reguły, architektura)
+    - README (jeśli potrzeba)
+    
+    Sprawdź w CLAUDE.md projektu jakie pliki dokumentacyjne istnieją i które mogą wymagać aktualizacji.
+13. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po zakończeniu wdrożenia wypisz w terminalu prompt po polsku zawierający:
    - Co zostało zrobione (podsumowanie zmian)
    - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1` (Sokół musi go zweryfikować)
    - Jakie testy przeszły (liczba, wynik)

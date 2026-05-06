@@ -47,7 +47,7 @@ Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu p
 6. Orkiestrator zatwierdza podział Batche + Individual
 7. Praca idzie batch po batchu → potem individual issues
 
-**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka.
+**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka. **Wyłączenie:** pliki instrukcji workflow (`klaudiusz.md`, `sokol.md`, `workflow.md`, `cel.md`, `templates/*.md`) NIGDY nie są Quick fixem.
 **Kiedy batchować:** ten sam plik/moduł, ten sam wzorzec fixu, LOW/MEDIUM severity, brak zależności.
 **Kiedy osobno:** architektura, HIGH/CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
 
@@ -56,11 +56,13 @@ Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu p
 ### 1. Sokół rozpoczyna
 Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) zawierający:
 - **Źródło** — skąd pochodzi issue (np. `MD/issues_sokol.md`, skan modułu)
+- **Konsekwencje zaniechania** — co się stanie, jeśli tego nie naprawimy?
 - **Severity** — CRITICAL / HIGH / MEDIUM / LOW
 - **Dotknięte pliki** — konkretne ścieżki i funkcje
+- **Czego NIE robić** — zakazy (np. "nie refaktoruj otaczającego kodu")
 - **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
 - Opis problemu i propozycję rozwiązania
-- **Strategia testów** — jakie konkretne przypadki muszą zostać sprawdzone
+- **Strategia testów** — mierzalne kryteria sukcesu (np. "metoda X zwraca Y dla inputu Z")
 - Pytanie czy Klaudiusz się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji
 
@@ -69,6 +71,7 @@ Klaudiusz NIE implementuje — zamiast tego:
 - Wybiera szablon: `templates/plan_single.md` (1 issue) lub `templates/plan_batch.md` (batch)
 - Tworzy plik `MD/plans/plan_nazwa_wdrożenia.md` (status: DRAFT lub W DYSKUSJI)
 - Wypełnia wszystkie pola szablonu (źródło, pliki, severity, złożoność, senior-architect TAK/NIE)
+- **Pushback na złożoność:** Jeśli propozycja jest nieproporcjonalnie złożona — proponuje prostszą alternatywę NAJPIERW (YAGNI)
 - Mówi czy się zgadza z Sokołem (jeśli nie — dlaczego)
 - Proponuje alternatywy jeśli widzi lepsze rozwiązanie
 - Identyfikuje ryzyka
@@ -88,6 +91,12 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 **Złożona zmiana** (architektura, nowe serwisy, spór, ryzyko średnie+):
 → Sokół pisze: "Plan jest gotowy do oceny przez senior-architect."
 → Klaudiusz wywołuje senior-architecta → jeśli OK: wdraża. Jeśli nie: powrót do ping-pongu.
+
+### 4a. Zasady Karpathy'ego (obowiązują przed i w trakcie implementacji)
+
+- **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Problemy poza planem → dług techniczny.
+- **Test minimalizmu:** Przed implementacją: (1) Czy ≤20 linii wystarczy? (2) Czy dodaję coś, o co nikt nie prosił? (3) Czy to overcomplicated?
+- **Prawo do pushbacku:** Klaudiusz MUSI odrzucić zbyt złożoną propozycję i zaproponować prostszą alternatywę NAJPIERW.
 
 ### 5. Po wdrożeniu
 - Testy muszą przejść (zielone)
