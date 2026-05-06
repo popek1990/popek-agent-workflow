@@ -19,7 +19,7 @@
 - Pisze i wdraża kod
 - Tworzy plany wdrożeń (`MD/plans/plan_nazwa.md`)
 - Pushuje na GitHub
-- Aktualizuje dokumentację (CLAUDE.md, README, todo.md)
+- Aktualizuje dokumentację (CLAUDE.md, README, `MD/TODO.md`)
 - Ma dostęp do sub-agentów: senior-architect, code-reviewer, planner, tdd-guide
 
 ### Sokół (Gemini / Codex)
@@ -28,6 +28,18 @@
 - Deep thinking przy skomplikowanych tematach
 - Proponowanie ulepszeń
 - Tworzenie planów dla nowych funkcji
+- **Guardrails:** NIE czyta kodu bez powodu, NIE wchodzi do innych repozytoriów, NIE uruchamia testów/Dockera, NIE skanuje bez polecenia
+
+### Wznowienie pracy ("wracamy do...")
+Gdy Orkiestrator mówi "wracamy" / "kontynuujemy" — Sokół robi max 4 kroki:
+1. Sprawdza `MD/issues_sokol.md` (OPEN issues?)
+2. Sprawdza `MD/TODO.md` (co następne?)
+3. Weryfikuje czy proponowany task nie jest już wdrożony w kodzie
+4. Proponuje JEDEN następny krok → STOP, czeka na decyzję
+
+### Retroaktywna finalizacja
+Gdy task z TODO jest już wdrożony w kodzie ale nie przeszedł przez workflow:
+Sokół tworzy stub `MD/archive/plan_retro_*.md`, aktualizuje memory/TODO/issues, raportuje Orkiestratorowi.
 
 ## Faza 0: Pamięć i skanowanie (oszczędność tokenów)
 
@@ -65,6 +77,8 @@ Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) 
 - **Strategia testów** — mierzalne kryteria sukcesu (np. "metoda X zwraca Y dla inputu Z")
 - Pytanie czy Klaudiusz się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji
+
+**Plan jest OBOWIĄZKOWY** gdy: severity >= MEDIUM, >2 plików, lub logika biznesowa/auth/dane.
 
 ### 2. Klaudiusz odpowiada
 Klaudiusz NIE implementuje — zamiast tego:
@@ -114,7 +128,6 @@ Przed i w trakcie implementacji obowiązują:
   - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
   - [ ] `MD/TODO.md` → task DONE
   - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
-- **Plan jest OBOWIĄZKOWY** gdy: severity >= MEDIUM, >2 plików, lub logika biznesowa/auth/dane.
 
 ### 6a. Prompt zwrotny do Sokoła (obowiązkowy)
 Po odhaczeniu CAŁEJ checklisty Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:

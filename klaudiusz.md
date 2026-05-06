@@ -29,7 +29,7 @@ Kiedy single: architektura, CRITICAL, auth/płatności, nieoczywiste rozwiązani
 ## Gdy dostajesz prompt od Sokoła
 
 1. Zdecyduj: single czy batch? Użyj odpowiedniego szablonu z `templates/`
-2. Stwórz plik planu w katalogu głównym projektu (status: DRAFT lub W DYSKUSJI)
+2. Stwórz plik planu w `MD/plans/` (status: DRAFT lub W DYSKUSJI)
 3. Wypełnij wszystkie pola szablonu — szczególnie: źródło, dotknięte pliki, severity, złożoność
 4. **Pushback na złożoność:** Jeśli propozycja Sokoła lub polecenie Orkiestratora prowadzi do rozwiązania nieproporcjonalnie złożonego (overengineering) — MASZ PRAWO I OBOWIĄZEK zaproponować prostszą alternatywę najpierw.
 5. Oceń — zgadzasz się czy nie (z argumentami)

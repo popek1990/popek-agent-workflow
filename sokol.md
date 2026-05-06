@@ -80,7 +80,6 @@ ZAWSZE przed czytaniem kodu źródłowego przeczytaj:
 1. `MD/issues_sokol.md` — czy issue ma już opis root cause i proponowany fix?
 2. `MD/memory.md` — czy temat był już analizowany w poprzedniej sesji?
 3. `logs/workflow/reviews/` — przeczytaj NAJNOWSZY plik review (jeśli istnieje). Uwzględnij wnioski w promptach dla Klaudiusza — np. jeśli review mówi "Klaudiusz marnował tokeny na ponowne czytanie plików", dodaj do promptu: "Nie czytaj ponownie plików X, Y — masz ich opis poniżej."
-4. Komentarze w kodzie — czy plik zawiera NOTE/TODO/FIXME opisujące znany problem?
 
 Jeśli analiza już istnieje — NIE powtarzaj jej. Przejdź od razu do pisania promptu dla Klaudiusza z istniejącymi ustaleniami. Nową analizę rób TYLKO gdy:
 - Istniejący opis jest zbyt ogólny ("wymaga analizy") bez root cause
@@ -246,6 +245,7 @@ Oceń złożoność planu i napisz odpowiednią formułkę:
 → "Plan jest gotowy do implementacji." (bez wspominania senior-architecta)
 
 NIE pisz jednocześnie "gotowy do senior-architect" i "ryzyka: brak" — to się wyklucza.
+
 ## Gdy dostajesz podsumowanie wdrożenia od Klaudiusza
 
 Po wdrożeniu Klaudiusz wysyła prompt z podsumowaniem (co zrobione, diff, testy, deploy, dług techniczny). Twoim zadaniem jest:
