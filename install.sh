@@ -189,9 +189,45 @@ fi
 # --- Struktura MD/ ---
 echo -e "  ${FOLDER} ${BOLD}MD/${NC} ${DIM}(struktura dokumentów)${NC}"
 mkdir -p MD/plans MD/research
-if [ ! -d "MD/plans" ] 2>/dev/null; then
-    log_ok "MD/plans/ — utworzono"
+
+# issues.md — tracking issues ze statusami
+if [ ! -f "MD/issues.md" ]; then
+    cat > "MD/issues.md" << 'ISSUES'
+# Issues — [nazwa projektu]
+
+## Ostatni skan
+- **Data:** —
+- **Scope:** brak (pierwszy skan nie wykonany)
+- **Agent:** —
+- **Commit:** —
+
+(Brak issues — Sokół nie wykonał jeszcze pierwszego skanu)
+ISSUES
+    log_ok "MD/issues.md — utworzono"
     inc INSTALLED
+else
+    log_skip "MD/issues.md — już istnieje"
+    inc SKIPPED
+fi
+
+# memory.md — pamięć agentów (co zrobione, co odrzucone)
+if [ ! -f "MD/memory.md" ]; then
+    cat > "MD/memory.md" << 'MEMORY'
+# Memory — [nazwa projektu]
+
+## Zrobione
+| Data | Co | Plan | Kto |
+|------|----|------|-----|
+
+## Odrzucone / Debunked
+| Data | Propozycja | Powód odrzucenia | Kto odrzucił |
+|------|-----------|------------------|--------------|
+MEMORY
+    log_ok "MD/memory.md — utworzono"
+    inc INSTALLED
+else
+    log_skip "MD/memory.md — już istnieje"
+    inc SKIPPED
 fi
 
 # --- Szablony planów ---
@@ -241,6 +277,8 @@ smoke_check() {
 
 smoke_check "MD/plans/ istnieje"                     "[ -d MD/plans ]"
 smoke_check "MD/research/ istnieje"                  "[ -d MD/research ]"
+smoke_check "MD/issues.md istnieje"                  "[ -f MD/issues.md ]"
+smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md zawiera rolę Klaudiusza"     "grep -qF 'Klaudiusz' CLAUDE.md 2>/dev/null"
