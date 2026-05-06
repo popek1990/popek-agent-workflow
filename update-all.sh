@@ -54,11 +54,14 @@ for project in "${PROJECTS[@]}"; do
     echo -e "  ${DIM}────────────────────────────────${NC}"
 
     output=$(bash "$SCRIPT_DIR/install.sh" "$project" --force 2>&1) || true
-    echo "$output" | grep -E "(✅|⏭️|❌|✔️|🧪|🚀|Smoketest|Zainstalowano|Wszystko OK|problemów)" | head -25
+    echo "$output" | grep -E "(✅|⏭️|❌|✔️|🧪|🚀|Smoketest|Zainstalowano|Wszystko OK|problemów|pomijam)" | head -25
 
     if echo "$output" | grep -q "Wszystko OK"; then
         RESULTS+=("✅ $name")
         inc TOTAL_OK
+    elif echo "$output" | grep -q "pomijam"; then
+        RESULTS+=("⏭️  $name — brak workflow, pominięto")
+        inc TOTAL_SKIP
     elif echo "$output" | grep -q "problemów"; then
         RESULTS+=("⚠️  $name — smoketest z uwagami")
         inc TOTAL_FAIL

@@ -69,6 +69,21 @@ fi
 
 cd "$PROJECT_DIR"
 
+# --- Tryb --force: sprawdź czy workflow był wcześniej zainstalowany ---
+if $FORCE; then
+    MARKER="## Twoja rola"
+    HAS_CLAUDE=false
+    HAS_GEMINI=false
+    [ -f "CLAUDE.md" ] && grep -qF "$MARKER" "CLAUDE.md" 2>/dev/null && HAS_CLAUDE=true
+    [ -f "GEMINI.md" ] && grep -qF "$MARKER" "GEMINI.md" 2>/dev/null && HAS_GEMINI=true
+
+    if ! $HAS_CLAUDE && ! $HAS_GEMINI; then
+        echo -e "\n  ${SKIP}${YELLOW}Workflow nie był zainstalowany — pomijam${NC}"
+        echo -e "  ${DIM}Użyj bez --force aby zainstalować po raz pierwszy${NC}\n"
+        exit 0
+    fi
+fi
+
 # Liczniki do podsumowania
 INSTALLED=0
 UPDATED=0
