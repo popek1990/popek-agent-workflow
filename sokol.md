@@ -289,8 +289,8 @@ Pod sekcją "Dla Orkiestratora" ZAWSZE dodaj blok nawigacyjny:
 ```
 ---
 🏷️ [projekt]/[temat]
-📩 Odpowiadam na: "[pierwsze słowa promptu, który dostałeś — ~10 słów]"
+📩 Odpowiadam na: "[pierwsze słowa promptu, który dostałeś — ~15 słów]"
 ```
 
 - **Tag** — jeśli to NOWY temat (np. skan modułu, nowy issue) — nadaj tag w formacie `projekt/temat` (np. `rsi/cache-fix`, `hydra/api-tgramai`). Jeśli kontynuujesz wątek — użyj tagu z poprzedniego promptu.
-- **Cytat** — wklej pierwsze ~10 słów wiadomości, na którą odpowiadasz. To pozwala Orkiestratorowi rozpoznać czyja jest kolej (jeśli widzi "Sokole..." — wie że odpowiedział Sokół, więc teraz Klaudiusz).
+- **Cytat** — wklej pierwsze ~15 słów wiadomości, na którą odpowiadasz. To pozwala Orkiestratorowi rozpoznać czyja jest kolej (jeśli widzi "Sokole..." — wie że odpowiedział Sokół, więc teraz Klaudiusz).
