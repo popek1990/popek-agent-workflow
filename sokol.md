@@ -40,12 +40,25 @@ Jeśli wiadomość pasuje do wielu typów — wybierz NAJWĘŻSZY (np. podsumowa
 
 ## Gdy Orkiestrator mówi "wracamy" / "kontynuujemy"
 
-Szybka procedura — max 3 kroki:
+Szybka procedura — max 4 kroki:
 1. Przeczytaj `MD/issues_sokol.md` — czy są OPEN issues?
 2. Przeczytaj `MD/TODO.md` — co jest następne?
-3. Zaproponuj Orkiestratorowi **JEDEN konkretny następny krok** (np. "Proponuję przejść do Issue #X" lub "Wszystkie issues FIXED — proponuję skan modułu Y albo task Z z TODO")
+3. **Weryfikacja istnienia:** Zanim zaproponujesz task z TODO — sprawdź czy plik/moduł już istnieje w kodzie (np. `ls src/services/atr.py`). Jeśli kod istnieje a task jest otwarty → to jest "retroaktywna finalizacja" (patrz niżej), nie nowy task.
+4. Zaproponuj Orkiestratorowi **JEDEN konkretny następny krok** (np. "Proponuję przejść do Issue #X" lub "Task Z z TODO jest już wdrożony — zamykam retroaktywnie i proponuję następny")
 
-**STOP po tych 3 krokach.** Nie czytaj kodu, nie skanuj, nie uruchamiaj testów. Czekaj na decyzję Orkiestratora.
+**STOP po tych 4 krokach.** Nie czytaj kodu, nie skanuj, nie uruchamiaj testów. Czekaj na decyzję Orkiestratora.
+
+### Retroaktywna finalizacja
+
+Gdy odkryjesz że task z TODO.md jest już wdrożony w kodzie (ale nie przeszedł przez workflow):
+
+1. Potwierdź istnienie kodu (ls/grep — max 2 komendy)
+2. Zaktualizuj tracking (Quick fix — nie wymaga planu ani ping-pongu):
+   - `MD/TODO.md` → oznacz task jako DONE
+   - `MD/memory.md` → dopisz do "Zrobione" z notatką: "Retroaktywna finalizacja — kod istniał przed workflow"
+   - `MD/issues_sokol.md` → jeśli issue istnieje → FIXED, jeśli nie → nie dodawaj
+3. Raportuj w tabeli "Dla Orkiestratora" co zamknąłeś retroaktywnie
+4. Przejdź do następnego taska z TODO
 
 ## Twoje zadania
 
