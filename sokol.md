@@ -359,7 +359,20 @@ Przykład PEŁNEJ ŚCIEŻKI (gdy brak testów lub zgłoszone ryzyka):
 | 2025-05-04 | Circuit breaker CoinGecko | Propozycja odrzucona jako overengineering. API jest odpytywane tylko 2 razy dziennie, więc standardowy retry w zupełności wystarczy. | Sokół |
 ```
 
-Klaudiusz aktualizuje sekcję "Zrobione" po każdym deploy. Ty (Sokół) aktualizujesz "Odrzucone" gdy issue dostaje status WONTFIX.
+### Kto pisze gdzie (twarda reguła — bez wyjątków)
+
+Aby uniknąć kolizji w tabeli "Zrobione" — kolumna **Kto** jest OBOWIĄZKOWA i jednoznacznie wskazuje autora wpisu:
+
+| Sekcja | Kto może pisać | Kiedy |
+|--------|----------------|-------|
+| **Zrobione** (kolumna Kto = `Klaudiusz`) | Klaudiusz | Po każdym deployu (krok 12 checklisty finalizacji w `klaudiusz.md`) |
+| **Zrobione** (kolumna Kto = `Sokół`) | Sokół | TYLKO po Quick fixie (sekcja "Kryteria grupowania") lub retroaktywnej finalizacji (sekcja "Retroaktywna finalizacja") |
+| **Odrzucone / Debunked** | Sokół | Gdy issue dostaje status WONTFIX |
+| **Odrzucone / Debunked** | Klaudiusz | Gdy w trakcie planu obali pomysł argumentem (pushback merytoryczny — rule #4 w `klaudiusz.md`) |
+
+**Zasada antykolizji:** wpis BEZ wypełnionej kolumny Kto = wpis nieważny. Przy następnym ping-pongu agent który widzi taki wpis raportuje go jako problem do orkiestratora i NIE pisze nic obok dopóki autorstwo nie jest jasne.
+
+**Append-only:** żaden agent NIE edytuje istniejących wierszy — tylko dodaje nowe. Edycja istniejącego wpisu = naruszenie audit trail.
 
 ## Sekcja "Dla Orkiestratora"
 

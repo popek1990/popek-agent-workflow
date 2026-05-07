@@ -133,8 +133,11 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
 9. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
    - Na branchu: `git checkout main && git merge task/nazwa && git push && git branch -d task/nazwa`
    - Na main: `git commit` + `git push`
+   - **Konflikt push (`! [rejected]` / non-fast-forward):** STOP. NIE używaj `--force`. Wykonaj `git pull --rebase`, rozwiąż ewentualne konflikty, znów uruchom testy (skrócony smoke), powtórz push. Jeśli rebase wprowadza nieoczekiwane zmiany — eskaluj do orkiestratora przez `bash scripts/notify.sh "Konflikt push — wymagana decyzja"`.
 10. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
-11. **Powiadom Orkiestratora** — po zakończeniu rebuildu: `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
+    - **Build fail / non-zero exit:** przejdź do sekcji "Procedura rollback" niżej. Nie próbuj naprawić "przy okazji".
+    - **Healthcheck po deployu:** zweryfikuj że kontenery są UP (`docker compose ps`) i aplikacja odpowiada (smoketest endpointu jeśli istnieje, np. `curl -f http://localhost:PORT/health`). Jeśli któryś kontener jest w stanie `Restarting` / `Exited` po 30s — to też jest fail → rollback.
+11. **Powiadom Orkiestratora** — po zakończeniu rebuildu (zielonego!): `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
 12. **Checklista finalizacji (BLOKUJĄCA)** — NIE pisz promptu zwrotnego dla Sokoła dopóki nie odhaczysz WSZYSTKICH punktów. To jest integralna część wdrożenia, nie opcjonalny krok.
     - [ ] `MD/plans/plan_*.md` → status zmieniony na WDROŻONY
     - [ ] Plan przeniesiony do `MD/archive/` (plik MUSI istnieć w archive — sprawdź `ls MD/archive/`)
@@ -152,6 +155,48 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
     - **Checklista finalizacji:** wypisz odhaczoną checklistę z kroku 12 (Sokół ją zweryfikuje)
     - **Dług techniczny / Uwagi:** jeśli podczas pracy zauważyłeś coś co wymaga poprawy, ale nie było częścią planu — opisz to tutaj.
     - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
+
+## Procedura rollback (gdy deploy się wywali)
+
+Trzy scenariusze fail. **Reguła naczelna:** najpierw przywróć działający stan, potem analizuj.
+
+### A) Docker build / startup fail
+
+`docker compose up -d --build` zwraca non-zero LUB kontener jest w stanie `Restarting`/`Exited` po 30 sekundach.
+
+1. **Zatrzymaj** błędne kontenery: `docker compose down`
+2. **Revert commita** który właśnie wypushowałeś: `git revert HEAD --no-edit && git push`
+3. **Rebuild ze stanu sprzed**: `docker compose up -d --build` (teraz powinno przejść — bo to ten sam obraz co działał przedtem)
+4. **Powiadom orkiestratora**: `bash scripts/notify.sh "DEPLOY FAIL — wykonano rollback. Plan: [link do MD/plans/plan_*.md], błąd: [pierwsze 3 linie z docker logs]"`
+5. **Plan zostaje na ZATWIERDZONY** (NIE przesuwaj na WDROŻONY). Dopisz do planu sekcję `## Incydent` z opisem co się wywaliło.
+6. **STOP** — nie próbuj fix-na-zywo. Czekaj na decyzję orkiestratora czy wracamy do planu z poprawką, czy odrzucamy go całkowicie.
+
+### B) Aplikacja działa, ale healthcheck/smoketest fail
+
+Kontenery UP, ale endpoint `/health` zwraca 500 albo aplikacja nie odpowiada.
+
+1. **Sprawdź logi** (max 30 linii): `docker compose logs --tail=30 [serwis]`
+2. **Jeśli błąd jest WYRAŹNIE związany z Twoją zmianą** (np. ImportError z dodanego pliku, missing env var) → revert + push (jak A.2-A.4)
+3. **Jeśli błąd jest niejasny** (kontekst niezwiązany, race condition, side effect z innego serwisu) → revert i tak (zasada "działający stan najpierw"), ale w notyfikacji zaznacz: "Rollback profilaktyczny — root cause niejasny, wymaga analizy z Sokołem"
+4. **Plan zostaje na ZATWIERDZONY** + sekcja `## Incydent`
+
+### C) Konflikt push (`git push` rejected)
+
+Ktoś inny pushnął na main w międzyczasie (lub stan rozjechany po --force gdzieś).
+
+1. **NIE używaj `git push --force`** — to nadpisuje cudze commity (zasada bezpieczeństwa z `~/.claude/rules/git-workflow.md`)
+2. `git pull --rebase` — rebase Twoich commitów na aktualny main
+3. **Jeśli są konflikty** rozwiąż je (semantycznie, nie syntaktycznie — przeczytaj co zmienił drugi commit)
+4. Uruchom **skrócony smoketest** (kluczowe testy modułu który zmieniłeś) — czy rebase nic nie zepsuł
+5. Powtórz `git push`
+6. **Jeśli rebase wprowadza nieoczywiste zmiany** (np. drugi commit zmienił ten sam plik co Ty, ale w innym miejscu) — STOP, eskaluj: `bash scripts/notify.sh "Konflikt push — wymagana decyzja: [opis konfliktu]"`
+
+### Po rollbacku — jak wrócić do planu
+
+1. Sokół analizuje sekcję `## Incydent` w planie
+2. Pisze nowy prompt dla Klaudiusza z poprawioną strategią (status planu wraca do W DYSKUSJI)
+3. Standardowy ping-pong + ponowne wdrożenie
+4. **Po SUKCESIE drugiego podejścia** — w `MD/memory.md` sekcja "Zrobione" zaznacz że to drugie podejście (kolumna Opis: "Wdrożone w drugiej iteracji po rollbacku — przyczyna pierwszego fail: [krótko]")
 
 ## Kiedy wymagany code-review
 

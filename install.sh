@@ -286,9 +286,16 @@ if [ ! -f "MD/memory.md" ]; then
 | Data | Co | Opis (2-3 zdania) | Plan | Kto |
 |------|----|-------------------|------|-----|
 
+> **Reguła pisania:** wpis dodaje TYLKO ten kto wykonał pracę.
+> - **Klaudiusz** pisze po deployu (kolumna Kto = `Klaudiusz`).
+> - **Sokół** pisze TYLKO po Quick fixie lub retroaktywnej finalizacji (kolumna Kto = `Sokół`).
+> Kolumna **Kto** jest OBOWIĄZKOWA — bez niej wpis nieważny.
+
 ## Odrzucone / Debunked
 | Data | Propozycja | Powód odrzucenia (2-3 zdania) | Kto odrzucił |
 |------|-----------|-------------------------------|--------------|
+
+> **Reguła pisania:** Sokół dopisuje gdy issue dostaje status WONTFIX. Klaudiusz dopisuje gdy w trakcie planu obali pomysł argumentem (pushback).
 MEMORY
     log_ok "MD/memory.md — utworzono"
     inc INSTALLED
@@ -296,6 +303,43 @@ else
     log_skip "MD/memory.md — już istnieje"
     inc SKIPPED
 fi
+
+# TODO.md — kolejka zadań (OPEN / DONE / Hygiene)
+if [ ! -f "MD/TODO.md" ]; then
+    cat > "MD/TODO.md" << 'TODOS'
+# TODO — [nazwa projektu]
+
+## OPEN
+Aktywne zadania do zrobienia. Każdy task = 1 wiersz tabeli.
+
+| # | Task | Severity | Źródło | Status | Kto zgłosił |
+|---|------|----------|--------|--------|-------------|
+
+**Statusy:** OPEN → IN_PROGRESS → DONE / WONTFIX
+
+## DONE
+Zadania zakończone — przeniesione tu po wdrożeniu (status WDROŻONY w planie).
+
+| Data | Task | Plan | Kto wdrożył |
+|------|------|------|-------------|
+
+## Hygiene
+Drobne porządki, długi techniczne, "kiedyś warto byłoby" — zrobimy gdy będzie chwila. Nie blokuje workflow.
+
+| # | Co | Gdzie | Kto zgłosił |
+|---|----|-------|-------------|
+
+> **Reguła:** Jeśli Klaudiusz w prompcie zwrotnym zgłosi "Dług techniczny" — Sokół dopisuje go do **Hygiene**. Drobne issues z LOW severity które nie wymagają planu — też tutaj.
+TODOS
+    log_ok "MD/TODO.md — utworzono"
+    inc INSTALLED
+else
+    log_skip "MD/TODO.md — już istnieje"
+    inc SKIPPED
+fi
+
+# archive/ — katalog na zarchiwizowane plany (po wdrożeniu)
+mkdir -p MD/archive
 
 # --- Szablony planów ---
 mkdir -p templates
@@ -346,6 +390,9 @@ smoke_check "MD/plans/ istnieje"                     "[ -d MD/plans ]"
 smoke_check "MD/research/ istnieje"                  "[ -d MD/research ]"
 smoke_check "MD/issues_sokol.md istnieje"                  "[ -f MD/issues_sokol.md ]"
 smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
+smoke_check "MD/TODO.md istnieje"                    "[ -f MD/TODO.md ]"
+smoke_check "MD/archive/ istnieje"                   "[ -d MD/archive ]"
+smoke_check "MD/TODO.md ma sekcje OPEN/DONE/Hygiene" "grep -qF '## OPEN' MD/TODO.md && grep -qF '## DONE' MD/TODO.md && grep -qF '## Hygiene' MD/TODO.md"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' CLAUDE.md 2>/dev/null)\" = '1' ]"
