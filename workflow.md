@@ -125,12 +125,7 @@ Przed i w trakcie implementacji obowiązują:
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
-- **Checklista finalizacji (BLOKUJĄCA)** — Klaudiusz NIE pisze promptu zwrotnego dopóki nie odhaczył:
-  - [ ] Plan → status WDROŻONY → przeniesiony do `MD/archive/`
-  - [ ] `MD/memory.md` → link do `MD/archive/` (nie `MD/plans/`)
-  - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
-  - [ ] `MD/TODO.md` → task DONE
-  - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
+- **Checklista finalizacji (BLOKUJĄCA)** — Klaudiusz NIE pisze promptu zwrotnego dopóki nie odhaczy WSZYSTKICH punktów. **Kanoniczna lista:** `klaudiusz.md` → sekcja "Po zatwierdzeniu planu" → krok 12. Templates `plan_single.md` / `plan_batch.md` mają tę samą listę jako per-plan checkboxy do odhaczenia.
 
 ### 6a. Prompt zwrotny do Sokoła (obowiązkowy)
 Po odhaczeniu CAŁEJ checklisty Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
@@ -178,3 +173,56 @@ Pod każdą odpowiedzią agenta — tabela zmian (sortowana od najważniejszego)
 ```
 
 Pod tabelą — pytanie decyzyjne do Orkiestratora (np. "Czy zatwierdzasz? Zaczynamy?").
+
+## FAQ — co gdy coś idzie nie tak
+
+Sytuacje brzegowe, na które reguły wprost nie odpowiadają. Wszystkie mają wspólny rdzeń: **orkiestrator decyduje, agenty realizują**.
+
+### Sokół wraca z tym samym pomysłem mimo NIE od Klaudiusza
+
+Jeśli po pushbacku Klaudiusza Sokół ponownie proponuje to samo (np. po 2 rundach) bez nowego argumentu:
+- Klaudiusz w prompcie zwrotnym: cytuje swój poprzedni argument + pyta "co się zmieniło że wracamy do tego pomysłu?"
+- Po 3 rundach (zasada 3 rund ping-pongu) — STOP, eskalacja do orkiestratora
+- Orkiestrator rozstrzyga: albo zatwierdza wersję Sokoła (overrides Klaudiusza), albo zatwierdza wersję Klaudiusza (zamyka temat → Sokół zapisuje pomysł w `MD/memory.md` "Odrzucone")
+
+### Senior-architect odrzuca cały plan
+
+- Status planu wraca do `W DYSKUSJI`
+- Klaudiusz pisze prompt zwrotny dla Sokoła z uwagami architecta (cytuj dokładnie, nie parafrazuj)
+- Standardowy ping-pong z nowym wkładem
+- Jeśli architect odrzucił **drugi raz** po poprawkach — STOP, orkiestrator decyduje czy plan wykonujemy mimo wszystko, czy go zamykamy (status `WONTFIX`)
+
+### Plan ZATWIERDZONY, ale orkiestrator zmienia zdanie
+
+- Orkiestrator pisze do Klaudiusza "wstrzymaj plan X" — nawet jeśli implementacja już ruszyła
+- Klaudiusz zatrzymuje pracę, status planu → `W DYSKUSJI` z notatką "wstrzymany przez orkiestratora — powód: …"
+- **Jeśli były już commity:** zostają na branchu (lub są revertowane — decyzja orkiestratora). Plan się nie merguje na main dopóki nie wraca do `ZATWIERDZONY`
+- Sokół dostaje prompt zwrotny "plan wstrzymany — czekamy na decyzję orkiestratora"
+
+### `MD/issues_sokol.md` puchnie do 200+ wierszy
+
+- Sokół (przy pierwszym skanie po przekroczeniu progu) raportuje to w tabeli "Dla Orkiestratora"
+- Quick fix dla Sokoła: przenieść wszystkie `FIXED` / `WONTFIX` do `MD/issues_sokol_archive.md` (zostaje plik tylko z `OPEN` + `IN_PROGRESS`)
+- Aktualne statusy nie giną — w archiwum mają nadal pełną historię z linkiem do planu
+
+### Klaudiusz wywołał agenta z `agents_catalog.md` ale agent nie istnieje
+
+Sokół zasugerował agenta którego nie ma (mimo że miał czytać katalog) lub Klaudiusz źle przeparsował.
+- Klaudiusz NIE wywołuje "podobnego" agenta na ślepo
+- W prompcie zwrotnym do Sokoła: "Nie znalazłem agenta `X` w `agents_catalog.md`. Sprawdziłem sekcję Y. Możesz zasugerować innego z faktycznie istniejących?"
+- Sokół otwiera katalog (rule #8) i poprawia sugestię
+
+### Push się wywalił, rollback też się wywalił
+
+Krytyczna sytuacja — opisana w `klaudiusz.md` → "Procedura rollback". TLDR:
+- Kontenery zatrzymaj (`docker compose down`)
+- Eskalacja przez `bash scripts/notify.sh "DEPLOY FAIL — rollback fail — wymagana ręczna interwencja"`
+- STOP. NIE próbuj `git push --force`. NIE próbuj kasować commitów. Czekaj na decyzję orkiestratora.
+
+### Dwa agenty edytują workflow równocześnie (`klaudiusz.md`, `sokol.md`, ...)
+
+To stanie się jeśli orkiestrator pomyli się i dał polecenie obu na ten sam zakres.
+- Reguła append-only z `sokol.md` → "Kto pisze gdzie" odnosi się tylko do `MD/memory.md`. Dla plików workflow:
+- Pierwsza zasada: oba agenty czytają plik PRZED edycją (zawsze świeży stan)
+- Jeśli git pokazuje konflikt — Klaudiusz rozwiązuje (Sokół nie pushuje), zachowując zmiany obu stron jeśli się nie wykluczają
+- Jeśli wykluczają się — eskalacja do orkiestratora przed mergem

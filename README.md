@@ -59,6 +59,39 @@ Skrypt tworzy w Twoim projekcie:
 3. Terminal 2: uruchom Gemini/Codex → to Sokół
 4. Zacznij od Sokoła — poproś go o przegląd kodu
 
+## Pełny przykład — od skanu do deployu
+
+Konkretny flow w nowym projekcie. Pokazuje kto co mówi, czego oczekiwać.
+
+**Krok 1 — Ty (orkiestrator) do Sokoła:**
+
+> Przeskanuj moduł `src/cache/`. Szukaj bugów, luk bezpieczeństwa, miejsc gdzie brakuje walidacji.
+
+**Krok 2 — Sokół skanuje, znajduje issue, pisze prompt dla Klaudiusza** (przykładowo):
+
+> Klaudiuszu, mamy problem z walidacją inputów w module cache.
+> **Źródło:** skan `src/cache/middleware.ts` linia 42
+> **Severity:** HIGH
+> **Konsekwencje zaniechania:** Bez walidacji `X-Forwarded-Host` atakujący może zatruć cache.
+> **Dotknięte pliki:** `src/cache/middleware.ts`, `src/cache/middleware.test.ts`
+> **Propozycja:** Guard na początku `getCacheKey()` — allowlista domen.
+> **Sugerowany agent:** `security-reviewer` [reviewer po implementacji]
+> Zaproponuj plan. Czy widzisz ryzyka?
+
+**Krok 3 — Ty kopiujesz prompt z Sokoła do Klaudiusza.** Klaudiusz **nie pisze kodu** — tworzy `MD/plans/plan_cache_host_validation.md`, ocenia propozycję, identyfikuje ryzyka, pisze prompt zwrotny dla Sokoła:
+
+> Sokole, zgadzam się z guardem, ale allowlista powinna być w configu (`src/config.ts`), nie hardcoded. Mitygacja pustej allowlisty: skip jeśli długość 0. Czy akceptujesz dodanie configa? Jeśli tak — zmieniam status planu na GOTOWY DO OCENY.
+
+**Krok 4 — Ty kopiujesz odpowiedź Klaudiusza do Sokoła.** Sokół potwierdza ("Plan jest gotowy do implementacji.") lub kontruje. Ping-pong trwa max 3 rundy.
+
+**Krok 5 — Ty dajesz zielone światło Klaudiuszowi:** *"OK, wdrażaj."*
+
+**Krok 6 — Klaudiusz wdraża sam:** wywołuje `security-reviewer` na kodzie, puszcza testy, robi `git push`, `docker compose up -d --build`, healthcheck, aktualizuje `MD/memory.md` + `MD/TODO.md` + przenosi plan do `MD/archive/`. Kończy promptem zwrotnym dla Sokoła z dowodem (link do commitu).
+
+**Krok 7 — Ty kopiujesz raport Klaudiusza do Sokoła.** Sokół robi Blind Audit (sprawdza diff, weryfikuje finalizację) i wskazuje kolejne issue → wracamy do kroku 2.
+
+**Co poszło nie tak?** Patrz `workflow.md` → sekcja FAQ.
+
 ## Pliki w tym repo
 
 | Plik | Opis |

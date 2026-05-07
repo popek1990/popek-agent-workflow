@@ -1,8 +1,10 @@
-# Workflow: Dual-Agent Vibe-Coding
+# Workflow: Dual-Agent Vibe-Coding (z perspektywy orkiestratora)
 
-Pracuję w terminalu z dwoma agentami AI działającymi na tym samym repozytorium. Ja (orkiestrator) zarządzam przepływem informacji między nimi.
+Pracuję w terminalu z dwoma agentami AI działającymi na tym samym repo. Ja (orkiestrator) zarządzam przepływem informacji między nimi.
 
-> To jest uproszczony opis z perspektywy orkiestratora. Pełna referencja techniczna: `workflow.md`.
+> **To jest skrócony opis z perspektywy orkiestratora — co robię, co decyduję, co kopiuję.**
+> Pełna referencja techniczna (statusy planu, format checklistów, FAQ): `workflow.md`.
+> Reguły poszczególnych agentów: `klaudiusz.md` (Claude Code), `sokol.md` (Gemini/Codex).
 
 ---
 
@@ -17,118 +19,74 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 
 ---
 
-## Role agentów
+## Role w jednym zdaniu
 
-### Klaudiusz (Claude Code) — serce projektu
-
-- Tworzy, edytuje i ulepsza kod
-- Robi `git push` na GitHub
-- Tutaj zachodzą wszystkie poważne zmiany w projekcie
-- Ma dostęp do **60+ wyspecjalizowanych agentów** z katalogu [agents.popeklab.com](https://agents.popeklab.com/) — m.in. `python-reviewer`, `silent-failure-hunter`, `tdd-guide`, `aqua-combo`, `security-reviewer`, `senior-architect`, `database-reviewer`
-- **Nie dokonuje zmian w kodzie bez mojego zielonego światła** (ale po zielonych testach i code review — sam pushuje i rebuilduje Dockera)
-- **Prawo do pushbacku** — jeśli propozycja jest zbyt złożona, Klaudiusz musi zaproponować prostszą alternatywę (zasady Karpathy'ego)
-
-### Sokół (Gemini / Codex) — analityk i doradca
-
-- Szuka pomysłów i ulepszeń
-- Znajduje błędy, luki bezpieczeństwa
-- Myśli głęboko przy skomplikowanych tematach
-- Tworzy plany dla nowych funkcji
-- **Sugeruje agenta dla Klaudiusza** w każdym prompcie (np. "wywołaj `python-reviewer` jako reviewer po implementacji") — Klaudiusz może odrzucić z uzasadnieniem
-- **Nigdy nie robi push na GitHub** (chyba że wyraźnie poproszę)
-- **Nigdy nie edytuje plików instrukcji workflow** (`klaudiusz.md`, `sokol.md`, `workflow.md`, `cel.md`, `templates/*.md`)
-- Może samodzielnie robić **Quick fixy** (literówki, rename, max 3 pliki, zero logiki)
+- **Klaudiusz** — pisze kod, robi `git push`, deployuje Dockera. Ma dostęp do **60+ wyspecjalizowanych agentów** z [agents.popeklab.com](https://agents.popeklab.com/) (lokalny katalog: `agents_catalog.md`).
+- **Sokół** — szuka błędów, robi research, krytykuje propozycje, **nigdy nie pushuje** (chyba że proszę).
+- **Ja** — kopiuję prompty między oknami, decyduję kiedy plan jest gotowy do wdrożenia.
 
 ---
 
-## Orkiestrator (ja)
+## Co robię w trakcie sesji
 
-- Kopiuję prompty między agentami (ręcznie)
-- Decyduję, kiedy plan jest gotowy do wdrożenia
-- Daję zielone światło na zmiany w kodzie
-- Chcę rozumieć każdy etap — wymagam opisów prostymi słowami (znam Git, Docker i podstawy architektury, ale nie chcę żargonu)
+1. **Daję polecenie** Sokołowi (np. "przeskanuj moduł X" / "zajmij się issue #5")
+2. **Kopiuję prompty** które Sokół pisze do Klaudiusza, i odwrotnie — ping-pong
+3. **Daję zielone światło** na implementację, gdy oba agenty zgadzają się co do planu
+4. **Decyduję eskalacje** — gdy ping-pong przekroczy 3 rundy bez konsensusu, lub senior-architect odrzuci plan (patrz `workflow.md` → FAQ)
 
----
-
-## Workflow krok po kroku
-
-### Faza 0: Pamięć i skanowanie
-
-1. Sokół sprawdza `MD/memory.md` (co już zrobione/odrzucone) i `MD/issues_sokol.md` (co OPEN)
-2. Sokół skanuje projekt/moduł (pomija już skanowane)
-3. Zapisuje WSZYSTKIE issues do `MD/issues_sokol.md`
-4. Grupuje: **Quick fix** (robi sam) / **Batche** (powiązane, max 5) / **Individual** (złożone)
-5. Quick fixy wykonuje od razu, resztę przedstawia mi do zatwierdzenia
-
-### Faza 1: Analiza (Sokół)
-
-6. Sokół pisze **prompt dla Klaudiusza** z pełnym checklistem:
-   - Źródło, severity, dotknięte pliki, konsekwencje zaniechania
-   - Czego NIE robić (zakazy)
-   - Propozycja rozwiązania i mierzalne kryteria akceptacji
-   - Pytania do Klaudiusza
-
-### Faza 2: Burza mózgów (ping-pong)
-
-7. Ja kopiuję prompt Sokoła → wklejam do Klaudiusza
-8. Klaudiusz **nie rusza kodu** — zamiast tego:
-   - Tworzy plan z szablonu (`templates/plan_single.md` lub `templates/plan_batch.md`)
-   - Ocenia propozycję — zgadza się lub proponuje alternatywę
-   - **Test minimalizmu:** Czy rozwiązanie jest najprostsze? Czy ≤20 linii wystarczy?
-   - Pisze **prompt zwrotny dla Sokoła**
-9. Ja kopiuję prompt Klaudiusza → wklejam do Sokoła
-10. Sokół odpowiada → powtarzamy (kroki 7–9)
-11. **Kończymy gdy plan satysfakcjonuje obu agentów** (max 3 rundy — po 3 eskalacja do mnie)
-
-### Faza 3: Ocena architektury (warunkowa)
-
-Senior-architect jest wymagany TYLKO gdy:
-- Zmiana dotyka architektury (nowe serwisy, zmiana flow danych)
-- Agenty nie doszły do konsensusu (był spór)
-- Ryzyko średnie lub wyższe
-
-Prosty fix z pełnym konsensusem → pomijamy.
-
-### Faza 4: Wdrożenie
-
-12. Klaudiusz wdraża plan (po moim zielonym świetle)
-13. **Surgical Changes:** Modyfikuje TYLKO pliki wymienione w planie
-
-### Faza 5: Code review i auto-deploy
-
-14. Klaudiusz wywołuje `/code-review` (jeśli wymagany: 3+ pliki, logika biznesowa)
-15. Gdy review przechodzi, Klaudiusz **sam** (bez pytania o zgodę):
-    - Robi `git push` na GitHub
-    - Robi `docker compose up -d --build` (rebuild + deploy)
-    - Aktualizuje tracking: `MD/plans/`, `MD/issues_sokol.md`, `MD/memory.md`, `MD/TODO.md`
-    - Aktualizuje dokumentację (CLAUDE.md, README) jeśli potrzeba
-    - Powiadamia mnie (popup)
-
-### Faza 6: Prompt zwrotny do Sokoła
-
-16. Klaudiusz pisze **prompt dla Sokoła** (po polsku, w terminalu):
-    - Co zostało zrobione + dowód (diff/commit)
-    - Wynik testów i deploy
-    - Dług techniczny / uwagi (jeśli są)
-    - Pytanie: co dalej?
-17. Ja kopiuję ten prompt → wklejam do Sokoła
-18. Sokół robi **Blind Audit** (sprawdza diff, czy nie ma zmian poza planem)
-19. Sokół wskazuje kolejne zadanie → wracamy do Fazy 1
+Po zielonych testach Klaudiusz **sam** pushuje, rebuilduje Dockera i robi healthcheck — bez pytania o zgodę. Patrz `klaudiusz.md` → "Po zatwierdzeniu planu".
 
 ---
 
-## Po git push — synchronizacja kodu
+## Co dostaję pod każdą odpowiedzią
 
-Po każdym `git push` orkiestrator (ja) instaluje nową wersję kodu w środowisku, aby **oba okna** (Klaudiusz i Sokół) widziały aktualny stan repozytorium.
+Każdy agent kończy odpowiedź dwoma rzeczami:
+
+1. **Tabela "Dla Orkiestratora"** — proste streszczenie zmian (obecne zachowanie / propozycja / wpływ / ryzyko)
+2. **Pytanie decyzyjne** — np. "Czy zatwierdzasz? Wklej do drugiego agenta?"
+
+Tę tabelę czytam zamiast szczegółów technicznych — wystarcza do podjęcia decyzji.
 
 ---
 
-## Zasady komunikacji
+## Pełny przebieg jednego issue
 
-Pod każdym promptem (niezależnie od fazy) chcę tabelę zmian:
+Skondensowanie procesu (szczegóły: `workflow.md`):
 
-| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
-|---|---|---|---|---|
-| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać] | [niskie/średnie/wysokie] |
+1. **Sokół** skanuje / dostaje issue → pisze prompt dla Klaudiusza (z severity, plikami, propozycją, sugerowanym agentem)
+2. **Klaudiusz** dostaje prompt → tworzy plan w `MD/plans/plan_*.md` (NIE pisze kodu) → pisze prompt zwrotny dla Sokoła
+3. **Ping-pong** (max 3 rundy) → plan dojrzewa
+4. **Senior-architect** ocenia plan (warunkowo — gdy zmiana architektoniczna lub spór)
+5. **Ja** daję zielone światło → Klaudiusz wdraża, woła reviewera (przed testami!), puszcza testy
+6. **Auto-deploy** — git push + docker compose up → healthcheck → notify
+7. **Klaudiusz** pisze raport zwrotny dla Sokoła (diff, testy, finalizacja)
+8. **Sokół** robi Blind Audit + wskazuje kolejne zadanie → wracamy do kroku 1
 
-Pod tabelą — pytanie decyzyjne (np. "Czy zatwierdzasz? Zaczynamy?").
+Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widziały aktualny stan repo.
+
+---
+
+## Plik instrukcji w repo
+
+| Plik | Co opisuje | Komu czyta |
+|------|-----------|------------|
+| `klaudiusz.md` → `CLAUDE.md` | Reguły Klaudiusza | Claude Code w docelowym projekcie |
+| `sokol.md` → `GEMINI.md` / `AGENTS.md` | Reguły Sokoła | Gemini / Codex |
+| `workflow.md` | Pełna referencja procesu + FAQ | Ja (gdy coś się popsuje) |
+| `cel.md` (ten plik) | Skrót dla orkiestratora | Ja, znajomi |
+| `agents_catalog.md` | Snapshot 60+ agentów (Sokół wybiera z tego, nie zmyśla) | Sokół |
+| `templates/plan_single.md`, `plan_batch.md` | Szablon per-plan | Klaudiusz |
+| `scripts/notify.sh` | Powiadomienie po deployu | Klaudiusz wywołuje |
+
+---
+
+## Co gdy coś się popsuje
+
+`workflow.md` → sekcja "FAQ — co gdy coś idzie nie tak" pokrywa:
+- Sokół zapętla się na tym samym pomyśle
+- Senior-architect odrzuca plan
+- Plan ZATWIERDZONY ale zmieniam zdanie
+- `MD/issues_sokol.md` puchnie do 200+ wierszy
+- Push się wywalił, rollback też się wywalił
+
+`klaudiusz.md` → sekcja "Procedura rollback" — co robi Klaudiusz gdy deploy padnie.

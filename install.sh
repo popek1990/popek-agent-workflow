@@ -270,9 +270,30 @@ else
     inc SKIPPED
 fi
 
+# --- scripts/notify.sh — powiadomienie po wdrożeniu (cross-platform popup) ---
+# Klaudiusz wywołuje ten skrypt po zielonym rebuildzie i przy konfliktach push/rollback.
+# Bez tego skryptu wszystkie wywołania `bash scripts/notify.sh "..."` z klaudiusz.md
+# kończyłyby się "No such file or directory" w docelowym projekcie.
+echo -e "  ${FILE} ${BOLD}scripts/notify.sh${NC} ${DIM}(powiadomienie orkiestratora)${NC}"
+mkdir -p scripts
+if [ ! -f "scripts/notify.sh" ] || $FORCE; then
+    cp "$SCRIPT_DIR/scripts/notify.sh" "scripts/notify.sh"
+    chmod +x "scripts/notify.sh"
+    if $FORCE; then
+        log_update "scripts/notify.sh — zaktualizowano"
+        inc UPDATED
+    else
+        log_ok "scripts/notify.sh — skopiowano"
+        inc INSTALLED
+    fi
+else
+    log_skip "scripts/notify.sh — już istnieje (zachowuję wersję projektu)"
+    inc SKIPPED
+fi
+
 # --- Struktura MD/ ---
 echo -e "  ${FOLDER} ${BOLD}MD/${NC} ${DIM}(struktura dokumentów)${NC}"
-mkdir -p MD/plans MD/research
+mkdir -p MD/plans
 
 # issues_sokol.md — tracking issues ze statusami
 if [ ! -f "MD/issues_sokol.md" ]; then
@@ -404,7 +425,6 @@ smoke_check() {
 }
 
 smoke_check "MD/plans/ istnieje"                     "[ -d MD/plans ]"
-smoke_check "MD/research/ istnieje"                  "[ -d MD/research ]"
 smoke_check "MD/issues_sokol.md istnieje"                  "[ -f MD/issues_sokol.md ]"
 smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "MD/TODO.md istnieje"                    "[ -f MD/TODO.md ]"
@@ -413,6 +433,8 @@ smoke_check "MD/TODO.md ma sekcje OPEN/DONE/Hygiene" "grep -qF '## OPEN' MD/TODO
 smoke_check "agents_catalog.md istnieje"             "[ -f agents_catalog.md ]"
 smoke_check "agents_catalog.md zawiera python-reviewer" "grep -qF 'python-reviewer' agents_catalog.md 2>/dev/null"
 smoke_check "agents_catalog.md zawiera aqua-combo"   "grep -qF 'aqua-combo' agents_catalog.md 2>/dev/null"
+smoke_check "scripts/notify.sh istnieje"             "[ -f scripts/notify.sh ]"
+smoke_check "scripts/notify.sh wykonywalny"          "[ -x scripts/notify.sh ]"
 smoke_check "CLAUDE.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' GEMINI.md 2>/dev/null"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"

@@ -81,8 +81,7 @@ Dla poleceń Orkiestratora: wykonaj zadanie, użyj sekcji "Gdy znajdujesz proble
 
 ZAWSZE przed czytaniem kodu źródłowego przeczytaj:
 1. `MD/issues_sokol.md` — czy issue ma już opis root cause i proponowany fix?
-2. `MD/memory.md` — czy temat był już analizowany w poprzedniej sesji?
-3. `logs/workflow/reviews/` — przeczytaj NAJNOWSZY plik review (jeśli istnieje). Uwzględnij wnioski w promptach dla Klaudiusza — np. jeśli review mówi "Klaudiusz marnował tokeny na ponowne czytanie plików", dodaj do promptu: "Nie czytaj ponownie plików X, Y — masz ich opis poniżej."
+2. `MD/memory.md` — czy temat był już analizowany w poprzedniej sesji? Sprawdź też tabelę "Odrzucone / Debunked" — jeśli pomysł był już raz odrzucony, NIE proponuj go ponownie bez nowych argumentów.
 
 Jeśli analiza już istnieje — NIE powtarzaj jej. Przejdź od razu do pisania promptu dla Klaudiusza z istniejącymi ustaleniami. Nową analizę rób TYLKO gdy:
 - Istniejący opis jest zbyt ogólny ("wymaga analizy") bez root cause
@@ -146,7 +145,9 @@ Przykłady:
    - Brak ewidentnego dopasowania → sugeruj `code-reviewer` (uniwersalny) i opisz w uzasadnieniu dlaczego brak specjalisty
    - Bardzo duża zmiana / niepewność → sugeruj `aqua-combo`
 
-**NIGDY** nie pomijaj pola "Sugerowany agent". Jeśli nie pasuje żaden — wpisz `Sugerowany agent: brak — [uzasadnienie, np. "trywialna zmiana 1-liniowa"]`. Jawne "brak" jest OK; brak pola — nie.
+**NIGDY** nie pomijaj pola "Sugerowany agent" w prompcie dla Klaudiusza. Jeśli nie pasuje żaden — wpisz `Sugerowany agent: brak — [uzasadnienie, np. "trywialna zmiana 1-liniowa"]`. Jawne "brak" jest OK; brak pola — nie.
+
+**Wyjątek — Quick fixy:** Quick fixy (literówki, rename, śmieci, max 3 pliki bez logiki) Sokół wykonuje SAM, bez promptu dla Klaudiusza — pole "Sugerowany agent" nie dotyczy, bo nie ma promptu w którym miałoby się pojawić. Reguła #8 dotyczy wyłącznie promptów wysyłanych do Klaudiusza.
 
 ## Tryb skanowania
 

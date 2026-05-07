@@ -9,4 +9,6 @@
 CLAUDE.md
 
 # Local diagnostic scripts — not part of the template
-scripts/
+scripts/*
+# Wyjątek: notify.sh jest częścią template'u (kopiowany przez install.sh)
+!scripts/notify.sh
