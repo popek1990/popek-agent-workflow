@@ -253,6 +253,23 @@ else
     inc INSTALLED
 fi
 
+# --- agents_catalog.md (lokalny katalog 60 agentów dla Sokoła) ---
+# Sokół nie ma WebFetch — czyta TEN plik zamiast halucynować nazwy z URL.
+echo -e "  ${FILE} ${BOLD}agents_catalog.md${NC} ${DIM}(katalog dla Sokoła)${NC}"
+if [ ! -f "agents_catalog.md" ] || $FORCE; then
+    cp "$SCRIPT_DIR/agents_catalog.md" "agents_catalog.md"
+    if $FORCE; then
+        log_update "agents_catalog.md — zaktualizowano"
+        inc UPDATED
+    else
+        log_ok "agents_catalog.md — skopiowano"
+        inc INSTALLED
+    fi
+else
+    log_skip "agents_catalog.md — już istnieje"
+    inc SKIPPED
+fi
+
 # --- Struktura MD/ ---
 echo -e "  ${FOLDER} ${BOLD}MD/${NC} ${DIM}(struktura dokumentów)${NC}"
 mkdir -p MD/plans MD/research
@@ -393,6 +410,11 @@ smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "MD/TODO.md istnieje"                    "[ -f MD/TODO.md ]"
 smoke_check "MD/archive/ istnieje"                   "[ -d MD/archive ]"
 smoke_check "MD/TODO.md ma sekcje OPEN/DONE/Hygiene" "grep -qF '## OPEN' MD/TODO.md && grep -qF '## DONE' MD/TODO.md && grep -qF '## Hygiene' MD/TODO.md"
+smoke_check "agents_catalog.md istnieje"             "[ -f agents_catalog.md ]"
+smoke_check "agents_catalog.md zawiera python-reviewer" "grep -qF 'python-reviewer' agents_catalog.md 2>/dev/null"
+smoke_check "agents_catalog.md zawiera aqua-combo"   "grep -qF 'aqua-combo' agents_catalog.md 2>/dev/null"
+smoke_check "CLAUDE.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' CLAUDE.md 2>/dev/null"
+smoke_check "GEMINI.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' GEMINI.md 2>/dev/null"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' CLAUDE.md 2>/dev/null)\" = '1' ]"

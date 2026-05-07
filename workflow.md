@@ -1,5 +1,7 @@
 # Workflow: Klaudiusz + Sokół
 
+<!-- workflow-version: 2026.05.07 -->
+
 ## Zasady ogólne
 
 - Oba agenty pracują na tym samym repo/katalogu
@@ -60,7 +62,7 @@ Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu p
 6. Orkiestrator zatwierdza podział Batche + Individual
 7. Praca idzie batch po batchu → potem individual issues
 
-**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka. **Wyłączenie:** pliki instrukcji workflow (`klaudiusz.md`, `sokol.md`, `workflow.md`, `cel.md`, `templates/*.md`) NIGDY nie są Quick fixem.
+**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka. **Wyłączenie:** pliki instrukcji workflow (`klaudiusz.md`, `sokol.md`, `workflow.md`, `cel.md`, `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, `agents_catalog.md`, `templates/*.md`) NIGDY nie są Quick fixem.
 **Kiedy batchować:** ten sam plik/moduł, ten sam wzorzec fixu, LOW/MEDIUM severity, brak zależności.
 **Kiedy osobno:** architektura, HIGH/CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
 
@@ -95,7 +97,7 @@ Klaudiusz NIE implementuje — zamiast tego:
 ### 3. Iteracja
 Orkiestrator kopiuje prompt do Sokoła. Proces się powtarza aż oba agenty są zadowolone z planu.
 
-**Zasada 3 rund:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Agenty eskalują do Orkiestratora z podsumowaniem stanowisk i pytaniem decyzyjnym.
+**Zasada 3 rund ping-pongu:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Agenty eskalują do Orkiestratora z podsumowaniem stanowisk i pytaniem decyzyjnym.
 
 ### 4. Zatwierdzenie
 
@@ -119,7 +121,7 @@ Przed i w trakcie implementacji obowiązują:
 
 ### 6. Po wdrożeniu
 - Testy muszą przejść (zielone)
-  - **Zasada 3 prób:** Jeśli testy padną 3 razy pod rząd, Klaudiusz przerywa pracę i wraca do Sokoła po nową strategię.
+  - **Zasada 3 prób testowych:** Jeśli testy padną 3 razy pod rząd, Klaudiusz przerywa pracę i wraca do Sokoła po nową strategię.
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)

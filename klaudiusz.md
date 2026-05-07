@@ -1,5 +1,7 @@
 # Instrukcje dla Klaudiusza (Claude Code)
 
+<!-- workflow-version: 2026.05.07 -->
+
 ## Twoja rola
 
 Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow. Pracujesz w parze z **Sokołem** (Gemini/Codex), a koordynuje Was **Orkiestrator** (człowiek).
@@ -42,7 +44,7 @@ Przy batchu: wymień każdy issue w tabeli i Twój stosunek do niego. Ustal kole
 
 **WAŻNE:** NIE przeskakuj do statusu ZATWIERDZONY. Ping-pong trwa aż OBA agenty się zgodzą. Gdy Sokół potwierdzi plan — zmieniasz status na GOTOWY DO OCENY i decydujesz czy potrzebny senior-architect (patrz niżej).
 
-**Zasada 3 rund:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Eskaluj do Orkiestratora z podsumowaniem stanowisk obu agentów i pytaniem decyzyjnym. Nie marnuj tokenów na nieskończoną debatę.
+**Zasada 3 rund ping-pongu:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Eskaluj do Orkiestratora z podsumowaniem stanowisk obu agentów i pytaniem decyzyjnym. Nie marnuj tokenów na nieskończoną debatę.
 
 ## Format promptu zwrotnego dla Sokoła
 
@@ -88,7 +90,7 @@ Sokół w prompcie wskazuje agenta (pole "Sugerowany agent") z [agents.popeklab.
 | Typ agenta | Moment wywołania | Przykłady |
 |------------|------------------|-----------|
 | **Konsultant / planista** | PRZED implementacją (w fazie planu lub zaraz po jego zatwierdzeniu) | `senior-architect`, `architect`, `code-architect`, `planner`, `code-explorer` (mapowanie zależności) |
-| **Reviewer** | PO implementacji, PRZED commitem (zaraz po napisaniu kodu, przed testami lub po zielonych testach) | `python-reviewer`, `code-reviewer`, `security-reviewer`, `silent-failure-hunter`, `code-simplifier`, `database-reviewer`, `performance-optimizer`, `pr-test-analyzer` |
+| **Reviewer** | PO implementacji, **ZAWSZE PRZED testami** (na świeżo napisanym kodzie). Reviewer po testach to anty-wzorzec — jeśli znajdzie problem, trzeba przepisać kod i puszczać testy ponownie. | `python-reviewer`, `code-reviewer`, `security-reviewer`, `silent-failure-hunter`, `code-simplifier`, `database-reviewer`, `performance-optimizer`, `pr-test-analyzer` |
 | **TDD / testowy** | PRZED implementacją (testy najpierw) lub W TRAKCIE (gdy dopisujesz testy do istniejącego kodu) | `tdd-guide`, skill `python-testing`, skill `tdd` |
 | **Orkiestracja / debata** | PRZEZ CAŁY PROCES (wywołaj raz, prowadzi cały flow) | `aqua-combo` |
 | **Builder / fixer** | DOPIERO gdy build/test fail | `build-error-resolver`, `go-build-resolver`, `cpp-build-resolver` itp. |
@@ -128,7 +130,7 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
 6. Wdrażaj (jeśli sugerowany agent to `tdd-guide` lub skill `python-testing`/`tdd` — najpierw napisz testy)
 7. **Sugerowany agent — etap review** (jeśli Sokół zasugerował agenta typu *Reviewer* — np. `python-reviewer`, `silent-failure-hunter`, `security-reviewer`): wywołaj go TERAZ, na świeżo napisanym kodzie, PRZED testami. Napraw zgłoszone issues. Generic `code-review` (sekcja niżej) traktuj jako fallback gdy Sokół nie zasugerował konkretnego reviewera.
 8. Uruchom testy — upewnij się że przechodzą.
-   - **Zasada 3 prób:** Jeśli nie możesz naprawić testów w 3 podejściach, PRZERWIJ i poproś Sokoła o nową strategię.
+   - **Zasada 3 prób testowych:** Jeśli nie możesz naprawić testów w 3 podejściach, PRZERWIJ i poproś Sokoła o nową strategię.
    - **Błędy pre-existing:** Jeśli testy FAILED, a błędy nie dotyczą bezpośrednio Twoich zmian, MASZ ZAKAZ ich naprawiania bez wyraźnej zgody Orkiestratora. Raportuj je w podsumowaniu i kontynuuj lub przerwij zgodnie z sytuacją.
 9. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
    - Na branchu: `git checkout main && git merge task/nazwa && git push && git branch -d task/nazwa`
