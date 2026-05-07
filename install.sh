@@ -74,10 +74,12 @@ if $FORCE; then
     MARKER="## Twoja rola"
     HAS_CLAUDE=false
     HAS_GEMINI=false
+    HAS_AGENTS=false
     [ -f "CLAUDE.md" ] && grep -qF "$MARKER" "CLAUDE.md" 2>/dev/null && HAS_CLAUDE=true
     [ -f "GEMINI.md" ] && grep -qF "$MARKER" "GEMINI.md" 2>/dev/null && HAS_GEMINI=true
+    [ -f "AGENTS.md" ] && grep -qF "$MARKER" "AGENTS.md" 2>/dev/null && HAS_AGENTS=true
 
-    if ! $HAS_CLAUDE && ! $HAS_GEMINI; then
+    if ! $HAS_CLAUDE && ! $HAS_GEMINI && ! $HAS_AGENTS; then
         echo -e "\n  ${SKIP}${YELLOW}Workflow nie był zainstalowany — pomijam${NC}"
         echo -e "  ${DIM}Użyj bez --force aby zainstalować po raz pierwszy${NC}\n"
         exit 0
@@ -99,41 +101,77 @@ log_update()  { echo -e "  ${OK} ${BLUE}$1${NC}"; }
 log_skip()    { echo -e "  ${SKIP}${YELLOW}$1${NC}"; }
 log_fail()    { echo -e "  ${FAIL} ${RED}$1${NC}"; }
 
-# --- Funkcja: podmień starą sekcję workflow na nową ---
+# --- Helper: usuwa końcowe puste linie ze stdin ---
+# POSIX awk — odporne na CRLF, tabulatory w pustych liniach, brak trailing newline
+strip_trailing_blanks() {
+    awk '
+        /^[[:space:]]*\r?$/ { blanks = blanks "\n"; next }
+        { printf "%s%s\n", blanks, $0; blanks = "" }
+    '
+}
+
+# --- Funkcja: podmień / wstaw blok workflow w pliku (idempotentnie, z deduplikacją wsteczną) ---
+#
+# Strategia (deterministyczna, niezależna od odstępów):
+#   1. Znajdź PIERWSZE wystąpienie '^# Instrukcje dla ' — to początek bloku workflow.
+#      Wszystko od tej linii do EOF traktujemy jako "zarządzaną" treść install.sh.
+#   2. Obetnij plik do tej linii (exclusive). To automatycznie usuwa WSZYSTKIE
+#      zalegające duplikaty nagłówka pozostawione przez wcześniejsze wersje skryptu.
+#   3. `strip_trailing_blanks` na zachowanej treści użytkownika.
+#   4. Doklej świeżą treść z dokładnie jedną pustą linią jako separator (2 × \n).
+#
+# Argumenty: file, content, label, mode (install|update — kontroluje liczniki/komunikat)
 update_file() {
     local file="$1"
-    local marker="$2"
-    local content="$3"
-    local label="$4"
+    local content="$2"
+    local label="$3"
+    local mode="${4:-update}"
 
-    local marker_line
-    marker_line=$(grep -n "$marker" "$file" | head -1 | cut -d: -f1)
+    # Liczba istniejących nagłówków — do raportowania ile duplikatów wyczyszczono
+    # (grep zwraca exit 1 gdy brak dopasowań → || true wymagane przez `set -e`)
+    local header_count
+    header_count=$(grep -c '^# Instrukcje dla ' "$file" 2>/dev/null || true)
+    [ -z "$header_count" ] && header_count=0
 
-    if [ -z "$marker_line" ]; then
-        printf "\n\n%s" "$content" >> "$file"
-        log_ok "$label — dodano instrukcje workflow"
-        inc INSTALLED
-        return
+    # Linia pierwszego nagłówka workflow (jeśli istnieje)
+    # Pipeline z grep + head: grep exit 1 łamie `pipefail` → || true na całości
+    local header_line
+    header_line=$( { grep -n '^# Instrukcje dla ' "$file" || true; } | head -1 | cut -d: -f1)
+
+    local tmp="${file}.tmp.$$"
+    : > "$tmp"
+
+    if [ -n "$header_line" ]; then
+        if [ "$header_line" -gt 1 ]; then
+            head -n $((header_line - 1)) "$file" | strip_trailing_blanks > "$tmp"
+        fi
+        # header_line == 1 → tmp pozostaje pusty (cały plik to workflow)
+    else
+        # Brak nagłówka workflow — zachowaj całą dotychczasową treść użytkownika
+        strip_trailing_blanks < "$file" > "$tmp"
     fi
 
-    local start=$marker_line
-    for i in 1 2 3; do
-        local check=$((marker_line - i))
-        if [ $check -ge 1 ]; then
-            local line
-            line=$(sed -n "${check}p" "$file")
-            if echo "$line" | grep -q "^# Instrukcje dla"; then
-                start=$check
-                break
-            fi
-        fi
-    done
+    if [ -s "$tmp" ]; then
+        # tmp kończy się na \n (po strip_trailing_blanks); dodaj 1 dodatkowy \n → 1 pusta linia separatora
+        printf '\n%s\n' "$content" >> "$tmp"
+    else
+        printf '%s\n' "$content" > "$tmp"
+    fi
 
-    head -n $((start - 1)) "$file" | sed -e :a -e '/^\n*$/{$d;N;ba}' > "${file}.tmp"
-    printf "\n\n%s" "$content" >> "${file}.tmp"
-    mv "${file}.tmp" "$file"
-    log_update "$label — zaktualizowano instrukcje workflow"
-    inc UPDATED
+    mv "$tmp" "$file"
+
+    if [ "$mode" = "install" ]; then
+        log_ok "$label — dodano instrukcje workflow"
+        inc INSTALLED
+    else
+        if [ "$header_count" -gt 1 ]; then
+            local dups=$((header_count - 1))
+            log_update "$label — zaktualizowano instrukcje workflow (usunięto $dups duplikat(ów) nagłówka)"
+        else
+            log_update "$label — zaktualizowano instrukcje workflow"
+        fi
+        inc UPDATED
+    fi
 }
 
 # --- CLAUDE.md ---
@@ -143,20 +181,22 @@ CLAUDE_MARKER="## Twoja rola"
 CLAUDE_CONTENT="$(cat "$SCRIPT_DIR/klaudiusz.md")"
 
 if [ -f "CLAUDE.md" ]; then
-    if grep -qF "$CLAUDE_MARKER" "CLAUDE.md"; then
+    HAS_WORKFLOW=false
+    grep -qF "$CLAUDE_MARKER" "CLAUDE.md" 2>/dev/null && HAS_WORKFLOW=true
+    grep -q '^# Instrukcje dla ' "CLAUDE.md" 2>/dev/null && HAS_WORKFLOW=true
+
+    if $HAS_WORKFLOW; then
         if $FORCE; then
-            update_file "CLAUDE.md" "$CLAUDE_MARKER" "$CLAUDE_CONTENT" "CLAUDE.md"
+            update_file "CLAUDE.md" "$CLAUDE_CONTENT" "CLAUDE.md" update
         else
             log_skip "CLAUDE.md — już zainstalowany (użyj --force)"
             inc SKIPPED
         fi
     else
-        printf "\n\n%s" "$CLAUDE_CONTENT" >> "CLAUDE.md"
-        log_ok "CLAUDE.md — dodano instrukcje workflow"
-        inc INSTALLED
+        update_file "CLAUDE.md" "$CLAUDE_CONTENT" "CLAUDE.md" install
     fi
 else
-    echo "$CLAUDE_CONTENT" > "CLAUDE.md"
+    printf '%s\n' "$CLAUDE_CONTENT" > "CLAUDE.md"
     log_ok "CLAUDE.md — utworzono"
     inc INSTALLED
 fi
@@ -167,22 +207,49 @@ GEMINI_MARKER="## Twoja rola"
 GEMINI_CONTENT="$(cat "$SCRIPT_DIR/sokol.md")"
 
 if [ -f "GEMINI.md" ]; then
-    if grep -qF "$GEMINI_MARKER" "GEMINI.md"; then
+    HAS_WORKFLOW=false
+    grep -qF "$GEMINI_MARKER" "GEMINI.md" 2>/dev/null && HAS_WORKFLOW=true
+    grep -q '^# Instrukcje dla ' "GEMINI.md" 2>/dev/null && HAS_WORKFLOW=true
+
+    if $HAS_WORKFLOW; then
         if $FORCE; then
-            update_file "GEMINI.md" "$GEMINI_MARKER" "$GEMINI_CONTENT" "GEMINI.md"
+            update_file "GEMINI.md" "$GEMINI_CONTENT" "GEMINI.md" update
         else
             log_skip "GEMINI.md — już zainstalowany (użyj --force)"
             inc SKIPPED
         fi
     else
-        printf "\n\n" >> "GEMINI.md"
-        cat "$SCRIPT_DIR/sokol.md" >> "GEMINI.md"
-        log_ok "GEMINI.md — dodano instrukcje workflow"
-        inc INSTALLED
+        update_file "GEMINI.md" "$GEMINI_CONTENT" "GEMINI.md" install
     fi
 else
-    cp "$SCRIPT_DIR/sokol.md" "GEMINI.md"
+    printf '%s\n' "$GEMINI_CONTENT" > "GEMINI.md"
     log_ok "GEMINI.md — utworzono"
+    inc INSTALLED
+fi
+
+# --- AGENTS.md (Codex CLI) — używa tej samej treści Sokoła co GEMINI.md ---
+echo -e "  ${FILE} ${BOLD}AGENTS.md${NC} ${DIM}(Sokół — Codex)${NC}"
+AGENTS_MARKER="## Twoja rola"
+AGENTS_CONTENT="$GEMINI_CONTENT"
+
+if [ -f "AGENTS.md" ]; then
+    HAS_WORKFLOW=false
+    grep -qF "$AGENTS_MARKER" "AGENTS.md" 2>/dev/null && HAS_WORKFLOW=true
+    grep -q '^# Instrukcje dla ' "AGENTS.md" 2>/dev/null && HAS_WORKFLOW=true
+
+    if $HAS_WORKFLOW; then
+        if $FORCE; then
+            update_file "AGENTS.md" "$AGENTS_CONTENT" "AGENTS.md" update
+        else
+            log_skip "AGENTS.md — już zainstalowany (użyj --force)"
+            inc SKIPPED
+        fi
+    else
+        update_file "AGENTS.md" "$AGENTS_CONTENT" "AGENTS.md" install
+    fi
+else
+    printf '%s\n' "$AGENTS_CONTENT" > "AGENTS.md"
+    log_ok "AGENTS.md — utworzono"
     inc INSTALLED
 fi
 
@@ -281,12 +348,18 @@ smoke_check "MD/issues_sokol.md istnieje"                  "[ -f MD/issues_sokol
 smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
+smoke_check "CLAUDE.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' CLAUDE.md 2>/dev/null)\" = '1' ]"
 smoke_check "CLAUDE.md zawiera rolę Klaudiusza"     "grep -qF 'Klaudiusz' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md zawiera auto-deploy"         "grep -qF 'docker compose' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md zawiera prompt zwrotny"      "grep -qF 'prompt zwrotny' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md istnieje"                    "[ -f GEMINI.md ]"
 smoke_check "GEMINI.md zawiera marker workflow"     "grep -qF '## Twoja rola' GEMINI.md 2>/dev/null"
+smoke_check "GEMINI.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' GEMINI.md 2>/dev/null)\" = '1' ]"
 smoke_check "GEMINI.md zawiera rolę Sokoła"         "grep -qF 'Sokół' GEMINI.md 2>/dev/null"
+smoke_check "AGENTS.md istnieje"                    "[ -f AGENTS.md ]"
+smoke_check "AGENTS.md zawiera marker workflow"     "grep -qF '## Twoja rola' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' AGENTS.md 2>/dev/null)\" = '1' ]"
+smoke_check "AGENTS.md zawiera rolę Sokoła"         "grep -qF 'Sokół' AGENTS.md 2>/dev/null"
 smoke_check "templates/plan_single.md istnieje"     "[ -f templates/plan_single.md ]"
 smoke_check "plan_single zawiera severity"          "grep -qF 'Severity' templates/plan_single.md 2>/dev/null"
 smoke_check "plan_single zawiera źródło"            "grep -qF 'Źródło' templates/plan_single.md 2>/dev/null"

@@ -7,6 +7,7 @@
 **Severity:** CRITICAL | HIGH | MEDIUM | LOW
 **Złożoność:** prosty fix (1-2 pliki) | średni (3-5 plików) | duży refactor (6+ plików)
 **Senior-architect wymagany:** TAK / NIE — [uzasadnienie, np. "defensywny fix, pełny konsensus, brak ryzyk architektonicznych"]
+**Sugerowany agent:** [agent z agents.popeklab.com + 1-zdaniowe uzasadnienie + timing, np. "`python-reviewer` [reviewer po implementacji] — fix dotyka logiki kalkulacji, wymaga weryfikacji idiomów Pythona". Jeśli żaden nie pasuje — `brak — [uzasadnienie]`]
 
 ## Źródło
 
@@ -77,6 +78,7 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
 - [ ] `MD/TODO.md` → task oznaczony jako DONE
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
+- [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego planu]
 
 ## Dla Orkiestratora

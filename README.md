@@ -45,7 +45,8 @@ bash /tmp/workflow/install.sh /ścieżka/do/twojego/projektu
 
 Skrypt tworzy w Twoim projekcie:
 - `CLAUDE.md` — instrukcje dla Klaudiusza (z `klaudiusz.md`)
-- `GEMINI.md` — instrukcje dla Sokoła (z `sokol.md`)
+- `GEMINI.md` — instrukcje dla Sokoła w Gemini CLI (z `sokol.md`)
+- `AGENTS.md` — instrukcje dla Sokoła w Codex CLI (identyczna treść jak `GEMINI.md`)
 - `templates/plan_single.md` — szablon planu — pojedynczy issue
 - `templates/plan_batch.md` — szablon planu — batch (kilka issues)
 - `MD/issues_sokol.md` — tracking issues ze statusami
@@ -63,7 +64,7 @@ Skrypt tworzy w Twoim projekcie:
 | Plik | Opis |
 |------|------|
 | `klaudiusz.md` | Instrukcje dla Claude Code (kopiowane do CLAUDE.md) |
-| `sokol.md` | Instrukcje dla Gemini/Codex (kopiowane do GEMINI.md) |
+| `sokol.md` | Instrukcje dla Gemini/Codex (kopiowane do `GEMINI.md` i `AGENTS.md`) |
 | `workflow.md` | Pełny opis procesu (referencja) |
 | `cel.md` | Opis workflow z perspektywy orkiestratora |
 | `install.sh` | Skrypt instalacyjny |

@@ -15,6 +15,7 @@ Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow. Pra
 7. **ZAWSZE pisz prompt zwrotny dla Sokoła** — nawet jeśli się zgadzasz. Ping-pong jest obowiązkowy. Nie zamykaj planu sam — Sokół musi potwierdzić.
 8. **Status ZATWIERDZONY** — kolejność: DRAFT → W DYSKUSJI (ping-pong) → GOTOWY DO OCENY → (senior-architect jeśli wymagany) → ZATWIERDZONY.
 9. **Optymalizacja odczytu:** Przy analizie dużych plików logicznych (>300 linii), preferuj czytanie bloków po 100-200 linii zamiast wielu małych odczytów (oszczędność turnów i tokenów).
+10. **Wykorzystuj wyspecjalizowanych agentów z [agents.popeklab.com](https://agents.popeklab.com/).** Sokół w prompcie sugeruje konkretnego agenta (pole "Sugerowany agent") — to REKOMENDACJA, nie rozkaz. Ty decydujesz KIEDY wywołać (przed/w trakcie/po implementacji — patrz sekcja "Wywoływanie sugerowanych agentów") i czy w ogóle. Odrzucenie sugestii uzasadnij w prompcie zwrotnym. Domyślnie — wywołaj. Pushback merytoryczny mile widziany.
 
 ## Szablony planów
 
@@ -78,38 +79,77 @@ Senior-architect NIE jest wymagany gdy:
 
 Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto senior-architect: defensywny fix, pełny konsensus, zero ryzyk architektonicznych").
 
+## Wywoływanie sugerowanych agentów
+
+Sokół w prompcie wskazuje agenta (pole "Sugerowany agent") z [agents.popeklab.com](https://agents.popeklab.com/). Twoja decyzja — KIEDY i CZY go wywołać.
+
+### Kiedy wywołać — wg roli agenta
+
+| Typ agenta | Moment wywołania | Przykłady |
+|------------|------------------|-----------|
+| **Konsultant / planista** | PRZED implementacją (w fazie planu lub zaraz po jego zatwierdzeniu) | `senior-architect`, `architect`, `code-architect`, `planner`, `code-explorer` (mapowanie zależności) |
+| **Reviewer** | PO implementacji, PRZED commitem (zaraz po napisaniu kodu, przed testami lub po zielonych testach) | `python-reviewer`, `code-reviewer`, `security-reviewer`, `silent-failure-hunter`, `code-simplifier`, `database-reviewer`, `performance-optimizer`, `pr-test-analyzer` |
+| **TDD / testowy** | PRZED implementacją (testy najpierw) lub W TRAKCIE (gdy dopisujesz testy do istniejącego kodu) | `tdd-guide`, skill `python-testing`, skill `tdd` |
+| **Orkiestracja / debata** | PRZEZ CAŁY PROCES (wywołaj raz, prowadzi cały flow) | `aqua-combo` |
+| **Builder / fixer** | DOPIERO gdy build/test fail | `build-error-resolver`, `go-build-resolver`, `cpp-build-resolver` itp. |
+| **Skille (slash-command lub Skill tool)** | Jako narzędzie kontekstowe — wg dokumentacji skilla | `modern-python` (porządkowanie tooling Pythona), `fastapi-router-py` (scaffolding endpointu), `database-postgreSQL` (best practices) |
+
+### Decyzja "wywołać czy nie"
+
+Domyślnie — TAK, wywołaj. Odrzucenie ma sens TYLKO gdy:
+- **Trywialność:** zmiana 1-2 linie, zero logiki, agent byłby overkillem (np. zmiana stringa w stałej → nie wzywaj `python-reviewer`)
+- **Duplikacja:** już zostało zrobione w tej sesji przez tego samego agenta dla tych samych plików
+- **Niedopasowanie:** Sokół zasugerował agenta dla domeny, której zmiana nie dotyka (np. `database-reviewer` dla zmiany frontendu — wskaż lepszego)
+
+W każdym z tych wypadków — uzasadnij odrzucenie 1 zdaniem w prompcie zwrotnym (sekcja "Format promptu zwrotnego dla Sokoła"). Sokół potwierdzi lub zaproponuje innego.
+
+### Jak wywołać agenta
+
+- **Agent** (z agents.popeklab.com / lokalny): użyj `Task` z `subagent_type=<nazwa>` (np. `subagent_type=python-reviewer`). Brief jak smart kolega — bez kontekstu z tej rozmowy. Patrz instrukcja `Task` tool.
+- **Skill** (oznaczony prefiksem `skill ` lub jako `/<nazwa>`): użyj narzędzia `Skill` z `skill=<nazwa>` lub odpowiedniej slash-komendy.
+
+Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalazł krytyczne issue — STOP, zaktualizuj plan, ping-pong z Sokołem.
+
+### Konflikt z istniejącymi regułami
+
+- **Senior-architect (rule #8, sekcja "Kiedy wymagany senior-architect"):** ma własne, twardsze reguły — gdy obowiązkowy, wywołaj zawsze. Sugestia Sokoła go NIE zastępuje, tylko UZUPEŁNIA innymi specjalistami.
+- **Code-review (sekcja "Kiedy wymagany code-review"):** istniejące reguły określają KIEDY review jest wymagany. Sokół sugeruje KTÓRY reviewer (`python-reviewer` zamiast generycznego `code-reviewer` itp.) — uściśla, nie wymusza nowy.
+
 ## Po zatwierdzeniu planu (zielone światło)
 
 1. Senior-architect (jeśli wymagany) → ocena planu
-2. **Branching:** Dla zmian dotykających 3+ plików: `git checkout -b task/nazwa` przed implementacją. Dla prostych fixów (1-2 pliki): pracuj bezpośrednio na main.
-3. **Test minimalizmu (obowiązkowy przed implementacją):**
+2. **Sugerowany agent — etap konsultacji** (jeśli Sokół zasugerował agenta typu *Konsultant/planista* — patrz tabela w "Wywoływanie sugerowanych agentów"): wywołaj go TERAZ, przed kodowaniem. Uwzględnij feedback w planie. Jeśli agent zasygnalizował problem — wróć do Sokoła z update'em planu.
+3. **Branching:** Dla zmian dotykających 3+ plików: `git checkout -b task/nazwa` przed implementacją. Dla prostych fixów (1-2 pliki): pracuj bezpośrednio na main.
+4. **Test minimalizmu (obowiązkowy przed implementacją):**
    - Czy mogę rozwiązać to w ≤20 liniach zmienionego kodu? (Jeśli tak → zrób to)
    - Czy dodaję coś, o co nikt nie prosił? (Jeśli tak → usuń)
    - Czy doświadczony inżynier powiedziałby "to overcomplicated"? (Jeśli tak → uprość)
-4. **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Jeśli zauważysz problem w innym miejscu — zaraportuj go w prompcie zwrotnym jako dług techniczny, ale NIE naprawiaj go "przy okazji".
-5. Wdrażaj
-6. Code-review (jeśli wymagany) → sprawdź kod, napraw issues
-7. Uruchom testy — upewnij się że przechodzą.
+5. **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Jeśli zauważysz problem w innym miejscu — zaraportuj go w prompcie zwrotnym jako dług techniczny, ale NIE naprawiaj go "przy okazji".
+6. Wdrażaj (jeśli sugerowany agent to `tdd-guide` lub skill `python-testing`/`tdd` — najpierw napisz testy)
+7. **Sugerowany agent — etap review** (jeśli Sokół zasugerował agenta typu *Reviewer* — np. `python-reviewer`, `silent-failure-hunter`, `security-reviewer`): wywołaj go TERAZ, na świeżo napisanym kodzie, PRZED testami. Napraw zgłoszone issues. Generic `code-review` (sekcja niżej) traktuj jako fallback gdy Sokół nie zasugerował konkretnego reviewera.
+8. Uruchom testy — upewnij się że przechodzą.
    - **Zasada 3 prób:** Jeśli nie możesz naprawić testów w 3 podejściach, PRZERWIJ i poproś Sokoła o nową strategię.
    - **Błędy pre-existing:** Jeśli testy FAILED, a błędy nie dotyczą bezpośrednio Twoich zmian, MASZ ZAKAZ ich naprawiania bez wyraźnej zgody Orkiestratora. Raportuj je w podsumowaniu i kontynuuj lub przerwij zgodnie z sytuacją.
-8. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
+9. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
    - Na branchu: `git checkout main && git merge task/nazwa && git push && git branch -d task/nazwa`
    - Na main: `git commit` + `git push`
-9. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
-10. **Powiadom Orkiestratora** — po zakończeniu rebuildu: `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
-11. **Checklista finalizacji (BLOKUJĄCA)** — NIE pisz promptu zwrotnego dla Sokoła dopóki nie odhaczysz WSZYSTKICH punktów. To jest integralna część wdrożenia, nie opcjonalny krok.
+10. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
+11. **Powiadom Orkiestratora** — po zakończeniu rebuildu: `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
+12. **Checklista finalizacji (BLOKUJĄCA)** — NIE pisz promptu zwrotnego dla Sokoła dopóki nie odhaczysz WSZYSTKICH punktów. To jest integralna część wdrożenia, nie opcjonalny krok.
     - [ ] `MD/plans/plan_*.md` → status zmieniony na WDROŻONY
     - [ ] Plan przeniesiony do `MD/archive/` (plik MUSI istnieć w archive — sprawdź `ls MD/archive/`)
     - [ ] `MD/memory.md` → dopisany wiersz do "Zrobione" z linkiem do `MD/archive/plan_*.md` (NIE do `MD/plans/`)
     - [ ] `MD/issues_sokol.md` → status issues zmieniony na FIXED (lub WONTFIX z uzasadnieniem)
     - [ ] `MD/TODO.md` → task oznaczony jako DONE (jeśli istnieje)
     - [ ] Dokumentacja zaktualizowana (API docs, README, CLAUDE.md — jeśli zmiana ich dotyczy)
-12. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po odhaczeniu CAŁEJ checklisty wypisz w terminalu prompt po polsku zawierający:
+    - [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (patrz prompt zwrotny)
+13. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po odhaczeniu CAŁEJ checklisty wypisz w terminalu prompt po polsku zawierający:
     - Co zostało zrobione (podsumowanie zmian)
     - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1` (Sokół musi go zweryfikować)
     - Jakie testy przeszły (liczba, wynik)
     - Czy deploy się powiódł (docker rebuild + push)
-    - **Checklista finalizacji:** wypisz odhaczoną checklistę z kroku 11 (Sokół ją zweryfikuje)
+    - **Sugerowany agent:** czy wywołano (kto, co znalazł, co naprawiono) czy odrzucono (z uzasadnieniem)
+    - **Checklista finalizacji:** wypisz odhaczoną checklistę z kroku 12 (Sokół ją zweryfikuje)
     - **Dług techniczny / Uwagi:** jeśli podczas pracy zauważyłeś coś co wymaga poprawy, ale nie było częścią planu — opisz to tutaj.
     - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 

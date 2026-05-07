@@ -24,7 +24,7 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 - Tworzy, edytuje i ulepsza kod
 - Robi `git push` na GitHub
 - Tutaj zachodzą wszystkie poważne zmiany w projekcie
-- Ma dostęp do agentów pomocniczych (`/code-review`, `@/a/senior-architect/` itd.)
+- Ma dostęp do **60+ wyspecjalizowanych agentów** z katalogu [agents.popeklab.com](https://agents.popeklab.com/) — m.in. `python-reviewer`, `silent-failure-hunter`, `tdd-guide`, `aqua-combo`, `security-reviewer`, `senior-architect`, `database-reviewer`
 - **Nie dokonuje zmian w kodzie bez mojego zielonego światła** (ale po zielonych testach i code review — sam pushuje i rebuilduje Dockera)
 - **Prawo do pushbacku** — jeśli propozycja jest zbyt złożona, Klaudiusz musi zaproponować prostszą alternatywę (zasady Karpathy'ego)
 
@@ -34,6 +34,7 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 - Znajduje błędy, luki bezpieczeństwa
 - Myśli głęboko przy skomplikowanych tematach
 - Tworzy plany dla nowych funkcji
+- **Sugeruje agenta dla Klaudiusza** w każdym prompcie (np. "wywołaj `python-reviewer` jako reviewer po implementacji") — Klaudiusz może odrzucić z uzasadnieniem
 - **Nigdy nie robi push na GitHub** (chyba że wyraźnie poproszę)
 - **Nigdy nie edytuje plików instrukcji workflow** (`klaudiusz.md`, `sokol.md`, `workflow.md`, `cel.md`, `templates/*.md`)
 - Może samodzielnie robić **Quick fixy** (literówki, rename, max 3 pliki, zero logiki)

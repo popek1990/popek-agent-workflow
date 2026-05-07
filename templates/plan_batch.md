@@ -6,6 +6,7 @@
 **Typ zmiany:** bug fix | security fix | nowa funkcja | refactor | portowanie | optymalizacja
 **Złożoność:** prosty fix (1-2 pliki) | średni (3-5 plików) | duży refactor (6+ plików)
 **Senior-architect wymagany:** TAK / NIE — [uzasadnienie]
+**Sugerowany agent:** [agent z agents.popeklab.com + 1-zdaniowe uzasadnienie + timing. Dla batchy 6+ plików / logiki biznesowej rozważ `aqua-combo` [debata przez cały proces]. Dla domeny Python rozważ `python-reviewer` [reviewer po implementacji]. Jeśli żaden — `brak — [uzasadnienie]`]
 
 ## Źródło
 
@@ -91,6 +92,7 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
 - [ ] `MD/TODO.md` → taski oznaczone jako DONE
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
+- [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego batcha]
 
 ## Dla Orkiestratora

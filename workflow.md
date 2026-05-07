@@ -20,7 +20,7 @@
 - Tworzy plany wdrożeń (`MD/plans/plan_nazwa.md`)
 - Pushuje na GitHub
 - Aktualizuje dokumentację (CLAUDE.md, README, `MD/TODO.md`)
-- Ma dostęp do sub-agentów: senior-architect, code-reviewer, planner, tdd-guide
+- Ma dostęp do **60+ sub-agentów** z katalogu [agents.popeklab.com](https://agents.popeklab.com/) (m.in. senior-architect, python-reviewer, silent-failure-hunter, security-reviewer, code-reviewer, tdd-guide, aqua-combo)
 
 ### Sokół (Gemini / Codex)
 - Research i analiza
@@ -28,6 +28,7 @@
 - Deep thinking przy skomplikowanych tematach
 - Proponowanie ulepszeń
 - Tworzenie planów dla nowych funkcji
+- **Sugeruje agenta dla Klaudiusza** w każdym prompcie (wybór z [agents.popeklab.com](https://agents.popeklab.com/) wg domeny zadania) — sugestia jest REKOMENDACJĄ, Klaudiusz może odrzucić z uzasadnieniem
 - **Guardrails:** NIE czyta kodu bez powodu, NIE wchodzi do innych repozytoriów, NIE uruchamia testów/Dockera, NIE skanuje bez polecenia
 
 ### Wznowienie pracy ("wracamy do...")
