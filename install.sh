@@ -343,6 +343,7 @@ else
 fi
 
 # TODO.md — kolejka zadań (OPEN / DONE / Hygiene)
+TODO_LEGACY=false  # flaga: pre-existing TODO.md bez naszych sekcji (smoketest user'i)
 if [ ! -f "MD/TODO.md" ]; then
     cat > "MD/TODO.md" << 'TODOS'
 # TODO — [nazwa projektu]
@@ -374,6 +375,19 @@ TODOS
 else
     log_skip "MD/TODO.md — już istnieje"
     inc SKIPPED
+    # Sprawdź czy istniejący plik ma standardowe sekcje workflow.
+    # Jeśli nie — wypisz inline ostrzeżenie (legacy format z czasów przed standaryzacją).
+    if ! grep -qF '## OPEN' "MD/TODO.md" 2>/dev/null \
+       || ! grep -qF '## DONE' "MD/TODO.md" 2>/dev/null \
+       || ! grep -qF '## Hygiene' "MD/TODO.md" 2>/dev/null; then
+        TODO_LEGACY=true
+        missing=()
+        grep -qF '## OPEN' "MD/TODO.md" 2>/dev/null    || missing+=("OPEN")
+        grep -qF '## DONE' "MD/TODO.md" 2>/dev/null    || missing+=("DONE")
+        grep -qF '## Hygiene' "MD/TODO.md" 2>/dev/null || missing+=("Hygiene")
+        echo -e "     ${DIM}${YELLOW}↳ legacy format: brak sekcji ${missing[*]}. Workflow je używa do trackingu.${NC}"
+        echo -e "     ${DIM}${YELLOW}  Migracja (opcjonalna): dokleić te sekcje do MD/TODO.md, lub przenieść stary do MD/TODO_legacy.md i odpalić install ponownie.${NC}"
+    fi
 fi
 
 # archive/ — katalog na zarchiwizowane plany (po wdrożeniu)
@@ -429,7 +443,13 @@ smoke_check "MD/issues_sokol.md istnieje"                  "[ -f MD/issues_sokol
 smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "MD/TODO.md istnieje"                    "[ -f MD/TODO.md ]"
 smoke_check "MD/archive/ istnieje"                   "[ -d MD/archive ]"
-smoke_check "MD/TODO.md ma sekcje OPEN/DONE/Hygiene" "grep -qF '## OPEN' MD/TODO.md && grep -qF '## DONE' MD/TODO.md && grep -qF '## Hygiene' MD/TODO.md"
+# Strict check tylko dla świeżych instalacji. Legacy pre-existing TODO.md (np. po polsku z customowym formatem)
+# raportujemy inline jako warning powyżej — w smoketest pass'uje gdy plik ma jakąkolwiek strukturę (>5 linii).
+if $TODO_LEGACY; then
+    smoke_check "MD/TODO.md ma strukturę (legacy format zachowany)" "[ \"\$(wc -l < MD/TODO.md 2>/dev/null)\" -gt 5 ]"
+else
+    smoke_check "MD/TODO.md ma sekcje OPEN/DONE/Hygiene" "grep -qF '## OPEN' MD/TODO.md && grep -qF '## DONE' MD/TODO.md && grep -qF '## Hygiene' MD/TODO.md"
+fi
 smoke_check "agents_catalog.md istnieje"             "[ -f agents_catalog.md ]"
 smoke_check "agents_catalog.md zawiera python-reviewer" "grep -qF 'python-reviewer' agents_catalog.md 2>/dev/null"
 smoke_check "agents_catalog.md zawiera aqua-combo"   "grep -qF 'aqua-combo' agents_catalog.md 2>/dev/null"

@@ -99,6 +99,8 @@ Smoketest na końcu instalacji weryfikuje czy wszystkie pliki są na miejscu (ma
 | `MD/memory.md` | Pamięć agentów: zrobione (z linkiem do archive) + odrzucone z uzasadnieniem | stub |
 | `MD/TODO.md` | Kolejka zadań: OPEN / DONE / Hygiene | stub |
 
+**Pre-existing pliki:** Jeśli któryś z plików (`MD/TODO.md`, `MD/memory.md`, `MD/issues_sokol.md`) już istnieje w projekcie z innym formatem (np. własna struktura tasków po polsku) — `install.sh` go **zachowuje** bez zmian. Przy `MD/TODO.md` dodatkowo wypisuje inline ostrzeżenie jeśli brakuje standardowych sekcji `OPEN/DONE/Hygiene` (workflow ich używa do trackingu). To **warning, nie błąd** — możesz albo dokleić te sekcje do swojego pliku, albo zarchiwizować stary do `MD/TODO_legacy.md` i odpalić install ponownie żeby dostać świeży template.
+
 ## Aktualizacja workflow (`--force`)
 
 Gdy w tym repo pojawią się nowe wersje `klaudiusz.md` / `sokol.md`, podmienisz je w docelowym projekcie:
