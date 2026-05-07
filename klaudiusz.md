@@ -121,7 +121,7 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
 
 1. Senior-architect (jeśli wymagany) → ocena planu
 2. **Sugerowany agent — etap konsultacji** (jeśli Sokół zasugerował agenta typu *Konsultant/planista* — patrz tabela w "Wywoływanie sugerowanych agentów"): wywołaj go TERAZ, przed kodowaniem. Uwzględnij feedback w planie. Jeśli agent zasygnalizował problem — wróć do Sokoła z update'em planu.
-3. **Branching:** Dla zmian dotykających 3+ plików: `git checkout -b task/nazwa` przed implementacją. Dla prostych fixów (1-2 pliki): pracuj bezpośrednio na main.
+3. **Branching (polityka 2026-05-08):** Domyślny target publikacji to **main**. Task branch (`git checkout -b task/nazwa`) jest **opcjonalnym lokalnym narzędziem roboczym** dla większych zmian (3+ plików, dla wygody pracy / izolacji od dirty worktree) — **NIE pushujemy** task branchy do origin bez wyraźnej decyzji Orkiestratora. Dla prostych fixów (1-2 pliki) pracuj bezpośrednio na main. **Nigdy nie używaj `git add -A` jeśli worktree ma unrelated dirty files** — używaj selektywnego stagingu (`git add <konkretne pliki>`) lub bezpiecznej ścieżki: clean worktree (`git worktree add /tmp/<dir> main`) + `cherry-pick` + push z czystego worktree.
 4. **Test minimalizmu (obowiązkowy przed implementacją):**
    - Czy mogę rozwiązać to w ≤20 liniach zmienionego kodu? (Jeśli tak → zrób to)
    - Czy dodaję coś, o co nikt nie prosił? (Jeśli tak → usuń)
@@ -132,10 +132,22 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
 8. Uruchom testy — upewnij się że przechodzą.
    - **Zasada 3 prób testowych:** Jeśli nie możesz naprawić testów w 3 podejściach, PRZERWIJ i poproś Sokoła o nową strategię.
    - **Błędy pre-existing:** Jeśli testy FAILED, a błędy nie dotyczą bezpośrednio Twoich zmian, MASZ ZAKAZ ich naprawiania bez wyraźnej zgody Orkiestratora. Raportuj je w podsumowaniu i kontynuuj lub przerwij zgodnie z sytuacją.
-9. **Gdy testy zielone → commit + push** (nie czekaj na pozwolenie)
-   - Na branchu: `git checkout main && git merge task/nazwa && git push && git branch -d task/nazwa`
-   - Na main: `git commit` + `git push`
+9. **Gdy testy zielone → commit + push na main** (nie czekaj na pozwolenie). Domyślny target: **main**. Task branche zostają lokalnie, **NIE są pushowane** bez wyraźnej decyzji Orkiestratora.
+   - **Na main bezpośrednio:** `git add <konkretne pliki>` + `git commit` + `git push origin main`
+   - **Z task brancha (lokalnego):**
+     - Jeśli worktree jest czysty (zero unrelated dirty files): `git checkout main && git merge task/nazwa && git push origin main && git branch -d task/nazwa`
+     - Jeśli worktree ma unrelated dirty files: użyj **clean worktree + cherry-pick** (bezpieczniejsze):
+       ```
+       git worktree add /tmp/publish-$(date +%s) main
+       git -C /tmp/publish-* cherry-pick <commit-hash>
+       cd /tmp/publish-* && bash scripts/migration_audit.sh  # lub testy
+       git -C /tmp/publish-* push origin main
+       cd ~/projects/<repo> && git fetch origin main && git update-ref refs/heads/main origin/main
+       git worktree remove /tmp/publish-*
+       ```
+       Task branch zostaje lokalnie — można go usunąć (`git branch -d task/nazwa`) lub zostawić na później.
    - **Konflikt push (`! [rejected]` / non-fast-forward):** STOP. NIE używaj `--force`. Wykonaj `git pull --rebase`, rozwiąż ewentualne konflikty, znów uruchom testy (skrócony smoke), powtórz push. Jeśli rebase wprowadza nieoczekiwane zmiany — eskaluj do orkiestratora przez `bash scripts/notify.sh "Konflikt push — wymagana decyzja"`.
+   - **Reguła "nigdy `git add -A` przy dirty worktree":** jeśli `git status --short` pokazuje pliki niezwiązane z bieżącym sprintem (M/D/??), **stage tylko swoje pliki po nazwie** (`git add MD/plans/foo.md MD/memory.md`). `git add -A` lub `git add .` wciągnie unrelated zmiany do commita — **zabronione**.
 10. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
     - **Build fail / non-zero exit:** przejdź do sekcji "Procedura rollback" niżej. Nie próbuj naprawić "przy okazji".
     - **Healthcheck po deployu:** zweryfikuj że kontenery są UP (`docker compose ps`) i aplikacja odpowiada (smoketest endpointu jeśli istnieje, np. `curl -f http://localhost:PORT/health`). Jeśli któryś kontener jest w stanie `Restarting` / `Exited` po 30s — to też jest fail → rollback.
@@ -218,17 +230,20 @@ Jeśli pomijasz code-review — napisz w commicie dlaczego (np. "trivial guard, 
 
 ## Sekcja "Dla Orkiestratora"
 
-Pod każdą odpowiedzią dodaj tabelę zmian (sortuj od najważniejszego do najmniej ważnego):
+W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unicode (sortuj od najważniejszego do najmniej ważnego):
 
 ```
 ---
 **Dla Orkiestratora:**
 
-| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
-|---|---|---|---|---|
-| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
-| | | | | |
-| 2 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
+│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
+├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
+│ 1   │ [krótko]          │ [krótko]           │ [krótko]          │ niskie  │
+│ 2   │ [krótko]          │ [krótko]           │ [krótko]          │ średnie │
+└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+
+Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie.
 
 **Decyzja:** [pytanie do Orkiestratora, np. "Czy zatwierdzasz? Zaczynamy wdrożenie?"]
 ```
@@ -247,8 +262,6 @@ Gdy task zostanie wdrożony, zamiast zwykłego statusu, użyj tego formatu (wkle
 
 **Sugerowany następny krok:** [Twoja propozycja, np. "Przejdź do Issue #8" lub "Skanowanie modułu X"]
 ```
-
-Dodawaj pusty wiersz-separator (`| | | | | |`) między każdym taskiem w tabeli — poprawia czytelność przy dłuższych opisach.
 
 Tabela musi zawierać KAŻDY problem/zmianę — nawet jeśli jest ich dużo. Orkiestrator chce widzieć pełny obraz w jednym miejscu.
 

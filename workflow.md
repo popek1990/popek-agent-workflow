@@ -123,7 +123,7 @@ Przed i w trakcie implementacji obowiązują:
 - Testy muszą przejść (zielone)
   - **Zasada 3 prób testowych:** Jeśli testy padną 3 razy pod rząd, Klaudiusz przerywa pracę i wraca do Sokoła po nową strategię.
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
-- `git commit` + `git push` na GitHub (automatycznie po zielonych testach)
+- `git commit` + `git push origin main` (automatycznie po zielonych testach). Domyślny target publikacji = **main**. Task branche są opcjonalne i **lokalne** — nie pushujemy ich do origin bez wyraźnej decyzji Orkiestratora. Przy dirty worktree z unrelated zmianami: selektywny staging po nazwie (`git add <pliki>`) lub clean worktree + cherry-pick. Nigdy `git add -A`. Szczegóły: `klaudiusz.md` sekcja "Po zatwierdzeniu planu" punkty 3+9.
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
 - **Checklista finalizacji (BLOKUJĄCA)** — Klaudiusz NIE pisze promptu zwrotnego dopóki nie odhaczy WSZYSTKICH punktów. **Kanoniczna lista:** `klaudiusz.md` → sekcja "Po zatwierdzeniu planu" → krok 12. Templates `plan_single.md` / `plan_batch.md` mają tę samą listę jako per-plan checkboxy do odhaczenia.
 
@@ -164,13 +164,17 @@ DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 
 ## Wyjaśnienie dla Orkiestratora
 
-Pod każdą odpowiedzią agenta — tabela zmian (sortowana od najważniejszego):
+Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sortowana od najważniejszego):
 
 ```
-| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
-|---|---|---|---|---|
-| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
+│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
+├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
+│ 1   │ [krótko]          │ [krótko]           │ [krótko]          │ niskie  │
+└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
 ```
+
+Komórki tabeli mają być krótkie. Długie opisy, uzasadnienia i szczegóły techniczne idą pod tabelą jako zwykły tekst.
 
 Pod tabelą — pytanie decyzyjne do Orkiestratora (np. "Czy zatwierdzasz? Zaczynamy?").
 
