@@ -2,7 +2,7 @@
 
 Dwóch agentów AI pracuje na tym samym repo. Jeden pisze kod, drugi go sprawdza. Ty kopiujesz prompty między nimi i decydujesz co wdrożyć.
 
-> **Repo szablonowe.** Tu nie implementujesz kodu — instalujesz workflow w docelowym projekcie skryptem `install.sh`. Pliki `klaudiusz.md` i `sokol.md` są kopiowane jako instrukcje dla agentów.
+> **Repo szablonowe.** Tu nie implementujesz kodu — instalujesz workflow w docelowym projekcie skryptem `install.sh`. Pliki `builder.md` i `sokol.md` są kopiowane jako instrukcje dla agentów.
 
 ## Spis treści
 
@@ -21,7 +21,7 @@ Dwóch agentów AI pracuje na tym samym repo. Jeden pisze kod, drugi go sprawdza
 
 ## Po co to
 
-Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwóch, którzy się nawzajem weryfikują. Sokół znajduje problemy, Klaudiusz proponuje rozwiązania, razem dochodzą do planu przez burzę mózgów. Ty masz kontrolę na każdym etapie.
+Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwóch, którzy się nawzajem weryfikują. Sokół znajduje problemy, Builder proponuje rozwiązania, razem dochodzą do planu przez burzę mózgów. Ty masz kontrolę na każdym etapie.
 
 **Co dostajesz:**
 - Drugi pair of eyes na każdą zmianę przed implementacją
@@ -35,7 +35,7 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 
 | Agent | Narzędzie | Rola |
 |-------|-----------|------|
-| **Klaudiusz** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
+| **Builder** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
 | **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie. **Nigdy nie pushuje** (chyba że Orkiestrator wyraźnie poprosi) |
 | **Orkiestrator** | Ty | Kopiujesz prompty, podejmujesz decyzje, dajesz zielone światło |
 
@@ -43,8 +43,8 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 
 ```
 Sokół: skanuje moduł / czyta issue / dostaje polecenie
-  ↓ prompt (kopiujesz do Klaudiusza)
-Klaudiusz: tworzy plan w MD/plans/, ocenia, pisze prompt zwrotny
+  ↓ prompt (kopiujesz do Buildera)
+Builder: tworzy plan w MD/plans/, ocenia, pisze prompt zwrotny
   ↓ prompt (kopiujesz do Sokoła)
 Sokół: odpowiada → iteracja (max 3 rundy) aż plan jest gotowy
   ↓
@@ -52,9 +52,9 @@ Senior-architect: ocenia plan (warunkowo — przy zmianach architektonicznych)
   ↓
 Ty: dajesz zielone światło "OK, wdrażaj"
   ↓
-Klaudiusz: wdraża → testy → auto push + docker rebuild + healthcheck
+Builder: wdraża → testy → auto push + docker rebuild + healthcheck
   ↓
-Klaudiusz: pisze raport zwrotny dla Sokoła (commit, testy, checklista)
+Builder: pisze raport zwrotny dla Sokoła (commit, testy, checklista)
   ↓
 Sokół: Blind Audit (weryfikuje diff, finalizację) → wskazuje kolejne issue
   ↓
@@ -66,7 +66,7 @@ Cykl się powtarza
 - [Codex CLI](https://github.com/openai/codex)
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) **lub** [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 - `bash`, `git`
-- Docker (jeśli projekt używa kontenerów — Klaudiusz robi auto-rebuild po deployu)
+- Docker (jeśli projekt używa kontenerów — Builder robi auto-rebuild po deployu)
 
 ## Instalacja
 
@@ -88,7 +88,7 @@ Smoketest na końcu instalacji weryfikuje czy wszystkie pliki są na miejscu (ma
 |---------|----|---------|
 | `CLAUDE.md` | Instrukcje dla Claude Code (Sokół) | `sokol.md` |
 | `GEMINI.md` | Instrukcje dla Gemini CLI (Sokół) | `sokol.md` |
-| `AGENTS.md` | Instrukcje dla Codex CLI (Klaudiusz) | `klaudiusz.md` |
+| `AGENTS.md` | Instrukcje dla Codex CLI (Builder) | `builder.md` |
 | `agents_catalog.md` | Snapshot 60+ sub-agentów (Sokół wybiera z tego, nie zmyśla) | `agents_catalog.md` |
 | `scripts/notify.sh` | Powiadomienie po deployu (cross-platform popup) | `scripts/notify.sh` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
@@ -103,7 +103,7 @@ Smoketest na końcu instalacji weryfikuje czy wszystkie pliki są na miejscu (ma
 
 ## Aktualizacja workflow (`--force`)
 
-Gdy w tym repo pojawią się nowe wersje `klaudiusz.md` / `sokol.md`, podmienisz je w docelowym projekcie:
+Gdy w tym repo pojawią się nowe wersje `builder.md` / `sokol.md`, podmienisz je w docelowym projekcie:
 
 ```bash
 bash /tmp/workflow/install.sh /ścieżka/do/projektu --force
@@ -122,7 +122,7 @@ bash update-all.sh
 ## Szybki start
 
 1. Otwórz dwa terminale w katalogu projektu
-2. **Terminal 1:** uruchom `codex` → to Klaudiusz
+2. **Terminal 1:** uruchom `codex` → to Builder
 3. **Terminal 2:** uruchom `claude` (lub `gemini`) → to Sokół
 4. Zacznij od Sokoła — poproś go o przegląd kodu modułu lub odebranie konkretnego issue z `MD/issues_sokol.md`
 
@@ -134,9 +134,9 @@ Konkretny flow w nowym projekcie. Pokazuje kto co mówi, czego oczekiwać.
 
 > Przeskanuj moduł `src/cache/`. Szukaj bugów, luk bezpieczeństwa, miejsc gdzie brakuje walidacji.
 
-**Krok 2 — Sokół skanuje, znajduje issue, pisze prompt dla Klaudiusza** (przykładowo):
+**Krok 2 — Sokół skanuje, znajduje issue, pisze prompt dla Buildera** (przykładowo):
 
-> Klaudiuszu, mamy problem z walidacją inputów w module cache.
+> Builderze, mamy problem z walidacją inputów w module cache.
 > **Źródło:** skan `src/cache/middleware.ts` linia 42
 > **Severity:** HIGH
 > **Konsekwencje zaniechania:** Bez walidacji `X-Forwarded-Host` atakujący może zatruć cache.
@@ -145,17 +145,17 @@ Konkretny flow w nowym projekcie. Pokazuje kto co mówi, czego oczekiwać.
 > **Sugerowany agent:** `security-reviewer` [reviewer po implementacji]
 > Zaproponuj plan. Czy widzisz ryzyka?
 
-**Krok 3 — Ty kopiujesz prompt z Sokoła do Klaudiusza.** Klaudiusz **nie pisze kodu** — tworzy `MD/plans/plan_cache_host_validation.md`, ocenia propozycję, identyfikuje ryzyka, pisze prompt zwrotny dla Sokoła:
+**Krok 3 — Ty kopiujesz prompt z Sokoła do Buildera.** Builder **nie pisze kodu** — tworzy `MD/plans/plan_cache_host_validation.md`, ocenia propozycję, identyfikuje ryzyka, pisze prompt zwrotny dla Sokoła:
 
 > Sokole, zgadzam się z guardem, ale allowlista powinna być w configu (`src/config.ts`), nie hardcoded. Mitygacja pustej allowlisty: skip jeśli długość 0. Czy akceptujesz dodanie configa? Jeśli tak — zmieniam status planu na GOTOWY DO OCENY.
 
-**Krok 4 — Ty kopiujesz odpowiedź Klaudiusza do Sokoła.** Sokół potwierdza ("Plan jest gotowy do implementacji.") lub kontruje. Ping-pong trwa max 3 rundy.
+**Krok 4 — Ty kopiujesz odpowiedź Buildera do Sokoła.** Sokół potwierdza ("Plan jest gotowy do implementacji.") lub kontruje. Ping-pong trwa max 3 rundy.
 
-**Krok 5 — Ty dajesz zielone światło Klaudiuszowi:** *"OK, wdrażaj."*
+**Krok 5 — Ty dajesz zielone światło Builderowi:** *"OK, wdrażaj."*
 
-**Krok 6 — Klaudiusz wdraża sam:** wywołuje `security-reviewer` na kodzie, puszcza testy, robi `git push`, `docker compose up -d --build`, healthcheck, aktualizuje `MD/memory.md` + `MD/TODO.md` + przenosi plan do `MD/archive/`. Kończy promptem zwrotnym dla Sokoła z dowodem (link do commitu).
+**Krok 6 — Builder wdraża sam:** wywołuje `security-reviewer` na kodzie, puszcza testy, robi `git push`, `docker compose up -d --build`, healthcheck, aktualizuje `MD/memory.md` + `MD/TODO.md` + przenosi plan do `MD/archive/`. Kończy promptem zwrotnym dla Sokoła z dowodem (link do commitu).
 
-**Krok 7 — Ty kopiujesz raport Klaudiusza do Sokoła.** Sokół robi **Blind Audit** (sprawdza diff, weryfikuje finalizację: plan w archive, memory linkuje do archive, issues FIXED) i wskazuje kolejne issue → wracamy do kroku 2.
+**Krok 7 — Ty kopiujesz raport Buildera do Sokoła.** Sokół robi **Blind Audit** (sprawdza diff, weryfikuje finalizację: plan w archive, memory linkuje do archive, issues FIXED) i wskazuje kolejne issue → wracamy do kroku 2.
 
 **Co poszło nie tak?** Patrz `workflow.md` → sekcja FAQ.
 
@@ -167,7 +167,7 @@ DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 
 | Status | Co oznacza |
 |--------|-----------|
-| **DRAFT** | Klaudiusz tworzy plan na podstawie pierwszego promptu Sokoła |
+| **DRAFT** | Builder tworzy plan na podstawie pierwszego promptu Sokoła |
 | **W DYSKUSJI** | Ping-pong trwa (max 3 rundy) |
 | **GOTOWY DO OCENY** | Oba agenty potwierdziły, czeka na senior-architect (lub pomijamy) |
 | **ZATWIERDZONY** | Gotowy do implementacji (po zielonym świetle Orkiestratora) |
@@ -179,7 +179,7 @@ Dodatkowo: **WONTFIX** — issue / plan świadomie odrzucony, zapisany w `MD/mem
 
 | Plik | Opis | Instalowany jako |
 |------|------|------------------|
-| `klaudiusz.md` | Instrukcje dla Codex CLI | `AGENTS.md` |
+| `builder.md` | Instrukcje dla Codex CLI | `AGENTS.md` |
 | `sokol.md` | Instrukcje dla Claude Code/Gemini | `CLAUDE.md` + `GEMINI.md` |
 | `agents_catalog.md` | Snapshot 60+ sub-agentów (Sokół wybiera z listy, nie zmyśla nazw) | `agents_catalog.md` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
@@ -195,20 +195,20 @@ Dodatkowo: **WONTFIX** — issue / plan świadomie odrzucony, zapisany w `MD/mem
 
 Najczęstsze sytuacje brzegowe — pełne odpowiedzi w `workflow.md` → sekcja "FAQ".
 
-**Sokół zapętla się na tym samym pomyśle mimo NIE od Klaudiusza**
+**Sokół zapętla się na tym samym pomyśle mimo NIE od Buildera**
 → Po 3 rundach ping-pongu — STOP, eskalacja do Orkiestratora. Orkiestrator rozstrzyga.
 
 **Senior-architect odrzuca plan**
 → Status wraca do `W DYSKUSJI`, ping-pong z uwagami architecta jako nowym wkładem. Drugi raz odrzucony → Orkiestrator decyduje (`WONTFIX` albo wdrażamy mimo wszystko).
 
 **Plan ZATWIERDZONY, ale zmieniam zdanie**
-→ "Wstrzymaj plan X" do Klaudiusza. Zatrzymuje pracę, status → `W DYSKUSJI`. Commity zostają na branchu (lub revert — Twoja decyzja).
+→ "Wstrzymaj plan X" do Buildera. Zatrzymuje pracę, status → `W DYSKUSJI`. Commity zostają na branchu (lub revert — Twoja decyzja).
 
 **`MD/issues_sokol.md` puchnie do 200+ wierszy**
 → Sokół przenosi `FIXED` / `WONTFIX` do `MD/issues_sokol_archive.md`. Aktywny plik trzyma tylko `OPEN` / `IN_PROGRESS`.
 
 **Sokół zasugerował agenta którego nie ma w `agents_catalog.md`**
-→ Klaudiusz nie wywołuje "podobnego" na ślepo. W prompcie zwrotnym pyta Sokoła o poprawioną sugestię z faktycznie istniejących agentów.
+→ Builder nie wywołuje "podobnego" na ślepo. W prompcie zwrotnym pyta Sokoła o poprawioną sugestię z faktycznie istniejących agentów.
 
 **Push się wywalił, rollback też się wywalił**
 → `docker compose down`, `bash scripts/notify.sh "DEPLOY FAIL — wymagana ręczna interwencja"`, STOP. Bez `git push --force`, bez kasowania commitów. Czekamy na Twoją decyzję.

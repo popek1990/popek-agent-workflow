@@ -1,6 +1,6 @@
 # Agents Catalog — popek-agent-workflow
 
-Lokalny katalog agentów dostępnych dla Klaudiusza (Codex CLI) w tym workflow. **Sokół (Claude Code/Gemini) — czytaj TEN plik gdy wybierasz "Sugerowany agent" do promptu.** Nie zmyślaj nazw, nie zgaduj — wybór TYLKO z tej listy.
+Lokalny katalog agentów dostępnych dla Buildera (Codex CLI) w tym workflow. **Sokół (Claude Code/Gemini) — czytaj TEN plik gdy wybierasz "Sugerowany agent" do promptu.** Nie zmyślaj nazw, nie zgaduj — wybór TYLKO z tej listy.
 
 **Liczba agentów:** 60
 **Źródło:** [agents.popeklab.com](https://agents.popeklab.com/) (snapshot)
@@ -9,7 +9,7 @@ Lokalny katalog agentów dostępnych dla Klaudiusza (Codex CLI) w tym workflow. 
 
 ## Mapowanie domena → agent (skrót)
 
-Pełne tabele decyzyjne — patrz `sokol.md` sekcja "Wybór agenta dla Klaudiusza".
+Pełne tabele decyzyjne — patrz `sokol.md` sekcja "Wybór agenta dla Buildera".
 
 | Domena | Sugerowani |
 |--------|------------|

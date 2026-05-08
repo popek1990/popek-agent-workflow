@@ -4,7 +4,7 @@ Pracuję w terminalu z dwoma agentami AI działającymi na tym samym repo. Ja (o
 
 > **To jest skrócony opis z perspektywy orkiestratora — co robię, co decyduję, co kopiuję.**
 > Pełna referencja techniczna (statusy planu, format checklistów, FAQ): `workflow.md`.
-> Reguły poszczególnych agentów: `klaudiusz.md` (Codex CLI), `sokol.md` (Claude Code/Gemini).
+> Reguły poszczególnych agentów: `builder.md` (Codex CLI), `sokol.md` (Claude Code/Gemini).
 
 ---
 
@@ -12,7 +12,7 @@ Pracuję w terminalu z dwoma agentami AI działającymi na tym samym repo. Ja (o
 
 | Okno | Agent | Narzędzie |
 |------|-------|-----------|
-| 1 | **Klaudiusz** | Codex CLI |
+| 1 | **Builder** | Codex CLI |
 | 2 | **Sokół** | Claude Code CLI lub Gemini CLI |
 
 Oba okna mają dostęp do tych samych plików (to samo repo).
@@ -21,7 +21,7 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 
 ## Role w jednym zdaniu
 
-- **Klaudiusz** — pisze kod, robi `git push`, deployuje Dockera. Ma dostęp do **60+ wyspecjalizowanych agentów** z [agents.popeklab.com](https://agents.popeklab.com/) (lokalny katalog: `agents_catalog.md`).
+- **Builder** — pisze kod, robi `git push`, deployuje Dockera. Ma dostęp do **60+ wyspecjalizowanych agentów** z [agents.popeklab.com](https://agents.popeklab.com/) (lokalny katalog: `agents_catalog.md`).
 - **Sokół** — szuka błędów, robi research, krytykuje propozycje, **nigdy nie pushuje** (chyba że proszę).
 - **Ja** — kopiuję prompty między oknami, decyduję kiedy plan jest gotowy do wdrożenia.
 
@@ -30,11 +30,11 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 ## Co robię w trakcie sesji
 
 1. **Daję polecenie** Sokołowi (np. "przeskanuj moduł X" / "zajmij się issue #5")
-2. **Kopiuję prompty** które Sokół pisze do Klaudiusza, i odwrotnie — ping-pong
+2. **Kopiuję prompty** które Sokół pisze do Buildera, i odwrotnie — ping-pong
 3. **Daję zielone światło** na implementację, gdy oba agenty zgadzają się co do planu
 4. **Decyduję eskalacje** — gdy ping-pong przekroczy 3 rundy bez konsensusu, lub senior-architect odrzuci plan (patrz `workflow.md` → FAQ)
 
-Po zielonych testach Klaudiusz **sam** pushuje, rebuilduje Dockera i robi healthcheck — bez pytania o zgodę. Patrz `klaudiusz.md` → "Po zatwierdzeniu planu".
+Po zielonych testach Builder **sam** pushuje, rebuilduje Dockera i robi healthcheck — bez pytania o zgodę. Patrz `builder.md` → "Po zatwierdzeniu planu".
 
 ---
 
@@ -53,13 +53,13 @@ Tę tabelę czytam zamiast szczegółów technicznych — wystarcza do podjęcia
 
 Skondensowanie procesu (szczegóły: `workflow.md`):
 
-1. **Sokół** skanuje / dostaje issue → pisze prompt dla Klaudiusza (z severity, plikami, propozycją, sugerowanym agentem)
-2. **Klaudiusz** dostaje prompt → tworzy plan w `MD/plans/plan_*.md` (NIE pisze kodu) → pisze prompt zwrotny dla Sokoła
+1. **Sokół** skanuje / dostaje issue → pisze prompt dla Buildera (z severity, plikami, propozycją, sugerowanym agentem)
+2. **Builder** dostaje prompt → tworzy plan w `MD/plans/plan_*.md` (NIE pisze kodu) → pisze prompt zwrotny dla Sokoła
 3. **Ping-pong** (max 3 rundy) → plan dojrzewa
 4. **Senior-architect** ocenia plan (warunkowo — gdy zmiana architektoniczna lub spór)
-5. **Ja** daję zielone światło → Klaudiusz wdraża, woła reviewera (przed testami!), puszcza testy
+5. **Ja** daję zielone światło → Builder wdraża, woła reviewera (przed testami!), puszcza testy
 6. **Auto-deploy** — git push + docker compose up → healthcheck → notify
-7. **Klaudiusz** pisze raport zwrotny dla Sokoła (diff, testy, finalizacja)
+7. **Builder** pisze raport zwrotny dla Sokoła (diff, testy, finalizacja)
 8. **Sokół** robi Blind Audit + wskazuje kolejne zadanie → wracamy do kroku 1
 
 Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widziały aktualny stan repo.
@@ -70,13 +70,13 @@ Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widzia
 
 | Plik | Co opisuje | Komu czyta |
 |------|-----------|------------|
-| `klaudiusz.md` → `AGENTS.md` | Reguły Klaudiusza | Codex CLI w docelowym projekcie |
+| `builder.md` → `AGENTS.md` | Reguły Buildera | Codex CLI w docelowym projekcie |
 | `sokol.md` → `CLAUDE.md` / `GEMINI.md` | Reguły Sokoła | Claude Code / Gemini |
 | `workflow.md` | Pełna referencja procesu + FAQ | Ja (gdy coś się popsuje) |
 | `cel.md` (ten plik) | Skrót dla orkiestratora | Ja, znajomi |
 | `agents_catalog.md` | Snapshot 60+ agentów (Sokół wybiera z tego, nie zmyśla) | Sokół |
-| `templates/plan_single.md`, `plan_batch.md` | Szablon per-plan | Klaudiusz |
-| `scripts/notify.sh` | Powiadomienie po deployu | Klaudiusz wywołuje |
+| `templates/plan_single.md`, `plan_batch.md` | Szablon per-plan | Builder |
+| `scripts/notify.sh` | Powiadomienie po deployu | Builder wywołuje |
 
 ---
 
@@ -89,4 +89,4 @@ Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widzia
 - `MD/issues_sokol.md` puchnie do 200+ wierszy
 - Push się wywalił, rollback też się wywalił
 
-`klaudiusz.md` → sekcja "Procedura rollback" — co robi Klaudiusz gdy deploy padnie.
+`builder.md` → sekcja "Procedura rollback" — co robi Builder gdy deploy padnie.

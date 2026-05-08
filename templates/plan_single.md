@@ -2,7 +2,7 @@
 
 **Status:** DRAFT | W DYSKUSJI | GOTOWY DO OCENY | ZATWIERDZONY | WDROŻONY
 **Data:** [data]
-**Inicjator:** Sokół / Klaudiusz / Orkiestrator
+**Inicjator:** Sokół / Builder / Orkiestrator
 **Typ zmiany:** bug fix | security fix | nowa funkcja | refactor | portowanie | optymalizacja
 **Severity:** CRITICAL | HIGH | MEDIUM | LOW
 **Złożoność:** prosty fix (1-2 pliki) | średni (3-5 plików) | duży refactor (6+ plików)
@@ -58,7 +58,7 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 ## Uzgodnienia
 
 - **Sokół:** [zgadza się / ma uwagi]
-- **Klaudiusz:** [zgadza się / ma uwagi]
+- **Builder:** [zgadza się / ma uwagi]
 - **Senior-architect:** [ocena — lub "pominięty: [uzasadnienie]"]
 
 ## Kryteria akceptacji

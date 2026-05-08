@@ -1,18 +1,18 @@
-# Workflow: Klaudiusz + Sokół
+# Workflow: Builder + Sokół
 
 <!-- workflow-version: 2026.05.08 -->
 
 ## Zasady ogólne
 
 - Oba agenty pracują na tym samym repo/katalogu
-- Tylko Klaudiusz pushuje na GitHub (chyba że Orkiestrator wyraźnie poprosi Sokoła)
-- Klaudiusz nigdy nie rusza kodu bez zielonego światła od Orkiestratora
+- Tylko Builder pushuje na GitHub (chyba że Orkiestrator wyraźnie poprosi Sokoła)
+- Builder nigdy nie rusza kodu bez zielonego światła od Orkiestratora
 - Komunikacja między agentami odbywa się po polsku
 - Pod każdą odpowiedzią — wyjaśnienie prostym językiem dla Orkiestratora
 
 ### Wyjątek: maintenance repo workflow
 
-W repo `popek-agent-workflow` drobne zmiany maintenance mogą iść szybciej. Jeśli Orkiestrator wyraźnie prosi o małą poprawkę (np. output skryptu, literówka, doprecyzowanie instrukcji, mały tweak szablonu), Klaudiusz może ją wdrożyć, przetestować, commitować i pushować bez dodatkowego pytania.
+W repo `popek-agent-workflow` drobne zmiany maintenance mogą iść szybciej. Jeśli Orkiestrator wyraźnie prosi o małą poprawkę (np. output skryptu, literówka, doprecyzowanie instrukcji, mały tweak szablonu), Builder może ją wdrożyć, przetestować, commitować i pushować bez dodatkowego pytania.
 
 Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Jeśli zmiana dotyka architektury workflow, wielu plików, migracji danych, konfliktów git albo operacji destrukcyjnych — obowiązuje normalny tryb z decyzją Orkiestratora.
 
@@ -23,7 +23,7 @@ Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Je�
 - Podejmuje ostateczne decyzje
 - Daje zielone światło na wdrożenie
 
-### Klaudiusz (Codex CLI)
+### Builder (Codex CLI)
 - Pisze i wdraża kod
 - Tworzy plany wdrożeń (`MD/plans/plan_nazwa.md`)
 - Pushuje na GitHub
@@ -36,7 +36,7 @@ Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Je�
 - Deep thinking przy skomplikowanych tematach
 - Proponowanie ulepszeń
 - Tworzenie planów dla nowych funkcji
-- **Sugeruje agenta dla Klaudiusza** w każdym prompcie (wybór z [agents.popeklab.com](https://agents.popeklab.com/) wg domeny zadania) — sugestia jest REKOMENDACJĄ, Klaudiusz może odrzucić z uzasadnieniem
+- **Sugeruje agenta dla Buildera** w każdym prompcie (wybór z [agents.popeklab.com](https://agents.popeklab.com/) wg domeny zadania) — sugestia jest REKOMENDACJĄ, Builder może odrzucić z uzasadnieniem
 - **Guardrails:** NIE czyta kodu bez powodu, NIE wchodzi do innych repozytoriów, NIE uruchamia testów/Dockera, NIE skanuje bez polecenia
 
 ### Wznowienie pracy ("wracamy do...")
@@ -68,14 +68,14 @@ Zamiast naprawiać issues jeden po jednym (kosztowne — pełny cykl kontekstu p
 6. Orkiestrator zatwierdza podział Batche + Individual
 7. Praca idzie batch po batchu → potem individual issues
 
-**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka. **Wyłączenie:** pliki instrukcji workflow (`klaudiusz.md`, `sokol.md`, `workflow.md`, `cel.md`, `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, `agents_catalog.md`, `templates/*.md`) NIGDY nie są Quick fixem.
+**Quick fix (Sokół sam):** literówki, rename, złamane linki, śmieci — max 3 pliki, zero ryzyka. **Wyłączenie:** pliki instrukcji workflow (`builder.md`, `sokol.md`, `workflow.md`, `cel.md`, `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, `agents_catalog.md`, `templates/*.md`) NIGDY nie są Quick fixem.
 **Kiedy batchować:** ten sam plik/moduł, ten sam wzorzec fixu, LOW/MEDIUM severity, brak zależności.
 **Kiedy osobno:** architektura, HIGH/CRITICAL, auth/płatności, nieoczywiste rozwiązanie.
 
 ## Proces ping-pong
 
 ### 1. Sokół rozpoczyna
-Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) zawierający:
+Sokół pisze prompt dla Buildera (dla pojedynczego issue LUB całego batcha) zawierający:
 - **Źródło** — skąd pochodzi issue (np. `MD/issues_sokol.md`, skan modułu)
 - **Konsekwencje zaniechania** — co się stanie, jeśli tego nie naprawimy?
 - **Severity** — CRITICAL / HIGH / MEDIUM / LOW
@@ -84,13 +84,13 @@ Sokół pisze prompt dla Klaudiusza (dla pojedynczego issue LUB całego batcha) 
 - **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
 - Opis problemu i propozycję rozwiązania
 - **Strategia testów** — mierzalne kryteria sukcesu (np. "metoda X zwraca Y dla inputu Z")
-- Pytanie czy Klaudiusz się zgadza (jeśli nie — chce argument)
+- Pytanie czy Builder się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji
 
 **Plan jest OBOWIĄZKOWY** gdy: severity >= MEDIUM, >2 plików, lub logika biznesowa/auth/dane.
 
-### 2. Klaudiusz odpowiada
-Klaudiusz NIE implementuje — zamiast tego:
+### 2. Builder odpowiada
+Builder NIE implementuje — zamiast tego:
 - Wybiera szablon: `templates/plan_single.md` (1 issue) lub `templates/plan_batch.md` (batch)
 - Tworzy plik `MD/plans/plan_nazwa_wdrożenia.md` (status: DRAFT lub W DYSKUSJI)
 - Wypełnia wszystkie pola szablonu (źródło, pliki, severity, złożoność, senior-architect TAK/NIE)
@@ -127,11 +127,11 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 
 **Prosty fix** (defensywny, pełny konsensus, brak ryzyk architektonicznych):
 → Sokół pisze: "Plan jest gotowy do implementacji."
-→ Klaudiusz zmienia status na ZATWIERDZONY i wdraża.
+→ Builder zmienia status na ZATWIERDZONY i wdraża.
 
 **Złożona zmiana** (architektura, nowe serwisy, spór, ryzyko średnie+):
 → Sokół pisze: "Plan jest gotowy do oceny przez senior-architect."
-→ Klaudiusz wywołuje senior-architecta → jeśli OK: wdraża. Jeśli nie: powrót do ping-pongu.
+→ Builder wywołuje senior-architecta → jeśli OK: wdraża. Jeśli nie: powrót do ping-pongu.
 
 ### 5. Implementacja (zasady Karpathy'ego)
 
@@ -139,18 +139,18 @@ Przed i w trakcie implementacji obowiązują:
 
 - **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Problemy poza planem → dług techniczny.
 - **Test minimalizmu:** Przed implementacją: (1) Czy ≤20 linii wystarczy? (2) Czy dodaję coś, o co nikt nie prosił? (3) Czy to overcomplicated?
-- **Prawo do pushbacku:** Klaudiusz MUSI odrzucić zbyt złożoną propozycję i zaproponować prostszą alternatywę NAJPIERW.
+- **Prawo do pushbacku:** Builder MUSI odrzucić zbyt złożoną propozycję i zaproponować prostszą alternatywę NAJPIERW.
 
 ### 6. Po wdrożeniu
 - Testy muszą przejść (zielone)
-  - **Zasada 3 prób testowych:** Jeśli testy padną 3 razy pod rząd, Klaudiusz przerywa pracę i wraca do Sokoła po nową strategię.
+  - **Zasada 3 prób testowych:** Jeśli testy padną 3 razy pod rząd, Builder przerywa pracę i wraca do Sokoła po nową strategię.
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
-- `git commit` + `git push origin main` (automatycznie po zielonych testach). Domyślny target publikacji = **main**. Task branche są opcjonalne i **lokalne** — nie pushujemy ich do origin bez wyraźnej decyzji Orkiestratora. Przy dirty worktree z unrelated zmianami: selektywny staging po nazwie (`git add <pliki>`) lub clean worktree + cherry-pick. Nigdy `git add -A`. Szczegóły: `klaudiusz.md` sekcja "Po zatwierdzeniu planu" punkty 3+9.
+- `git commit` + `git push origin main` (automatycznie po zielonych testach). Domyślny target publikacji = **main**. Task branche są opcjonalne i **lokalne** — nie pushujemy ich do origin bez wyraźnej decyzji Orkiestratora. Przy dirty worktree z unrelated zmianami: selektywny staging po nazwie (`git add <pliki>`) lub clean worktree + cherry-pick. Nigdy `git add -A`. Szczegóły: `builder.md` sekcja "Po zatwierdzeniu planu" punkty 3+9.
 - `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
-- **Checklista finalizacji (BLOKUJĄCA)** — Klaudiusz NIE pisze promptu zwrotnego dopóki nie odhaczy WSZYSTKICH punktów. **Kanoniczna lista:** `klaudiusz.md` → sekcja "Po zatwierdzeniu planu" → krok 12. Templates `plan_single.md` / `plan_batch.md` mają tę samą listę jako per-plan checkboxy do odhaczenia.
+- **Checklista finalizacji (BLOKUJĄCA)** — Builder NIE pisze promptu zwrotnego dopóki nie odhaczy WSZYSTKICH punktów. **Kanoniczna lista:** `builder.md` → sekcja "Po zatwierdzeniu planu" → krok 12. Templates `plan_single.md` / `plan_batch.md` mają tę samą listę jako per-plan checkboxy do odhaczenia.
 
 ### 6a. Prompt zwrotny do Sokoła (obowiązkowy)
-Po odhaczeniu CAŁEJ checklisty Klaudiusz **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
+Po odhaczeniu CAŁEJ checklisty Builder **MUSI** wypisać w terminalu prompt po polsku dla Sokoła:
 - Co zostało zrobione (podsumowanie zmian)
 - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1`
 - Jakie testy przeszły (liczba, wynik)
@@ -161,26 +161,26 @@ Po odhaczeniu CAŁEJ checklisty Klaudiusz **MUSI** wypisać w terminalu prompt p
 Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, weryfikuje checklistę finalizacji (plan w archive, memory linkuje do archive, issues FIXED), i wskazuje kolejne zadanie → cykl się powtarza.
 
 ### 6b. Routing końcowy (obowiązkowy)
-Na końcu każdej odpowiedzi Klaudiusz jasno wskazuje, czyja jest teraz kolej i co dzieje się z Sokołem:
+Na końcu każdej odpowiedzi Builder jasno wskazuje, czyja jest teraz kolej i co dzieje się z Sokołem:
 
 ```markdown
 **Routing końcowy:**
-- **Teraz ruch ma:** [Orkiestrator / Sokół / Klaudiusz]
+- **Teraz ruch ma:** [Orkiestrator / Sokół / Builder]
 - **Sokół:** [wyślij teraz / czeka na decyzję Orkiestratora / nie dotyczy]
 - **Dlaczego:** [jedno krótkie zdanie prostym językiem]
 - **Prompt dla Sokoła:** [gotowy tekst TYLKO jeśli "Sokół: wyślij teraz"]
 ```
 
-Jeśli potrzebna jest decyzja Orkiestratora, Sokół czeka. Klaudiusz nie tworzy wtedy sztucznego promptu do Sokoła, bo jego treść zależy od decyzji.
+Jeśli potrzebna jest decyzja Orkiestratora, Sokół czeka. Builder nie tworzy wtedy sztucznego promptu do Sokoła, bo jego treść zależy od decyzji.
 
 ### 7. Gdy coś pójdzie nie tak
 
 **Testy padają po wdrożeniu:**
-- Klaudiusz naprawia i puszcza testy ponownie
+- Builder naprawia i puszcza testy ponownie
 - Jeśli fix jest nietrywalny (zmiana podejścia) → nowa runda ping-pong z Sokołem
 
 **Code-review znajduje HIGH issues:**
-- Klaudiusz naprawia → ponowne testy → push
+- Builder naprawia → ponowne testy → push
 
 **Senior-architect odrzuca plan:**
 - Powrót do ping-pongu z uwagami architecta jako nowym inputem
@@ -191,7 +191,7 @@ Jeśli potrzebna jest decyzja Orkiestratora, Sokół czeka. Klaudiusz nie tworzy
 DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 ```
 
-- DRAFT: Klaudiusz tworzy plan na podstawie pierwszego promptu Sokoła
+- DRAFT: Builder tworzy plan na podstawie pierwszego promptu Sokoła
 - W DYSKUSJI: ping-pong trwa
 - GOTOWY DO OCENY: oba agenty potwierdziły, czeka na senior-architect (lub pomijamy)
 - ZATWIERDZONY: gotowy do implementacji (po zielonym świetle Orkiestratora)
@@ -212,7 +212,7 @@ Format jest blokujący:
 ┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
 │ #   │ Temat              │ Co to znaczy           │ Co dalej               │
 ├─────┼────────────────────┼────────────────────────┼────────────────────────┤
-│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Klaudiusza    │
+│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Buildera      │
 └─────┴────────────────────┴────────────────────────┴────────────────────────┘
 ```
 
@@ -226,24 +226,24 @@ Pod tabelą — pytanie decyzyjne do Orkiestratora (np. "Czy zatwierdzasz? Zaczy
 
 Sytuacje brzegowe, na które reguły wprost nie odpowiadają. Wszystkie mają wspólny rdzeń: **orkiestrator decyduje, agenty realizują**.
 
-### Sokół wraca z tym samym pomysłem mimo NIE od Klaudiusza
+### Sokół wraca z tym samym pomysłem mimo NIE od Buildera
 
-Jeśli po pushbacku Klaudiusza Sokół ponownie proponuje to samo (np. po 2 rundach) bez nowego argumentu:
-- Klaudiusz w prompcie zwrotnym: cytuje swój poprzedni argument + pyta "co się zmieniło że wracamy do tego pomysłu?"
+Jeśli po pushbacku Buildera Sokół ponownie proponuje to samo (np. po 2 rundach) bez nowego argumentu:
+- Builder w prompcie zwrotnym: cytuje swój poprzedni argument + pyta "co się zmieniło że wracamy do tego pomysłu?"
 - Po 3 rundach (zasada 3 rund ping-pongu) — STOP, eskalacja do orkiestratora
-- Orkiestrator rozstrzyga: albo zatwierdza wersję Sokoła (overrides Klaudiusza), albo zatwierdza wersję Klaudiusza (zamyka temat → Sokół zapisuje pomysł w `MD/memory.md` "Odrzucone")
+- Orkiestrator rozstrzyga: albo zatwierdza wersję Sokoła (overrides Buildera), albo zatwierdza wersję Buildera (zamyka temat → Sokół zapisuje pomysł w `MD/memory.md` "Odrzucone")
 
 ### Senior-architect odrzuca cały plan
 
 - Status planu wraca do `W DYSKUSJI`
-- Klaudiusz pisze prompt zwrotny dla Sokoła z uwagami architecta (cytuj dokładnie, nie parafrazuj)
+- Builder pisze prompt zwrotny dla Sokoła z uwagami architecta (cytuj dokładnie, nie parafrazuj)
 - Standardowy ping-pong z nowym wkładem
 - Jeśli architect odrzucił **drugi raz** po poprawkach — STOP, orkiestrator decyduje czy plan wykonujemy mimo wszystko, czy go zamykamy (status `WONTFIX`)
 
 ### Plan ZATWIERDZONY, ale orkiestrator zmienia zdanie
 
-- Orkiestrator pisze do Klaudiusza "wstrzymaj plan X" — nawet jeśli implementacja już ruszyła
-- Klaudiusz zatrzymuje pracę, status planu → `W DYSKUSJI` z notatką "wstrzymany przez orkiestratora — powód: …"
+- Orkiestrator pisze do Buildera "wstrzymaj plan X" — nawet jeśli implementacja już ruszyła
+- Builder zatrzymuje pracę, status planu → `W DYSKUSJI` z notatką "wstrzymany przez orkiestratora — powód: …"
 - **Jeśli były już commity:** zostają na branchu (lub są revertowane — decyzja orkiestratora). Plan się nie merguje na main dopóki nie wraca do `ZATWIERDZONY`
 - Sokół dostaje prompt zwrotny "plan wstrzymany — czekamy na decyzję orkiestratora"
 
@@ -253,24 +253,24 @@ Jeśli po pushbacku Klaudiusza Sokół ponownie proponuje to samo (np. po 2 rund
 - Quick fix dla Sokoła: przenieść wszystkie `FIXED` / `WONTFIX` do `MD/issues_sokol_archive.md` (zostaje plik tylko z `OPEN` + `IN_PROGRESS`)
 - Aktualne statusy nie giną — w archiwum mają nadal pełną historię z linkiem do planu
 
-### Klaudiusz wywołał agenta z `agents_catalog.md` ale agent nie istnieje
+### Builder wywołał agenta z `agents_catalog.md` ale agent nie istnieje
 
-Sokół zasugerował agenta którego nie ma (mimo że miał czytać katalog) lub Klaudiusz źle przeparsował.
-- Klaudiusz NIE wywołuje "podobnego" agenta na ślepo
+Sokół zasugerował agenta którego nie ma (mimo że miał czytać katalog) lub Builder źle przeparsował.
+- Builder NIE wywołuje "podobnego" agenta na ślepo
 - W prompcie zwrotnym do Sokoła: "Nie znalazłem agenta `X` w `agents_catalog.md`. Sprawdziłem sekcję Y. Możesz zasugerować innego z faktycznie istniejących?"
 - Sokół otwiera katalog (rule #8) i poprawia sugestię
 
 ### Push się wywalił, rollback też się wywalił
 
-Krytyczna sytuacja — opisana w `klaudiusz.md` → "Procedura rollback". TLDR:
+Krytyczna sytuacja — opisana w `builder.md` → "Procedura rollback". TLDR:
 - Kontenery zatrzymaj (`docker compose down`)
 - Eskalacja przez `bash scripts/notify.sh "DEPLOY FAIL — rollback fail — wymagana ręczna interwencja"`
 - STOP. NIE próbuj `git push --force`. NIE próbuj kasować commitów. Czekaj na decyzję orkiestratora.
 
-### Dwa agenty edytują workflow równocześnie (`klaudiusz.md`, `sokol.md`, ...)
+### Dwa agenty edytują workflow równocześnie (`builder.md`, `sokol.md`, ...)
 
 To stanie się jeśli orkiestrator pomyli się i dał polecenie obu na ten sam zakres.
 - Reguła append-only z `sokol.md` → "Kto pisze gdzie" odnosi się tylko do `MD/memory.md`. Dla plików workflow:
 - Pierwsza zasada: oba agenty czytają plik PRZED edycją (zawsze świeży stan)
-- Jeśli git pokazuje konflikt — Klaudiusz rozwiązuje (Sokół nie pushuje), zachowując zmiany obu stron jeśli się nie wykluczają
+- Jeśli git pokazuje konflikt — Builder rozwiązuje (Sokół nie pushuje), zachowując zmiany obu stron jeśli się nie wykluczają
 - Jeśli wykluczają się — eskalacja do orkiestratora przed mergem

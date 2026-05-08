@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Instalacja / aktualizacja workflow Klaudiusz + Sokół w projekcie
+# Instalacja / aktualizacja workflow Builder + Sokół w projekcie
 # Użycie:
 #   bash install.sh /ścieżka/do/projektu           — instalacja (nie nadpisuje)
 #   bash install.sh /ścieżka/do/projektu --force    — aktualizacja (podmienia starą wersję)
@@ -59,7 +59,7 @@ if [ ! -d "$PROJECT_DIR" ]; then
     exit 1
 fi
 
-if [ ! -f "$SCRIPT_DIR/klaudiusz.md" ] || [ ! -f "$SCRIPT_DIR/sokol.md" ]; then
+if [ ! -f "$SCRIPT_DIR/builder.md" ] || [ ! -f "$SCRIPT_DIR/sokol.md" ]; then
     echo -e "\n  ${FAIL} ${RED}Nie znaleziono plików źródłowych workflow${NC}"
     echo -e "  ${DIM}Ten skrypt musi być uruchamiany z lokalnego klonu repo:${NC}"
     echo -e "  ${DIM}  git clone https://github.com/popek1990/popek-agent-workflow.git${NC}"
@@ -114,7 +114,19 @@ strip_trailing_blanks() {
 # Część repo miała własny opis nad blokiem workflow; po zamianie ról taka linia
 # mogłaby przebić właściwą instrukcję z aktualnego bloku.
 strip_stale_workflow_role_lines() {
-    awk '!/^Jesteś \*\*(Klaudiusz|Sokół)\*\*/ { print }'
+    awk '!/^Jesteś \*\*((Klaudiu(sz))|Builder|Sokół)\*\*/ { print }'
+}
+
+# Zachowywany prefiks projektu może zawierać własne notatki o starych rolach.
+# Normalizujemy je, bo taki tekst jest czytany przed właściwym blokiem workflow.
+normalize_stale_workflow_prefix_lines() {
+    sed -E \
+        -e 's/Klaudiu(szowi)/Builderowi/g' \
+        -e 's/Klaudiu(szem)/Builderem/g' \
+        -e 's/Klaudiu(szu)/Builderze/g' \
+        -e 's/Klaudiu(sza)/Buildera/g' \
+        -e 's/Klaudiu(sz)/Builder/g' \
+        -e 's/Builder \(Claude\)/Builder (Codex)/g'
 }
 
 # --- Funkcja: podmień / wstaw blok workflow w pliku (idempotentnie, z deduplikacją wsteczną) ---
@@ -150,12 +162,12 @@ update_file() {
 
     if [ -n "$header_line" ]; then
         if [ "$header_line" -gt 1 ]; then
-            head -n $((header_line - 1)) "$file" | strip_trailing_blanks | strip_stale_workflow_role_lines > "$tmp"
+            head -n $((header_line - 1)) "$file" | strip_trailing_blanks | normalize_stale_workflow_prefix_lines | strip_stale_workflow_role_lines > "$tmp"
         fi
         # header_line == 1 → tmp pozostaje pusty (cały plik to workflow)
     else
         # Brak nagłówka workflow — zachowaj całą dotychczasową treść użytkownika
-        strip_trailing_blanks < "$file" | strip_stale_workflow_role_lines > "$tmp"
+        strip_trailing_blanks < "$file" | normalize_stale_workflow_prefix_lines | strip_stale_workflow_role_lines > "$tmp"
     fi
 
     if [ -s "$tmp" ]; then
@@ -234,10 +246,10 @@ else
     inc INSTALLED
 fi
 
-# --- AGENTS.md (Codex CLI) — używa roli Klaudiusza ---
-echo -e "  ${FILE} ${BOLD}AGENTS.md${NC} ${DIM}(Klaudiusz — Codex)${NC}"
+# --- AGENTS.md (Codex CLI) — używa roli Buildera ---
+echo -e "  ${FILE} ${BOLD}AGENTS.md${NC} ${DIM}(Builder — Codex)${NC}"
 AGENTS_MARKER="## Twoja rola"
-AGENTS_CONTENT="$(cat "$SCRIPT_DIR/klaudiusz.md")"
+AGENTS_CONTENT="$(cat "$SCRIPT_DIR/builder.md")"
 
 if [ -f "AGENTS.md" ]; then
     HAS_WORKFLOW=false
@@ -278,8 +290,8 @@ else
 fi
 
 # --- scripts/notify.sh — powiadomienie po wdrożeniu (cross-platform popup) ---
-# Klaudiusz wywołuje ten skrypt po zielonym rebuildzie i przy konfliktach push/rollback.
-# Bez tego skryptu wszystkie wywołania `bash scripts/notify.sh "..."` z klaudiusz.md
+# Builder wywołuje ten skrypt po zielonym rebuildzie i przy konfliktach push/rollback.
+# Bez tego skryptu wszystkie wywołania `bash scripts/notify.sh "..."` z builder.md
 # kończyłyby się "No such file or directory" w docelowym projekcie.
 echo -e "  ${FILE} ${BOLD}scripts/notify.sh${NC} ${DIM}(powiadomienie orkiestratora)${NC}"
 mkdir -p scripts
@@ -332,7 +344,7 @@ if [ ! -f "MD/memory.md" ]; then
 |------|----|-------------------|------|-----|
 
 > **Reguła pisania:** wpis dodaje TYLKO ten kto wykonał pracę.
-> - **Klaudiusz** pisze po deployu (kolumna Kto = `Klaudiusz`).
+> - **Builder** pisze po deployu (kolumna Kto = `Builder`).
 > - **Sokół** pisze TYLKO po Quick fixie lub retroaktywnej finalizacji (kolumna Kto = `Sokół`).
 > Kolumna **Kto** jest OBOWIĄZKOWA — bez niej wpis nieważny.
 
@@ -340,7 +352,7 @@ if [ ! -f "MD/memory.md" ]; then
 | Data | Propozycja | Powód odrzucenia (2-3 zdania) | Kto odrzucił |
 |------|-----------|-------------------------------|--------------|
 
-> **Reguła pisania:** Sokół dopisuje gdy issue dostaje status WONTFIX. Klaudiusz dopisuje gdy w trakcie planu obali pomysł argumentem (pushback).
+> **Reguła pisania:** Sokół dopisuje gdy issue dostaje status WONTFIX. Builder dopisuje gdy w trakcie planu obali pomysł argumentem (pushback).
 MEMORY
     log_ok "MD/memory.md — utworzono"
     inc INSTALLED
@@ -375,7 +387,7 @@ Drobne porządki, długi techniczne, "kiedyś warto byłoby" — zrobimy gdy bę
 | # | Co | Gdzie | Kto zgłosił |
 |---|----|-------|-------------|
 
-> **Reguła:** Jeśli Klaudiusz w prompcie zwrotnym zgłosi "Dług techniczny" — Sokół dopisuje go do **Hygiene**. Drobne issues z LOW severity które nie wymagają planu — też tutaj.
+> **Reguła:** Jeśli Builder w prompcie zwrotnym zgłosi "Dług techniczny" — Sokół dopisuje go do **Hygiene**. Drobne issues z LOW severity które nie wymagają planu — też tutaj.
 TODOS
     log_ok "MD/TODO.md — utworzono"
     inc INSTALLED
@@ -469,16 +481,16 @@ smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' CLAUDE.md 2>/dev/null)\" = '1' ]"
 smoke_check "CLAUDE.md zawiera dokładną rolę Sokoła" "grep -qF 'Jesteś **Sokół**' CLAUDE.md 2>/dev/null"
-smoke_check "CLAUDE.md nie zawiera starej roli Klaudiusza" "! grep -qF 'Jesteś **Klaudiusz**' CLAUDE.md 2>/dev/null"
+smoke_check "CLAUDE.md nie zawiera starej roli Buildera" "! grep -qF 'Jesteś **Builder**' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md istnieje"                    "[ -f GEMINI.md ]"
 smoke_check "GEMINI.md zawiera marker workflow"     "grep -qF '## Twoja rola' GEMINI.md 2>/dev/null"
 smoke_check "GEMINI.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' GEMINI.md 2>/dev/null)\" = '1' ]"
 smoke_check "GEMINI.md zawiera dokładną rolę Sokoła" "grep -qF 'Jesteś **Sokół**' GEMINI.md 2>/dev/null"
-smoke_check "GEMINI.md nie zawiera roli Klaudiusza" "! grep -qF 'Jesteś **Klaudiusz**' GEMINI.md 2>/dev/null"
+smoke_check "GEMINI.md nie zawiera roli Buildera" "! grep -qF 'Jesteś **Builder**' GEMINI.md 2>/dev/null"
 smoke_check "AGENTS.md istnieje"                    "[ -f AGENTS.md ]"
 smoke_check "AGENTS.md zawiera marker workflow"     "grep -qF '## Twoja rola' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' AGENTS.md 2>/dev/null)\" = '1' ]"
-smoke_check "AGENTS.md zawiera dokładną rolę Klaudiusza" "grep -qF 'Jesteś **Klaudiusz**' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md zawiera dokładną rolę Buildera" "grep -qF 'Jesteś **Builder**' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md nie zawiera roli Sokoła"      "! grep -qF 'Jesteś **Sokół**' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md zawiera auto-deploy"         "grep -qF 'docker compose' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md zawiera prompt zwrotny"      "grep -qF 'prompt zwrotny' AGENTS.md 2>/dev/null"

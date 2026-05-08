@@ -4,7 +4,7 @@
 # Działa na: WSL2/Windows (popup), Linux (notify-send), macOS (osascript)
 
 MSG="${1:-Wdrożenie zakończone — prompt zwrotny gotowy do skopiowania do Sokoła}"
-TITLE="${2:-Klaudiusz: Zadanie skończone}"
+TITLE="${2:-Builder: Zadanie skończone}"
 
 if command -v powershell.exe &>/dev/null; then
     powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null; [System.Windows.Forms.MessageBox]::Show('$MSG','$TITLE')" 2>/dev/null
