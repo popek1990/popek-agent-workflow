@@ -10,6 +10,12 @@
 - Komunikacja między agentami odbywa się po polsku
 - Pod każdą odpowiedzią — wyjaśnienie prostym językiem dla Orkiestratora
 
+### Wyjątek: maintenance repo workflow
+
+W repo `popek-agent-workflow` drobne zmiany maintenance mogą iść szybciej. Jeśli Orkiestrator wyraźnie prosi o małą poprawkę (np. output skryptu, literówka, doprecyzowanie instrukcji, mały tweak szablonu), Klaudiusz może ją wdrożyć, przetestować, commitować i pushować bez dodatkowego pytania.
+
+Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Jeśli zmiana dotyka architektury workflow, wielu plików, migracji danych, konfliktów git albo operacji destrukcyjnych — obowiązuje normalny tryb z decyzją Orkiestratora.
+
 ## Role
 
 ### Orkiestrator (człowiek)

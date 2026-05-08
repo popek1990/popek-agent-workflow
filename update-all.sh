@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Aktualizuje workflow we wszystkich projektach (--force)
-# Użycie: bash update-all.sh
+# Użycie:
+#   bash update-all.sh
+#   bash update-all.sh --verbose
 
 set -euo pipefail
 
@@ -18,6 +20,24 @@ inc() { eval "$1=\$(($1 + 1))"; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+VERBOSE=false
+for arg in "$@"; do
+    case "$arg" in
+        --verbose)
+            VERBOSE=true
+            ;;
+        -h|--help)
+            echo "Użycie: bash update-all.sh [--verbose]"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Nieznana opcja: $arg${NC}" >&2
+            echo "Użycie: bash update-all.sh [--verbose]" >&2
+            exit 1
+            ;;
+    esac
+done
+
 PROJECTS=(
     "$HOME/projects/rsi"
     "$HOME/projects/Hydra"
@@ -31,7 +51,11 @@ echo -e "${BOLD}${CYAN}╔══════════════════
 echo -e "${BOLD}${CYAN}║  🔄 Update All — Popek Agent Workflow       ║${NC}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "  ${DIM}Projekty: ${#PROJECTS[@]}  │  Tryb: --force${NC}"
+if $VERBOSE; then
+    echo -e "  ${DIM}Projekty: ${#PROJECTS[@]}  │  Tryb: --force --verbose${NC}"
+else
+    echo -e "  ${DIM}Projekty: ${#PROJECTS[@]}  │  Tryb: --force${NC}"
+fi
 echo ""
 
 TOTAL_OK=0
@@ -50,40 +74,77 @@ for project in "${PROJECTS[@]}"; do
         continue
     fi
 
-    echo -e "  ${BOLD}📦 ${name}${NC}"
-    echo -e "  ${DIM}────────────────────────────────${NC}"
+    install_status=0
+    output=$(bash "$SCRIPT_DIR/install.sh" "$project" --force 2>&1) || install_status=$?
 
-    output=$(bash "$SCRIPT_DIR/install.sh" "$project" --force 2>&1) || true
-    echo "$output" | grep -E "(✅|⏭️|❌|✔️|🧪|🚀|Smoketest|Zainstalowano|Wszystko OK|problemów|pomijam)" | head -25
+    if $VERBOSE; then
+        echo -e "  ${BOLD}📦 ${name}${NC}"
+        echo -e "  ${DIM}────────────────────────────────${NC}"
+        echo "$output"
+    fi
+
+    summary_line=$(echo "$output" | grep -E "Zainstalowano:" | tail -1 || true)
+    smoke_line=$(echo "$output" | grep -E "Smoketest:" | tail -1 || true)
+    installed="?"
+    updated="?"
+    skipped="?"
+    smoke="brak"
+
+    if [ -n "$summary_line" ]; then
+        counts=$(echo "$summary_line" | sed -E 's/.*Zainstalowano:[[:space:]]*([0-9]+).*Zaktualizowano:[[:space:]]*([0-9]+).*Pominięto:[[:space:]]*([0-9]+).*/\1 \2 \3/')
+        if [ "$counts" != "$summary_line" ]; then
+            read -r installed updated skipped <<< "$counts"
+        fi
+    fi
+
+    if [ -n "$smoke_line" ]; then
+        parsed_smoke=$(echo "$smoke_line" | sed -E 's/.*Smoketest:[[:space:]]*([0-9]+\/[0-9]+).*/\1/')
+        if [ "$parsed_smoke" != "$smoke_line" ]; then
+            smoke="$parsed_smoke"
+        elif echo "$smoke_line" | grep -q "problemów"; then
+            smoke="z uwagami"
+        fi
+    fi
 
     if echo "$output" | grep -q "Wszystko OK"; then
         RESULTS+=("✅ $name")
         inc TOTAL_OK
+        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${GREEN}✅ ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}${NC}"
     elif echo "$output" | grep -q "pomijam"; then
         RESULTS+=("⏭️  $name — brak workflow, pominięto")
         inc TOTAL_SKIP
+        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${YELLOW}⏭️  pominięto — workflow nie był zainstalowany${NC}"
     elif echo "$output" | grep -q "problemów"; then
         RESULTS+=("⚠️  $name — smoketest z uwagami")
         inc TOTAL_FAIL
+        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${YELLOW}⚠️  ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}${NC}"
+    elif [ "$install_status" -ne 0 ]; then
+        RESULTS+=("❌ $name — install.sh zakończył się błędem")
+        inc TOTAL_FAIL
+        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${RED}❌ błąd instalatora, odpal --verbose po szczegóły${NC}"
     else
         RESULTS+=("✅ $name")
         inc TOTAL_OK
+        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${GREEN}✅ ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}${NC}"
     fi
 
-    echo ""
+    $VERBOSE && echo ""
 done
 
 # --- Podsumowanie ---
+echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════╗${NC}"
 echo -e "${BOLD}${CYAN}║  📊 Podsumowanie                            ║${NC}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════╝${NC}"
 echo ""
 
-for result in "${RESULTS[@]}"; do
-    echo -e "  $result"
-done
+if $VERBOSE; then
+    for result in "${RESULTS[@]}"; do
+        echo -e "  $result"
+    done
+    echo ""
+fi
 
-echo ""
 echo -e "  ${DIM}─────────────────────────────────────${NC}"
 
 if [ $TOTAL_FAIL -eq 0 ] && [ $TOTAL_SKIP -eq 0 ]; then
@@ -92,5 +153,10 @@ elif [ $TOTAL_FAIL -eq 0 ]; then
     echo -e "  ✅ ${GREEN}OK: ${TOTAL_OK}${NC}  ${YELLOW}Pominięte: ${TOTAL_SKIP}${NC}"
 else
     echo -e "  ✅ ${GREEN}OK: ${TOTAL_OK}${NC}  ${RED}Błędy: ${TOTAL_FAIL}${NC}  ${YELLOW}Pominięte: ${TOTAL_SKIP}${NC}"
+fi
+
+if ! $VERBOSE; then
+    echo ""
+    echo -e "  ${DIM}P.S. Chcesz więcej szczegółów? Odpal: bash update-all.sh --verbose${NC}"
 fi
 echo ""
