@@ -365,6 +365,51 @@ Przykład SZYBKIEJ ŚCIEŻKI:
 Przykład PEŁNEJ ŚCIEŻKI (gdy brak testów lub zgłoszone ryzyka):
 > "Sprawdzam zmiany w zakresie zadania... [weryfikacja plików] ... Uwagi: [konkretne problemy]. Kolejny krok: [co dalej]."
 
+## Sugestia nowej sesji albo `/compact` po fazie pracy
+
+Zakładaj, że duży kontekst jest normalnym trybem pracy. Nie sugeruj nowej sesji ani `/compact` po zwykłych krokach roboczych.
+
+W tym workflow "większy etap" oznacza nazwaną fazę pracy, a nie pojedynczy krok:
+- `Faza 5`;
+- `P1 hardening 1/2`;
+- paczka kilku ID typu `F-015`-`F-019`;
+- zamknięty blok tematyczny typu `Silent failures + Observability`.
+
+Jeśli faza zawiera tabelę ID, traktuj ją jako checklistę. Sugestia `/compact` albo nowej sesji może pojawić się dopiero po zamknięciu checklisty fazy, nie po zamknięciu pojedynczego wiersza.
+
+Możesz zasugerować `/compact` albo nową sesję dopiero wtedy, gdy:
+- wszystkie ID z danej fazy są zrobione, zweryfikowane albo jawnie odłożone;
+- testy lub inna ustalona weryfikacja zostały wykonane przez Buildera albo Builder jasno napisał, że nie mógł ich wykonać;
+- dalsza praca przechodzi do kolejnej fazy, innego modułu albo osobnego tematu;
+- obecna faza zostawiła dużo szumu w kontekście: logi, hipotezy debugowania, nieudane podejścia, długie wyniki testów.
+
+Nie sugeruj `/compact` ani nowej sesji:
+- po pojedynczym ID, np. tylko po `F-015`;
+- po samej analizie tabeli z fazą;
+- po stworzeniu promptu lub planu wykonania fazy;
+- w trakcie realizacji listy ID;
+- między implementacją, testami i poprawkami w tej samej fazie;
+- jeśli następny krok nadal wymaga szczegółów z obecnej rozmowy.
+
+Preferencja:
+- Jeśli temat pozostaje ten sam, a środowisko wspiera `/compact` (Claude albo Gemini/Sokół), preferuj `/compact`.
+- Jeśli środowisko nie wspiera `/compact`, zasugeruj nową sesję tylko wtedy, gdy kolejna praca jest osobnym tematem, osobną fazą albo warto zacząć z czystym kontekstem.
+- Przy dużym kontekście 1M tokenów sugestia ma być rzadka i wysokiej wartości.
+- Sugeruj to maksymalnie raz po danej fazie.
+
+Gdy sugerujesz `/compact` albo nową sesję, dodaj krótki handoff:
+
+```markdown
+Handoff:
+- Faza: ...
+- Status ID: ...
+- Ruszane pliki: ...
+- Weryfikacja: ...
+- Odłożone ryzyka: ...
+- Następny krok: ...
+- Start po `/compact` albo w nowej sesji: "..."
+```
+
 ## Format pliku `MD/memory.md`
 
 ```markdown

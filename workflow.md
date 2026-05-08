@@ -160,6 +160,14 @@ Po odhaczeniu CAŁEJ checklisty Builder **MUSI** wypisać w terminalu prompt po 
 
 Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, weryfikuje checklistę finalizacji (plan w archive, memory linkuje do archive, issues FIXED), i wskazuje kolejne zadanie → cykl się powtarza.
 
+### 6c. Higiena kontekstu po fazie
+
+Agenty zakładają, że duży kontekst jest normalnym trybem pracy. Nie sugerują nowej sesji ani `/compact` po zwykłych krokach typu analiza, plan, pojedynczy issue, testy czy poprawki w tej samej fazie.
+
+Sugestia `/compact` albo nowej sesji może pojawić się dopiero po zamknięciu nazwanej fazy pracy, np. `Faza 5`, `P1 hardening 1/2`, paczki ID `F-015`-`F-019` albo bloku tematycznego `Silent failures + Observability`. Jeśli faza ma tabelę ID, tabela jest checklistą: sugestia może paść dopiero po zamknięciu całej checklisty, nie po pojedynczym wierszu.
+
+Preferencja: jeśli temat pozostaje ten sam i środowisko wspiera `/compact` (Claude albo Gemini/Sokół), agenty sugerują `/compact`. Nową sesję sugerują głównie przy przejściu do osobnej fazy, innego modułu albo niezależnego tematu. Każda sugestia musi zawierać krótki handoff: faza, status ID, ruszane pliki, weryfikacja, odłożone ryzyka i następny krok.
+
 ### 6b. Routing końcowy (obowiązkowy)
 Na końcu każdej odpowiedzi Builder jasno wskazuje, czyja jest teraz kolej i co dzieje się z Sokołem:
 
