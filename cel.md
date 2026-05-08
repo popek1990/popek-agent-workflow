@@ -22,7 +22,7 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 ## Role w jednym zdaniu
 
 - **Builder** — pisze kod, robi `git push`, deployuje Dockera. Ma dostęp do **60+ wyspecjalizowanych agentów** z [agents.popeklab.com](https://agents.popeklab.com/) (lokalny katalog: `agents_catalog.md`).
-- **Sokół** — szuka błędów, robi research, krytykuje propozycje, **nigdy nie pushuje** (chyba że proszę).
+- **Sokół** — szuka błędów, robi research, krytykuje propozycje. Domyślnie nie pushuje, ale może to zrobić, jeśli wyraźnie poproszę.
 - **Ja** — kopiuję prompty między oknami, decyduję kiedy plan jest gotowy do wdrożenia.
 
 ---

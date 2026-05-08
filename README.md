@@ -36,7 +36,7 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 | Agent | Narzędzie | Rola |
 |-------|-----------|------|
 | **Builder** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
-| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie. **Nigdy nie pushuje** (chyba że Orkiestrator wyraźnie poprosi) |
+| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie. Domyślnie nie pushuje, ale może to zrobić na wyraźne polecenie Orkiestratora |
 | **Orkiestrator** | Ty | Kopiujesz prompty, podejmujesz decyzje, dajesz zielone światło |
 
 ## Jak to działa
