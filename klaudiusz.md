@@ -261,22 +261,27 @@ Jeśli pomijasz code-review — napisz w commicie dlaczego (np. "trivial guard, 
 
 ## Sekcja "Dla Orkiestratora"
 
-W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unicode (sortuj od najważniejszego do najmniej ważnego):
+W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unicode (sortuj od najważniejszego do najmniej ważnego).
+
+**Format tabeli jest BLOKUJĄCY:**
+- Maksymalnie **4 kolumny**. Nie używaj tabel 5-kolumnowych typu `# / Obecnie / Zmiana / Wpływ / Ryzyko` — są za szerokie i rozjeżdżają się w terminalu.
+- Preferowany układ: `# / Temat / Co to znaczy / Co dalej`.
+- Każda komórka ma mieć maksymalnie ok. 24 znaki. Jeśli tekst jest dłuższy, skróć komórkę i przenieś szczegóły pod tabelę.
+- Nie zawijaj długich zdań wewnątrz komórki. Tabela ma być szybkim spisem, a pełne wyjaśnienie idzie pod nią.
+- Przed wysłaniem sprawdź wizualnie, czy prawa ramka `│` jest równa w każdym wierszu.
 
 ```
 ---
 **Dla Orkiestratora:**
 
-┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
-│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
-├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
-│ 1   │ [krótko]          │ [krótko]           │ [krótko]          │ niskie  │
-│ 2   │ [krótko]          │ [krótko]           │ [krótko]          │ średnie │
-└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
+│ #   │ Temat              │ Co to znaczy           │ Co dalej               │
+├─────┼────────────────────┼────────────────────────┼────────────────────────┤
+│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Klaudiusza    │
+│ 2   │ Ścieżki contextu   │ Trzeba zablokować `..` │ Dodać walidację        │
+└─────┴────────────────────┴────────────────────────┴────────────────────────┘
 
-Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie.
-
-**Reguła szerokości kolumn (BLOKUJĄCA):** każda linia tekstu w komórce MUSI mieścić się między separatorami `│`. Jeśli tekst jest dłuższy niż kolumna, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć tekst w tabeli, a szczegóły przenieś pod tabelę. Przed wysłaniem sprawdź wizualnie, czy prawa ramka tabeli jest równa w każdym wierszu.
+Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie, ale zrozumiałe.
 
 **Decyzja:** [pytanie do Orkiestratora, np. "Czy zatwierdzasz? Zaczynamy wdrożenie?"]
 ```

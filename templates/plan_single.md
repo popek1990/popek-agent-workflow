@@ -84,15 +84,15 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 ## Dla Orkiestratora
 
-Użyj tekstowej tabeli z ramką Unicode. Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się zmienia, po co to robimy i jaka decyzja jest potrzebna. Komórki mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst.
+Użyj tekstowej tabeli z ramką Unicode. Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się zmienia, po co to robimy i jaka decyzja jest potrzebna.
 
-Reguła szerokości kolumn: każda linia tekstu w komórce musi mieścić się między separatorami `│`. Jeśli tekst jest za długi, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć wpis w tabeli i przenieś szczegóły pod tabelę.
+Format tabeli: maksymalnie 4 kolumny, preferowany układ `# / Temat / Co to znaczy / Co dalej`. Nie używaj szerokiego układu `# / Obecnie / Zmiana / Wpływ / Ryzyko`. Komórki mają być krótkie, maksymalnie ok. 24 znaki. Nie zawijaj długich zdań w komórce — skróć komórkę i przenieś szczegóły pod tabelę.
 
-┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
-│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
-├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
-│ 1   │ [jak jest teraz]  │ [co zmieniamy]    │ [co to daje]      │ [krótko]│
-└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
+│ #   │ Temat              │ Co to znaczy           │ Co dalej               │
+├─────┼────────────────────┼────────────────────────┼────────────────────────┤
+│ 1   │ [temat]            │ [krótko]               │ [następny krok]        │
+└─────┴────────────────────┴────────────────────────┴────────────────────────┘
 
 Szczegóły:
 [dłuższy opis, jeśli potrzebny]

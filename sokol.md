@@ -400,20 +400,25 @@ Aby uniknąć kolizji w tabeli "Zrobione" — kolumna **Kto** jest OBOWIĄZKOWA 
 
 W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unicode (sortuj od najważniejszego do najmniej ważnego). Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się stało, dlaczego to ma znaczenie i jaka decyzja jest potrzebna.
 
+**Format tabeli jest BLOKUJĄCY:**
+- Maksymalnie **4 kolumny**. Nie używaj tabel 5-kolumnowych typu `# / Obecnie / Zmiana / Wpływ / Ryzyko` — są za szerokie i rozjeżdżają się w terminalu.
+- Preferowany układ: `# / Temat / Co to znaczy / Co dalej`.
+- Każda komórka ma mieć maksymalnie ok. 24 znaki. Jeśli tekst jest dłuższy, skróć komórkę i przenieś szczegóły pod tabelę.
+- Nie zawijaj długich zdań wewnątrz komórki. Tabela ma być szybkim spisem, a pełne wyjaśnienie idzie pod nią.
+- Przed wysłaniem sprawdź wizualnie, czy prawa ramka `│` jest równa w każdym wierszu.
+
 ```
 ---
 **Dla Orkiestratora:**
 
-┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
-│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
-├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
-│ 1   │ [krótko]          │ [krótko]           │ [krótko]          │ niskie  │
-│ 2   │ [krótko]          │ [krótko]           │ [krótko]          │ średnie │
-└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
+│ #   │ Temat              │ Co to znaczy           │ Co dalej               │
+├─────┼────────────────────┼────────────────────────┼────────────────────────┤
+│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Klaudiusza    │
+│ 2   │ Ścieżki contextu   │ Trzeba zablokować `..` │ Dodać walidację        │
+└─────┴────────────────────┴────────────────────────┴────────────────────────┘
 
 Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Unikaj skrótów typu "OK", "gotowe", "niskie" bez kontekstu — napisz np. "wdrożenie zakończone", "bez zmian w kodzie", "ryzyko niskie, bo dotyczy tylko dokumentacji".
-
-**Reguła szerokości kolumn (BLOKUJĄCA):** każda linia tekstu w komórce MUSI mieścić się między separatorami `│`. Jeśli tekst jest dłuższy niż kolumna, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć tekst w tabeli, a szczegóły przenieś pod tabelę. Przed wysłaniem sprawdź wizualnie, czy prawa ramka tabeli jest równa w każdym wierszu.
 
 **Następny krok:** [co Orkiestrator powinien zrobić, np. "Wklej powyższy prompt do Klaudiusza" / "Zatwierdź kolejność batchy" / "Zdecyduj czy #3 robimy teraz czy później"]
 ```

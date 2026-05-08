@@ -199,19 +199,26 @@ DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 
 ## Wyjaśnienie dla Orkiestratora
 
-Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sortowana od najważniejszego). Tabela ma być pisana prostym językiem, tak żeby Orkiestrator od razu rozumiał co się stało, po co to robimy i jaka decyzja jest potrzebna:
+Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sortowana od najważniejszego). Tabela ma być pisana prostym językiem, tak żeby Orkiestrator od razu rozumiał co się stało, po co to robimy i jaka decyzja jest potrzebna.
+
+Format jest blokujący:
+- maksymalnie 4 kolumny;
+- nie używać szerokiego układu `# / Obecnie / Zmiana / Wpływ / Ryzyko`;
+- preferować `# / Temat / Co to znaczy / Co dalej`;
+- komórka maks. ok. 24 znaki; dłuższe uzasadnienie idzie pod tabelą;
+- prawa ramka `│` musi być równa w każdym wierszu.
 
 ```
-┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
-│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
-├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
-│ 1   │ [krótko]          │ [krótko]           │ [krótko]          │ niskie  │
-└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
+│ #   │ Temat              │ Co to znaczy           │ Co dalej               │
+├─────┼────────────────────┼────────────────────────┼────────────────────────┤
+│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Klaudiusza    │
+└─────┴────────────────────┴────────────────────────┴────────────────────────┘
 ```
 
 Komórki tabeli mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Unikaj skrótów typu "OK", "gotowe", "niskie" bez kontekstu. Długie opisy, uzasadnienia i szczegóły techniczne idą pod tabelą jako zwykły tekst.
 
-**Reguła szerokości kolumn:** tekst w każdej komórce musi mieścić się w wyznaczonej szerokości kolumny. Jeśli tekst jest za długi, agent zawija go do kolejnej fizycznej linii tej samej komórki albo skraca wpis w tabeli i przenosi szczegóły pod tabelę. Prawa ramka tabeli musi być równa w każdym wierszu.
+Nie zawijaj długich zdań wewnątrz komórki. Skróć komórkę i przenieś szczegóły pod tabelę.
 
 Pod tabelą — pytanie decyzyjne do Orkiestratora (np. "Czy zatwierdzasz? Zaczynamy?").
 

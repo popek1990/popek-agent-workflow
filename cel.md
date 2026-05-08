@@ -42,7 +42,7 @@ Po zielonych testach Klaudiusz **sam** pushuje, rebuilduje Dockera i robi health
 
 Każdy agent kończy odpowiedź dwoma rzeczami:
 
-1. **Tabela "Dla Orkiestratora"** — proste streszczenie zmian (obecne zachowanie / propozycja / wpływ / ryzyko)
+1. **Tabela "Dla Orkiestratora"** — proste streszczenie zmian w układzie maks. 4 kolumn, najlepiej: temat / znaczenie / następny krok
 2. **Pytanie decyzyjne** — np. "Czy zatwierdzasz? Wklej do drugiego agenta?"
 
 Tę tabelę czytam zamiast szczegółów technicznych — wystarcza do podjęcia decyzji.
