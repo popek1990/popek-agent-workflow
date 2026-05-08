@@ -98,9 +98,18 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 
 ## Dla Orkiestratora
 
-| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
-|---|---|---|---|---|
-| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
-| 2 | ... | ... | ... | ... |
+Użyj tekstowej tabeli z ramką Unicode. Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się zmienia, po co to robimy i jaka decyzja jest potrzebna. Komórki mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst.
+
+Reguła szerokości kolumn: każda linia tekstu w komórce musi mieścić się między separatorami `│`. Jeśli tekst jest za długi, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć wpis w tabeli i przenieś szczegóły pod tabelę.
+
+┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
+│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
+├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
+│ 1   │ [jak jest teraz]  │ [co zmieniamy]    │ [co to daje]      │ [krótko]│
+│ 2   │ [jak jest teraz]  │ [co zmieniamy]    │ [co to daje]      │ [krótko]│
+└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+
+Szczegóły:
+[dłuższy opis, jeśli potrzebny]
 
 **Decyzja:** [np. "Czy zatwierdzasz kolejność? Zaczynamy od #1?"]

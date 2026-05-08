@@ -84,8 +84,17 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 ## Dla Orkiestratora
 
-| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
-|---|---|---|---|---|
-| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+Użyj tekstowej tabeli z ramką Unicode. Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się zmienia, po co to robimy i jaka decyzja jest potrzebna. Komórki mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst.
+
+Reguła szerokości kolumn: każda linia tekstu w komórce musi mieścić się między separatorami `│`. Jeśli tekst jest za długi, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć wpis w tabeli i przenieś szczegóły pod tabelę.
+
+┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
+│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
+├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
+│ 1   │ [jak jest teraz]  │ [co zmieniamy]    │ [co to daje]      │ [krótko]│
+└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+
+Szczegóły:
+[dłuższy opis, jeśli potrzebny]
 
 **Decyzja:** [np. "Czy zatwierdzasz ten plan? Czy zaczynamy wdrożenie?"]

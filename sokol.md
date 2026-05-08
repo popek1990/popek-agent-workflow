@@ -1,6 +1,6 @@
 # Instrukcje dla Sokoła (Gemini / Codex)
 
-<!-- workflow-version: 2026.05.07 -->
+<!-- workflow-version: 2026.05.08 -->
 
 ## Twoja rola
 
@@ -384,22 +384,25 @@ Aby uniknąć kolizji w tabeli "Zrobione" — kolumna **Kto** jest OBOWIĄZKOWA 
 
 ## Sekcja "Dla Orkiestratora"
 
-Pod każdą odpowiedzią dodaj tabelę zmian (sortuj od najważniejszego do najmniej ważnego):
+W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unicode (sortuj od najważniejszego do najmniej ważnego). Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się stało, dlaczego to ma znaczenie i jaka decyzja jest potrzebna.
 
 ```
 ---
 **Dla Orkiestratora:**
 
-| # | Obecne zachowanie | Proponowana zmiana | Wpływ na działanie | Ryzyko |
-|---|---|---|---|---|
-| 1 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
-| | | | | |
-| 2 | [jak działa teraz] | [co chcemy zmienić] | [jak będzie działać po zmianie] | [niskie/średnie/wysokie] |
+┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
+│ #   │ Obecnie           │ Zmiana             │ Wpływ             │ Ryzyko  │
+├─────┼───────────────────┼────────────────────┼───────────────────┼─────────┤
+│ 1   │ [krótko]          │ [krótko]           │ [krótko]          │ niskie  │
+│ 2   │ [krótko]          │ [krótko]           │ [krótko]          │ średnie │
+└─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
+
+Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Unikaj skrótów typu "OK", "gotowe", "niskie" bez kontekstu — napisz np. "wdrożenie zakończone", "bez zmian w kodzie", "ryzyko niskie, bo dotyczy tylko dokumentacji".
+
+**Reguła szerokości kolumn (BLOKUJĄCA):** każda linia tekstu w komórce MUSI mieścić się między separatorami `│`. Jeśli tekst jest dłuższy niż kolumna, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć tekst w tabeli, a szczegóły przenieś pod tabelę. Przed wysłaniem sprawdź wizualnie, czy prawa ramka tabeli jest równa w każdym wierszu.
 
 **Następny krok:** [co Orkiestrator powinien zrobić, np. "Wklej powyższy prompt do Klaudiusza" / "Zatwierdź kolejność batchy" / "Zdecyduj czy #3 robimy teraz czy później"]
 ```
-
-Dodawaj pusty wiersz-separator (`| | | | | |`) między każdym taskiem w tabeli — poprawia czytelność przy dłuższych opisach.
 
 W trybie skanowania tabela musi zawierać KAŻDY znaleziony problem/zmianę — Orkiestrator chce widzieć pełny obraz.
 

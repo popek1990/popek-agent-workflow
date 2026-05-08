@@ -177,7 +177,7 @@ DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 
 ## Wyjaśnienie dla Orkiestratora
 
-Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sortowana od najważniejszego):
+Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sortowana od najważniejszego). Tabela ma być pisana prostym językiem, tak żeby Orkiestrator od razu rozumiał co się stało, po co to robimy i jaka decyzja jest potrzebna:
 
 ```
 ┌─────┬───────────────────┬────────────────────┬───────────────────┬─────────┐
@@ -187,7 +187,9 @@ Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sort
 └─────┴───────────────────┴────────────────────┴───────────────────┴─────────┘
 ```
 
-Komórki tabeli mają być krótkie. Długie opisy, uzasadnienia i szczegóły techniczne idą pod tabelą jako zwykły tekst.
+Komórki tabeli mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Unikaj skrótów typu "OK", "gotowe", "niskie" bez kontekstu. Długie opisy, uzasadnienia i szczegóły techniczne idą pod tabelą jako zwykły tekst.
+
+**Reguła szerokości kolumn:** tekst w każdej komórce musi mieścić się w wyznaczonej szerokości kolumny. Jeśli tekst jest za długi, agent zawija go do kolejnej fizycznej linii tej samej komórki albo skraca wpis w tabeli i przenosi szczegóły pod tabelę. Prawa ramka tabeli musi być równa w każdym wierszu.
 
 Pod tabelą — pytanie decyzyjne do Orkiestratora (np. "Czy zatwierdzasz? Zaczynamy?").
 

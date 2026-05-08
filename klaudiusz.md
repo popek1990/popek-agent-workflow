@@ -247,6 +247,8 @@ W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unic
 
 Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie.
 
+**Reguła szerokości kolumn (BLOKUJĄCA):** każda linia tekstu w komórce MUSI mieścić się między separatorami `│`. Jeśli tekst jest dłuższy niż kolumna, zawiń go do kolejnej fizycznej linii tej samej komórki albo skróć tekst w tabeli, a szczegóły przenieś pod tabelę. Przed wysłaniem sprawdź wizualnie, czy prawa ramka tabeli jest równa w każdym wierszu.
+
 **Decyzja:** [pytanie do Orkiestratora, np. "Czy zatwierdzasz? Zaczynamy wdrożenie?"]
 ```
 
