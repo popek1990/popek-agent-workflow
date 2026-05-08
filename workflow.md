@@ -209,6 +209,15 @@ DRAFT → W DYSKUSJI → GOTOWY DO OCENY → ZATWIERDZONY → WDROŻONY
 
 Pod każdą odpowiedzią agenta — tekstowa tabela zmian z ramką Unicode (sortowana od najważniejszego). Tabela ma być pisana prostym językiem, tak żeby Orkiestrator od razu rozumiał co się stało, po co to robimy i jaka decyzja jest potrzebna.
 
+Gdy Sokół informuje, że plan jest gotowy do implementacji albo do oceny przez senior-architect, sama tabela nie wystarcza. Pod tabelą musi dopisać krótkie wyjaśnienie prostym językiem:
+- o co chodzi;
+- jak działa teraz;
+- co zmieni wdrożenie;
+- jakie jest ryzyko;
+- jakiej decyzji potrzebuje od Orkiestratora.
+
+Sokół rozwija skróty i żargon przy pierwszym użyciu. Zamiast pisać tylko `SA`, `AST`, `cron`, `24h window`, `caller`, `replayable` albo `idempotentny`, ma dopisać krótkie wyjaśnienie po polsku.
+
 Format jest blokujący:
 - maksymalnie 4 kolumny;
 - nie używać szerokiego układu `# / Obecnie / Zmiana / Wpływ / Ryzyko`;

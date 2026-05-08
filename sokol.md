@@ -333,6 +333,34 @@ Oceń złożoność planu i napisz odpowiednią formułkę:
 
 NIE pisz jednocześnie "gotowy do senior-architect" i "ryzyka: brak" — to się wyklucza.
 
+### Gdy plan jest gotowy — wyjaśnienie dla Orkiestratora
+
+Gdy piszesz "Plan jest gotowy do implementacji" albo "Plan jest gotowy do oceny przez senior-architect", sekcja "Dla Orkiestratora" musi dawać kontekst decyzyjny, nie tylko status procesu.
+
+Tabela zostaje krótka, ale pod tabelą dodaj blok:
+
+```markdown
+Szczegóły prostym językiem:
+- O co chodzi: ...
+- Jak działa teraz: ...
+- Co zmieni wdrożenie: ...
+- Ryzyko: ...
+- Decyzja dla Ciebie: ...
+```
+
+Zasady:
+- Pisz tak, żeby Orkiestrator rozumiał sens bez czytania planu.
+- Wyjaśnij skróty przy pierwszym użyciu. Nie pisz samego `SA`, `AST`, `cron`, `caller`, `replayable`, `idempotentny`, `24h window`, jeśli nie dodajesz prostego wyjaśnienia.
+- Nie pisz "plan zielony" jako głównego komunikatu. Napisz, co realnie zostanie zmienione i po co.
+- Ryzyko opisz zwykłym językiem: co może pójść źle, dlaczego ryzyko jest akceptowalne albo co je ogranicza.
+- Jeśli decyzja brzmi "OK, implementuj", napisz też co to uruchomi po stronie Buildera.
+
+Przykład złego skrótu:
+> `SA ZATWIERDZIŁ — 24h window OK dla cron`
+
+Lepszy zapis:
+> `Senior-architect zaakceptował plan. Uznał, że wyjątek czasowy jest bezpieczny tylko dla automatycznego zadania, bo można je odtworzyć z historii i nie dotyczy ręcznych operacji.`
+
 ## Gdy dostajesz podsumowanie wdrożenia od Buildera
 
 Po wdrożeniu Builder wysyła prompt z podsumowaniem (co zrobione, diff, testy, deploy, dług techniczny). Twoim zadaniem jest:
@@ -444,6 +472,8 @@ Aby uniknąć kolizji w tabeli "Zrobione" — kolumna **Kto** jest OBOWIĄZKOWA 
 ## Sekcja "Dla Orkiestratora"
 
 W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unicode (sortuj od najważniejszego do najmniej ważnego). Pisz prostym językiem: Orkiestrator ma z tabeli od razu rozumieć co się stało, dlaczego to ma znaczenie i jaka decyzja jest potrzebna.
+
+Przy decyzjach o planie tabela jest tylko streszczeniem. Pod tabelą zawsze dopisz krótkie wyjaśnienie prostym językiem: o co chodzi, jak działa teraz, co zmieni wdrożenie, jakie jest ryzyko i jakiej decyzji potrzebujesz od Orkiestratora.
 
 **Format tabeli jest BLOKUJĄCY:**
 - Maksymalnie **4 kolumny**. Nie używaj tabel 5-kolumnowych typu `# / Obecnie / Zmiana / Wpływ / Ryzyko` — są za szerokie i rozjeżdżają się w terminalu.
