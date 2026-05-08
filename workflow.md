@@ -103,6 +103,22 @@ Klaudiusz NIE implementuje — zamiast tego:
 ### 3. Iteracja
 Orkiestrator kopiuje prompt do Sokoła. Proces się powtarza aż oba agenty są zadowolone z planu.
 
+### 3a. Wyróżnienie promptów
+Gotowe prompty między agentami mają się wyróżniać na zielono w terminalu, żeby Orkiestrator od razu widział blok do skopiowania.
+
+Zasada:
+- zielony kolor stosujemy do linii start/koniec promptu;
+- sama treść promptu zostaje czystym tekstem, bez kodów ANSI;
+- jeśli terminal nie renderuje kolorów, agent używa prefiksu `🟩 PROMPT DLA ...`.
+
+Format:
+
+```text
+\033[0;32m--- PROMPT DLA [SOKOŁA/KLAUDIUSZA] — SKOPIUJ PONIŻEJ ---\033[0m
+[treść promptu czystym tekstem]
+\033[0;32m--- KONIEC PROMPTU DLA [SOKOŁA/KLAUDIUSZA] ---\033[0m
+```
+
 **Zasada 3 rund ping-pongu:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Agenty eskalują do Orkiestratora z podsumowaniem stanowisk i pytaniem decyzyjnym.
 
 ### 4. Zatwierdzenie

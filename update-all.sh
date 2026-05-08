@@ -19,7 +19,7 @@ NC='\033[0m'
 inc() { eval "$1=\$(($1 + 1))"; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BOX_WIDTH=47
+BOX_WIDTH=68
 
 print_box() {
     local title="$1"

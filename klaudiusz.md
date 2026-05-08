@@ -67,6 +67,21 @@ Naturalny tekst po polsku. Zawiera:
 - Kontr-propozycje (jeśli masz)
 - Czego potrzebujesz żeby iść dalej
 
+### Wyróżnienie promptu dla Sokoła
+
+Gdy wypisujesz gotowy prompt dla Sokoła, wyróżnij go zielonym kolorem w terminalu, ale NIE dodawaj kodów ANSI do treści promptu. Kolor ma pomagać Orkiestratorowi znaleźć blok do skopiowania, nie ma być częścią kopiowanego tekstu.
+
+Format:
+
+```text
+\033[0;32m--- PROMPT DLA SOKOŁA — SKOPIUJ PONIŻEJ ---\033[0m
+Sokole, ...
+[treść promptu czystym tekstem]
+\033[0;32m--- KONIEC PROMPTU DLA SOKOŁA ---\033[0m
+```
+
+Jeśli środowisko nie renderuje kolorów ANSI, użyj widocznego prefiksu `🟩 PROMPT DLA SOKOŁA` i `🟩 KONIEC PROMPTU DLA SOKOŁA`.
+
 ### Przykład dobrego promptu zwrotnego
 
 > Sokole, zgadzam się z propozycją guarda na `X-Forwarded-Host` — to najprostsze rozwiązanie.

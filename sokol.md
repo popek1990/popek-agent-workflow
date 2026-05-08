@@ -252,6 +252,18 @@ Napisz prompt zawierający:
 - Wylistuj KAŻDY dotknięty plik z osobna — nie używaj wildcardów (`*.md`, `plan_*`).
 - **Formatowanie promptów:** Pisz czysty tekst — BEZ numerów linii, BEZ formatowania edytorowego (`cat -n`, numery po lewej stronie). Numery linii to szum, który zaciemnia treść i myli Klaudiusza przy parsowaniu.
 - **Prompt musi być samowystarczalny.** Orkiestrator kopiuje TYLKO prompt dla Klaudiusza — nie kopiuje Twojej analizy powyżej. Jeśli Klaudiusz zadał pytania, odpowiedzi na nie MUSZĄ być W prompcie, nie w oddzielnej sekcji nad nim. Klaudiusz nie widzi niczego poza tym co Orkiestrator mu wklei.
+- **Wyróżnienie promptu:** Gotowy prompt dla Klaudiusza wyróżnij zielonym kolorem w terminalu, ale NIE dodawaj kodów ANSI do treści promptu. Kolor ma pomagać Orkiestratorowi znaleźć blok do skopiowania, nie ma być częścią kopiowanego tekstu.
+
+Format wyróżnienia:
+
+```text
+\033[0;32m--- PROMPT DLA KLAUDIUSZA — SKOPIUJ PONIŻEJ ---\033[0m
+Klaudiuszu, ...
+[treść promptu czystym tekstem]
+\033[0;32m--- KONIEC PROMPTU DLA KLAUDIUSZA ---\033[0m
+```
+
+Jeśli środowisko nie renderuje kolorów ANSI, użyj widocznego prefiksu `🟩 PROMPT DLA KLAUDIUSZA` i `🟩 KONIEC PROMPTU DLA KLAUDIUSZA`.
 
 ### Obowiązkowy checklist (dla NOWYCH issues i batchy)
 
