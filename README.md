@@ -9,6 +9,7 @@ Dwóch agentów AI pracuje na tym samym repo. Jeden pisze kod, drugi go sprawdza
 - [Po co to](#po-co-to)
 - [Agenty](#agenty)
 - [Jak to działa](#jak-to-działa)
+- [Najważniejsze zasady](#najważniejsze-zasady)
 - [Wymagania](#wymagania)
 - [Instalacja](#instalacja)
 - [Co tworzy install.sh](#co-tworzy-installsh-w-projekcie-docelowym)
@@ -30,13 +31,15 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 - Pamięć decyzji w `MD/memory.md` (zrobione + odrzucone z uzasadnieniem)
 - Auto-deploy po zielonych testach (push + docker rebuild + healthcheck)
 - Tabelę "Dla Orkiestratora" pod każdą odpowiedzią agenta — proste streszczenie dla człowieka
+- Czytelne podsumowania planów: co działa teraz, co zmieni wdrożenie, jakie jest ryzyko i jaka decyzja jest potrzebna
+- Higienę kontekstu: `/compact` albo nowa sesja dopiero po zamkniętej fazie pracy, nie po każdym małym kroku
 
 ## Agenty
 
 | Agent | Narzędzie | Rola |
 |-------|-----------|------|
 | **Builder** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
-| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie. Domyślnie nie pushuje, ale może to zrobić na wyraźne polecenie Orkiestratora |
+| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie i Blind Audit. Domyślnie nie pushuje, ale może to zrobić na wyraźne polecenie Orkiestratora |
 | **Orkiestrator** | Ty | Kopiujesz prompty, podejmujesz decyzje, dajesz zielone światło |
 
 ## Jak to działa
@@ -60,6 +63,42 @@ Sokół: Blind Audit (weryfikuje diff, finalizację) → wskazuje kolejne issue
   ↓
 Cykl się powtarza
 ```
+
+## Najważniejsze zasady
+
+### Builder najpierw planuje, potem wdraża
+
+Builder nie zaczyna od kodu. Najpierw tworzy plan w `MD/plans/`, ocenia propozycję Sokoła i pisze prompt zwrotny. Implementacja zaczyna się dopiero po zielonym świetle Orkiestratora.
+
+Po zielonych testach Builder sam robi commit, push, rebuild Dockera i healthcheck. To jest świadome uproszczenie procesu: Orkiestrator zatwierdza wdrożenie raz, a Builder kończy je do końca.
+
+### Sokół ma domyślny zakres, nie absolutne zakazy
+
+Sokół standardowo zajmuje się analizą, planowaniem, review i Blind Auditem. Testy, Docker, commit i push zostawia Builderowi.
+
+To nie jest twardy zakaz. Jeśli Orkiestrator wyraźnie poprosi Sokoła o push, commit, testy, Dockera albo aktualizację tracking docs, Sokół może to zrobić. Ma wtedy opisać ryzyko prostym językiem i nie używać destrukcyjnych operacji typu `git push --force` bez osobnego, jednoznacznego polecenia.
+
+### Raporty mają być zrozumiałe dla Orkiestratora
+
+Tabela "Dla Orkiestratora" ma być krótka, ale nie może być samym żargonem. Gdy Sokół pisze, że plan jest gotowy, pod tabelą musi dopisać prostym językiem:
+
+- o co chodzi;
+- jak działa teraz;
+- co zmieni wdrożenie;
+- jakie jest ryzyko;
+- jakiej decyzji potrzebuje od Orkiestratora.
+
+Sokół rozwija skróty i techniczne pojęcia przy pierwszym użyciu. Zamiast pisać tylko `SA`, `AST`, `cron`, `24h window`, `caller`, `replayable` albo `idempotentny`, dopisuje krótkie wyjaśnienie po polsku.
+
+Sokół nie powinien rutynowo dodawać sekcji "Czego NIE zrobiłem". Pominiętą czynność wymienia tylko wtedy, gdy blokuje następny krok, była przedmiotem pytania Orkiestratora albo wymaga decyzji.
+
+### `/compact` albo nowa sesja dopiero po fazie
+
+Duży kontekst jest normalnym trybem pracy. Agent nie sugeruje `/compact` ani nowej sesji po analizie, planie, pojedynczym issue albo zwykłym przejściu między implementacją i testami.
+
+Sugestia pojawia się dopiero po zamknięciu nazwanej fazy pracy, na przykład `Faza 5`, `P1 hardening 1/2`, paczki ID typu `F-015`-`F-019` albo bloku tematycznego `Silent failures + Observability`.
+
+Jeśli środowisko wspiera `/compact` (Claude albo Gemini/Sokół), a temat pozostaje ten sam, preferowany jest `/compact`. Nowa sesja ma sens głównie wtedy, gdy zaczyna się osobna faza, inny moduł albo niezależny temat.
 
 ## Wymagania
 
@@ -151,6 +190,8 @@ Konkretny flow w nowym projekcie. Pokazuje kto co mówi, czego oczekiwać.
 
 **Krok 4 — Ty kopiujesz odpowiedź Buildera do Sokoła.** Sokół potwierdza ("Plan jest gotowy do implementacji.") lub kontruje. Ping-pong trwa max 3 rundy.
 
+Gdy Sokół potwierdza gotowość planu, powinien dopisać pod tabelą ludzkie wyjaśnienie: co dokładnie zmieni wdrożenie, jak działa obecny stan, jakie jest ryzyko i jakiej decyzji potrzebuje od Ciebie.
+
 **Krok 5 — Ty dajesz zielone światło Builderowi:** *"OK, wdrażaj."*
 
 **Krok 6 — Builder wdraża sam:** wywołuje `security-reviewer` na kodzie, puszcza testy, robi `git push`, `docker compose up -d --build`, healthcheck, aktualizuje `MD/memory.md` + `MD/TODO.md` + przenosi plan do `MD/archive/`. Kończy promptem zwrotnym dla Sokoła z dowodem (link do commitu).
@@ -206,6 +247,9 @@ Najczęstsze sytuacje brzegowe — pełne odpowiedzi w `workflow.md` → sekcja 
 
 **`MD/issues_sokol.md` puchnie do 200+ wierszy**
 → Sokół przenosi `FIXED` / `WONTFIX` do `MD/issues_sokol_archive.md`. Aktywny plik trzyma tylko `OPEN` / `IN_PROGRESS`.
+
+**Sokół pisze zbyt technicznie albo wypisuje "czego nie zrobił"**
+→ Wklej mu odpowiedź z powrotem i poproś: "Napisz to dla Orkiestratora prostym językiem: o co chodzi, jak działa teraz, co się zmieni, jakie jest ryzyko i jaka decyzja jest potrzebna". Aktualne instrukcje wymagają takiego stylu.
 
 **Sokół zasugerował agenta którego nie ma w `agents_catalog.md`**
 → Builder nie wywołuje "podobnego" na ślepo. W prompcie zwrotnym pyta Sokoła o poprawioną sugestię z faktycznie istniejących agentów.
