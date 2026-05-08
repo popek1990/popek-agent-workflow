@@ -19,6 +19,31 @@ NC='\033[0m'
 inc() { eval "$1=\$(($1 + 1))"; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BOX_WIDTH=47
+
+print_box() {
+    local title="$1"
+    local title_len=${#title}
+    local padding=$((BOX_WIDTH - title_len))
+    local left=0
+    local right=0
+    local border
+
+    if [ "$padding" -lt 0 ]; then
+        title="${title:0:$BOX_WIDTH}"
+        title_len=${#title}
+        padding=0
+    fi
+
+    left=$((padding / 2))
+    right=$((padding - left))
+    printf -v border '%*s' "$BOX_WIDTH" ''
+    border=${border// /═}
+
+    echo -e "${BOLD}${CYAN}╔${border}╗${NC}"
+    printf "%b║%*s%s%*s║%b\n" "${BOLD}${CYAN}" "$left" "" "$title" "$right" "" "${NC}"
+    echo -e "${BOLD}${CYAN}╚${border}╝${NC}"
+}
 
 VERBOSE=false
 for arg in "$@"; do
@@ -47,9 +72,7 @@ PROJECTS=(
 
 # --- Header ---
 echo ""
-echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${CYAN}║  🔄 Update All — Popek Agent Workflow       ║${NC}"
-echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════╝${NC}"
+print_box "Update All — Popek Agent Workflow"
 echo ""
 if $VERBOSE; then
     echo -e "  ${DIM}Projekty: ${#PROJECTS[@]}  │  Tryb: --force --verbose${NC}"
@@ -133,9 +156,7 @@ done
 
 # --- Podsumowanie ---
 echo ""
-echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${CYAN}║  📊 Podsumowanie                            ║${NC}"
-echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════╝${NC}"
+print_box "Podsumowanie"
 echo ""
 
 if $VERBOSE; then
