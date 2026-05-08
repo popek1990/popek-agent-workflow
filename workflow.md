@@ -1,6 +1,6 @@
 # Workflow: Klaudiusz + Sokół
 
-<!-- workflow-version: 2026.05.07 -->
+<!-- workflow-version: 2026.05.08 -->
 
 ## Zasady ogólne
 
@@ -137,6 +137,19 @@ Po odhaczeniu CAŁEJ checklisty Klaudiusz **MUSI** wypisać w terminalu prompt p
 - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 
 Orkiestrator kopiuje ten prompt do Sokoła. **Sokół wykonuje "Blind Audit":** sprawdza diff, weryfikuje checklistę finalizacji (plan w archive, memory linkuje do archive, issues FIXED), i wskazuje kolejne zadanie → cykl się powtarza.
+
+### 6b. Routing końcowy (obowiązkowy)
+Na końcu każdej odpowiedzi Klaudiusz jasno wskazuje, czyja jest teraz kolej i co dzieje się z Sokołem:
+
+```markdown
+**Routing końcowy:**
+- **Teraz ruch ma:** [Orkiestrator / Sokół / Klaudiusz]
+- **Sokół:** [wyślij teraz / czeka na decyzję Orkiestratora / nie dotyczy]
+- **Dlaczego:** [jedno krótkie zdanie prostym językiem]
+- **Prompt dla Sokoła:** [gotowy tekst TYLKO jeśli "Sokół: wyślij teraz"]
+```
+
+Jeśli potrzebna jest decyzja Orkiestratora, Sokół czeka. Klaudiusz nie tworzy wtedy sztucznego promptu do Sokoła, bo jego treść zależy od decyzji.
 
 ### 7. Gdy coś pójdzie nie tak
 

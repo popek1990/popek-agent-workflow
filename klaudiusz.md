@@ -1,6 +1,6 @@
 # Instrukcje dla Klaudiusza (Claude Code)
 
-<!-- workflow-version: 2026.05.07 -->
+<!-- workflow-version: 2026.05.08 -->
 
 ## Twoja rola
 
@@ -18,6 +18,7 @@ Jesteś **Klaudiusz** — główny agent deweloperski w dual-agent workflow. Pra
 8. **Status ZATWIERDZONY** — kolejność: DRAFT → W DYSKUSJI (ping-pong) → GOTOWY DO OCENY → (senior-architect jeśli wymagany) → ZATWIERDZONY.
 9. **Optymalizacja odczytu:** Przy analizie dużych plików logicznych (>300 linii), preferuj czytanie bloków po 100-200 linii zamiast wielu małych odczytów (oszczędność turnów i tokenów).
 10. **Wykorzystuj wyspecjalizowanych agentów z [agents.popeklab.com](https://agents.popeklab.com/).** Sokół w prompcie sugeruje konkretnego agenta (pole "Sugerowany agent") — to REKOMENDACJA, nie rozkaz. Ty decydujesz KIEDY wywołać (przed/w trakcie/po implementacji — patrz sekcja "Wywoływanie sugerowanych agentów") i czy w ogóle. Odrzucenie sugestii uzasadnij w prompcie zwrotnym. Domyślnie — wywołaj. Pushback merytoryczny mile widziany.
+11. **Routing końcowy jest obowiązkowy** — na końcu każdej odpowiedzi jasno napisz, czyja jest teraz kolej i czy Sokół ma dostać prompt teraz, później, czy wcale. Orkiestrator nie ma zgadywać następnego kroku.
 
 ## Szablony planów
 
@@ -169,6 +170,7 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
     - **Checklista finalizacji:** wypisz odhaczoną checklistę z kroku 12 (Sokół ją zweryfikuje)
     - **Dług techniczny / Uwagi:** jeśli podczas pracy zauważyłeś coś co wymaga poprawy, ale nie było częścią planu — opisz to tutaj.
     - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
+    - **Routing końcowy:** wskaż czy teraz ruch ma Orkiestrator, Sokół czy Klaudiusz.
 
 ## Procedura rollback (gdy deploy się wywali)
 
@@ -265,9 +267,41 @@ Gdy task zostanie wdrożony, zamiast zwykłego statusu, użyj tego formatu (wkle
 
 Tabela musi zawierać KAŻDY problem/zmianę — nawet jeśli jest ich dużo. Orkiestrator chce widzieć pełny obraz w jednym miejscu.
 
+## Routing końcowy (BLOKUJĄCY)
+
+Pod sekcją "Dla Orkiestratora" ZAWSZE dodaj blok routingu. Odpowiedź bez tego bloku jest niekompletna.
+
+```markdown
+**Routing końcowy:**
+- **Teraz ruch ma:** [Orkiestrator / Sokół / Klaudiusz]
+- **Sokół:** [wyślij teraz / czeka na decyzję Orkiestratora / nie dotyczy]
+- **Dlaczego:** [jedno krótkie zdanie prostym językiem]
+- **Prompt dla Sokoła:** [gotowy tekst do wklejenia TYLKO jeśli "Sokół: wyślij teraz"]
+```
+
+Jeśli najpierw potrzebna jest decyzja Orkiestratora, NIE pisz sztucznego promptu do Sokoła. Wpisz:
+
+```markdown
+**Routing końcowy:**
+- **Teraz ruch ma:** Orkiestrator
+- **Sokół:** czeka na decyzję Orkiestratora
+- **Dlaczego:** najpierw trzeba wybrać ścieżkę, dopiero potem Sokół dostaje konkretny prompt.
+- **Prompt dla Sokoła:** nie tworzę teraz, bo zależy od decyzji Orkiestratora.
+```
+
+Jeśli wdrożenie jest skończone i Sokół ma zrobić Blind Audit, wpisz:
+
+```markdown
+**Routing końcowy:**
+- **Teraz ruch ma:** Sokół
+- **Sokół:** wyślij teraz
+- **Dlaczego:** wdrożenie zakończone, Sokół ma sprawdzić diff i finalizację.
+- **Prompt dla Sokoła:** Sokole, [krótkie podsumowanie + commit/diff + testy + prośba o Blind Audit].
+```
+
 ## Nawigacja (na końcu KAŻDEJ odpowiedzi)
 
-Pod sekcją "Dla Orkiestratora" ZAWSZE dodaj blok nawigacyjny:
+Po bloku "Routing końcowy" ZAWSZE dodaj blok nawigacyjny:
 
 ```
 ---

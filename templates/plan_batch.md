@@ -93,6 +93,7 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 - [ ] `MD/TODO.md` → taski oznaczone jako DONE
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
 - [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
+- [ ] Prompt zwrotny zawiera "Routing końcowy" — wiadomo czyja jest kolej i czy Sokół dostaje prompt teraz
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego batcha]
 
 ## Dla Orkiestratora

@@ -79,6 +79,7 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 - [ ] `MD/TODO.md` → task oznaczony jako DONE
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
 - [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
+- [ ] Prompt zwrotny zawiera "Routing końcowy" — wiadomo czyja jest kolej i czy Sokół dostaje prompt teraz
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego planu]
 
 ## Dla Orkiestratora
