@@ -129,6 +129,36 @@ normalize_stale_workflow_prefix_lines() {
         -e 's/Builder \(Claude\)/Builder (Codex)/g'
 }
 
+# Starsze projekty mogły mieć ręcznie doklejone reguły Buildera w CLAUDE.md
+# bez nagłówka "# Instrukcje dla ...". Zachowujemy mapę projektu, ale wycinamy
+# taki osadzony blok workflow, żeby Claude/Gemini nie dostawał sprzecznej roli.
+strip_legacy_embedded_workflow() {
+    awk '
+        /^## Reguły zawsze obowiązujące[[:space:]]*$/ {
+            skip_rules = 1
+            next
+        }
+
+        skip_rules && /^<important if=/ {
+            skip_rules = 0
+        }
+
+        skip_rules {
+            next
+        }
+
+        /^<important if="you just received a prompt from Sokół \(or are creating\/discussing a plan\)">/ {
+            exit
+        }
+
+        /^# Instrukcje dla / {
+            exit
+        }
+
+        { print }
+    '
+}
+
 # --- Funkcja: podmień / wstaw blok workflow w pliku (idempotentnie, z deduplikacją wsteczną) ---
 #
 # Strategia (deterministyczna, niezależna od odstępów):
@@ -162,12 +192,12 @@ update_file() {
 
     if [ -n "$header_line" ]; then
         if [ "$header_line" -gt 1 ]; then
-            head -n $((header_line - 1)) "$file" | strip_trailing_blanks | normalize_stale_workflow_prefix_lines | strip_stale_workflow_role_lines > "$tmp"
+            head -n $((header_line - 1)) "$file" | strip_legacy_embedded_workflow | strip_trailing_blanks | normalize_stale_workflow_prefix_lines | strip_stale_workflow_role_lines > "$tmp"
         fi
         # header_line == 1 → tmp pozostaje pusty (cały plik to workflow)
     else
         # Brak nagłówka workflow — zachowaj całą dotychczasową treść użytkownika
-        strip_trailing_blanks < "$file" | normalize_stale_workflow_prefix_lines | strip_stale_workflow_role_lines > "$tmp"
+        strip_legacy_embedded_workflow < "$file" | strip_trailing_blanks | normalize_stale_workflow_prefix_lines | strip_stale_workflow_role_lines > "$tmp"
     fi
 
     if [ -s "$tmp" ]; then
@@ -482,6 +512,7 @@ smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CL
 smoke_check "CLAUDE.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' CLAUDE.md 2>/dev/null)\" = '1' ]"
 smoke_check "CLAUDE.md zawiera dokładną rolę Sokoła" "grep -qF 'Jesteś **Sokół**' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md nie zawiera starej roli Buildera" "! grep -qF 'Jesteś **Builder**' CLAUDE.md 2>/dev/null"
+smoke_check "CLAUDE.md nie zawiera starego workflow Buildera" "! grep -qF 'Workflow planu — gdy dostajesz prompt od Sokoła' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md istnieje"                    "[ -f GEMINI.md ]"
 smoke_check "GEMINI.md zawiera marker workflow"     "grep -qF '## Twoja rola' GEMINI.md 2>/dev/null"
 smoke_check "GEMINI.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' GEMINI.md 2>/dev/null)\" = '1' ]"

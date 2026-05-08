@@ -91,6 +91,7 @@ check "install.sh kopiuje templates/plan_single.md"  "grep -qF 'plan_single.md' 
 check "install.sh kopiuje templates/plan_batch.md"   "grep -qF 'plan_batch.md' install.sh"
 check "install.sh tworzy MD/archive"           "grep -qE 'mkdir -p MD/archive' install.sh"
 check "install.sh tworzy MD/TODO.md"           "grep -qF 'MD/TODO.md' install.sh"
+check "install.sh usuwa stare osadzone workflow" "grep -qF 'strip_legacy_embedded_workflow' install.sh"
 
 echo ""
 echo "▸ Spójność reguł (kanoniczne źródła)"

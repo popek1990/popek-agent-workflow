@@ -109,7 +109,7 @@ Gdy w tym repo pojawią się nowe wersje `builder.md` / `sokol.md`, podmienisz j
 bash /tmp/workflow/install.sh /ścieżka/do/projektu --force
 ```
 
-`--force` podmienia tylko **bloki workflow** (od nagłówka `# Instrukcje dla ...` do końca pliku) — ręcznie dopisana treść projektu nad tym blokiem zostaje nietknięta. Skrypt usuwa też duplikaty nagłówka, jeśli wcześniejsze wersje skryptu pozostawiły jakieś szczątki.
+`--force` podmienia **bloki workflow** (od nagłówka `# Instrukcje dla ...` do końca pliku) — ręcznie dopisana treść projektu nad tym blokiem zostaje nietknięta. Skrypt usuwa też duplikaty nagłówka i starsze osadzone sekcje workflow Buildera w `CLAUDE.md`, które nie miały jeszcze nagłówka `# Instrukcje dla ...`.
 
 **Pominięcie bezpieczne:** jeśli `--force` wykryje, że workflow nigdy nie był zainstalowany w tym projekcie (brak markerów `## Twoja rola` w żadnym pliku) — pomija projekt. Ochrona przed przypadkowym nadpisaniem cudzego CLAUDE.md.
 
