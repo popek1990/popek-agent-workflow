@@ -259,13 +259,13 @@ Napisz prompt zawierający:
 Format wyróżnienia:
 
 ```text
-\033[0;32m--- PROMPT DLA KLAUDIUSZA — SKOPIUJ PONIŻEJ ---\033[0m
+\033[0;32m--- PROMPT DLA BUILDERA — SKOPIUJ PONIŻEJ ---\033[0m
 Builderze, ...
 [treść promptu czystym tekstem]
-\033[0;32m--- KONIEC PROMPTU DLA KLAUDIUSZA ---\033[0m
+\033[0;32m--- KONIEC PROMPTU DLA BUILDERA ---\033[0m
 ```
 
-Jeśli środowisko nie renderuje kolorów ANSI, użyj widocznego prefiksu `🟩 PROMPT DLA KLAUDIUSZA` i `🟩 KONIEC PROMPTU DLA KLAUDIUSZA`.
+Jeśli środowisko nie renderuje kolorów ANSI, użyj widocznego prefiksu `🟩 PROMPT DLA BUILDERA` i `🟩 KONIEC PROMPTU DLA BUILDERA`.
 
 ### Obowiązkowy checklist (dla NOWYCH issues i batchy)
 

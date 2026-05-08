@@ -114,9 +114,9 @@ Zasada:
 Format:
 
 ```text
-\033[0;32m--- PROMPT DLA [SOKOŁA/KLAUDIUSZA] — SKOPIUJ PONIŻEJ ---\033[0m
+\033[0;32m--- PROMPT DLA [SOKOŁA/BUILDERA] — SKOPIUJ PONIŻEJ ---\033[0m
 [treść promptu czystym tekstem]
-\033[0;32m--- KONIEC PROMPTU DLA [SOKOŁA/KLAUDIUSZA] ---\033[0m
+\033[0;32m--- KONIEC PROMPTU DLA [SOKOŁA/BUILDERA] ---\033[0m
 ```
 
 **Zasada 3 rund ping-pongu:** Jeśli po 3 rundach ping-pongu nie ma konsensusu — STOP. Agenty eskalują do Orkiestratora z podsumowaniem stanowisk i pytaniem decyzyjnym.

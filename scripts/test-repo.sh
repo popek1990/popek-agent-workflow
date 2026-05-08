@@ -99,6 +99,9 @@ check "builder.md ma kanoniczną checklistę finalizacji" \
     "grep -qF 'Checklista finalizacji (BLOKUJĄCA)' builder.md"
 check "workflow.md linkuje do builder.md jako kanonicznej" \
     "grep -qF 'builder.md' workflow.md"
+OLD_AGENT_NAME_PATTERN='KLAUD[I]USZ|Klaud[i]u|Cla[u]diu'
+check "kanoniczne źródła nie zawierają starej nazwy agenta" \
+    "! grep -RqiE \"$OLD_AGENT_NAME_PATTERN\" builder.md sokol.md workflow.md README.md templates"
 
 echo ""
 echo "▸ README — pliki wymienione w tabeli istnieją"
