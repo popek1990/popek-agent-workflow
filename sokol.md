@@ -403,7 +403,10 @@ W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unic
 **Format tabeli jest BLOKUJĄCY:**
 - Maksymalnie **4 kolumny**. Nie używaj tabel 5-kolumnowych typu `# / Obecnie / Zmiana / Wpływ / Ryzyko` — są za szerokie i rozjeżdżają się w terminalu.
 - Preferowany układ: `# / Temat / Co to znaczy / Co dalej`.
-- Każda komórka ma mieć maksymalnie ok. 24 znaki. Jeśli tekst jest dłuższy, skróć komórkę i przenieś szczegóły pod tabelę.
+- Kolumny treści mają mieć **maksymalnie ok. 18 znaków tekstu**. Jeśli tekst jest dłuższy, skróć komórkę i przenieś szczegóły pod tabelę.
+- W każdej komórce zostaw **minimum 2 spacje luzu** przed prawą ramką `│`. Jeśli tekst dotyka ramki albo wymaga wyrównywania "na oko" — skróć go.
+- Nie dodawaj osobnej kolumny `Ryzyko`. Ryzyko wpisz krótko w `Co to znaczy` albo pod tabelą.
+- Nie używaj backticków w komórkach tabeli. Kod, ścieżki i dłuższe nazwy przenieś pod tabelę.
 - Nie zawijaj długich zdań wewnątrz komórki. Tabela ma być szybkim spisem, a pełne wyjaśnienie idzie pod nią.
 - Przed wysłaniem sprawdź wizualnie, czy prawa ramka `│` jest równa w każdym wierszu.
 
@@ -411,12 +414,12 @@ W każdej odpowiedzi umieść tabelę zmian jako tekstową tabelę z ramką Unic
 ---
 **Dla Orkiestratora:**
 
-┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
-│ #   │ Temat              │ Co to znaczy           │ Co dalej               │
-├─────┼────────────────────┼────────────────────────┼────────────────────────┤
-│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Buildera      │
-│ 2   │ Ścieżki contextu   │ Trzeba zablokować `..` │ Dodać walidację        │
-└─────┴────────────────────┴────────────────────────┴────────────────────────┘
+┌─────┬──────────────────┬──────────────────┬──────────────────┐
+│ #   │ Temat            │ Co to znaczy     │ Co dalej         │
+├─────┼──────────────────┼──────────────────┼──────────────────┤
+│ 1   │ Faza 2           │ Wymaga poprawki  │ Wklej prompt     │
+│ 2   │ Ścieżki          │ Blokada działa   │ Dodać testy      │
+└─────┴──────────────────┴──────────────────┴──────────────────┘
 
 Dłuższe opisy, uzasadnienia i szczegóły techniczne wpisz pod tabelą jako zwykły tekst. Komórki tabeli mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Unikaj skrótów typu "OK", "gotowe", "niskie" bez kontekstu — napisz np. "wdrożenie zakończone", "bez zmian w kodzie", "ryzyko niskie, bo dotyczy tylko dokumentacji".
 

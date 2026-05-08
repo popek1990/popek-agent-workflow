@@ -8,7 +8,15 @@
 # Local agent instructions — not tracked in git
 CLAUDE.md
 
-# Local diagnostic scripts — not part of the template
+# Local diagnostic scripts — not installed into target projects
 scripts/*
-# Wyjątek: notify.sh jest częścią template'u (kopiowany przez install.sh)
+# Wyjątek: notify.sh jest częścią template'u (kopiowany przez install.sh).
 !scripts/notify.sh
+# Wyjątki: narzędzia diagnostyczne repo workflow.
+!scripts/test-repo.sh
+!scripts/review_prompt.md
+!scripts/extract-logs.sh
+!scripts/extract_claude.py
+!scripts/extract_gemini.py
+!scripts/sokol-log.sh
+!scripts/sokol-claude-log.sh

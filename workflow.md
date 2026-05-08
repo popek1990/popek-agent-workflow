@@ -205,15 +205,18 @@ Format jest blokujący:
 - maksymalnie 4 kolumny;
 - nie używać szerokiego układu `# / Obecnie / Zmiana / Wpływ / Ryzyko`;
 - preferować `# / Temat / Co to znaczy / Co dalej`;
-- komórka maks. ok. 24 znaki; dłuższe uzasadnienie idzie pod tabelą;
+- kolumny treści maks. ok. 18 znaków tekstu; dłuższe uzasadnienie idzie pod tabelą;
+- każda komórka ma mieć minimum 2 spacje luzu przed prawą ramką `│`;
+- nie używać osobnej kolumny `Ryzyko` — ryzyko idzie w krótkim opisie albo pod tabelą;
+- nie używać backticków w komórkach — kod i ścieżki idą pod tabelą;
 - prawa ramka `│` musi być równa w każdym wierszu.
 
 ```
-┌─────┬────────────────────┬────────────────────────┬────────────────────────┐
-│ #   │ Temat              │ Co to znaczy           │ Co dalej               │
-├─────┼────────────────────┼────────────────────────┼────────────────────────┤
-│ 1   │ Faza 2             │ Potrzebny hardening    │ Wklej do Buildera      │
-└─────┴────────────────────┴────────────────────────┴────────────────────────┘
+┌─────┬──────────────────┬──────────────────┬──────────────────┐
+│ #   │ Temat            │ Co to znaczy     │ Co dalej         │
+├─────┼──────────────────┼──────────────────┼──────────────────┤
+│ 1   │ Faza 2           │ Wymaga poprawki  │ Wklej prompt     │
+└─────┴──────────────────┴──────────────────┴──────────────────┘
 ```
 
 Komórki tabeli mają być krótkie, ale nie jednowyrazowe jeśli przez to tracą sens. Unikaj skrótów typu "OK", "gotowe", "niskie" bez kontekstu. Długie opisy, uzasadnienia i szczegóły techniczne idą pod tabelą jako zwykły tekst.
