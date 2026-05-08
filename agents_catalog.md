@@ -1,6 +1,6 @@
 # Agents Catalog — popek-agent-workflow
 
-Lokalny katalog agentów dostępnych dla Klaudiusza (Claude Code) w tym workflow. **Sokół (Gemini/Codex) — czytaj TEN plik gdy wybierasz "Sugerowany agent" do promptu.** Nie zmyślaj nazw, nie zgaduj — wybór TYLKO z tej listy.
+Lokalny katalog agentów dostępnych dla Klaudiusza (Codex CLI) w tym workflow. **Sokół (Claude Code/Gemini) — czytaj TEN plik gdy wybierasz "Sugerowany agent" do promptu.** Nie zmyślaj nazw, nie zgaduj — wybór TYLKO z tej listy.
 
 **Liczba agentów:** 60
 **Źródło:** [agents.popeklab.com](https://agents.popeklab.com/) (snapshot)

@@ -23,14 +23,14 @@ Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Je�
 - Podejmuje ostateczne decyzje
 - Daje zielone światło na wdrożenie
 
-### Klaudiusz (Claude Code)
+### Klaudiusz (Codex CLI)
 - Pisze i wdraża kod
 - Tworzy plany wdrożeń (`MD/plans/plan_nazwa.md`)
 - Pushuje na GitHub
-- Aktualizuje dokumentację (CLAUDE.md, README, `MD/TODO.md`)
+- Aktualizuje dokumentację (AGENTS.md, README, `MD/TODO.md`)
 - Ma dostęp do **60+ sub-agentów** z katalogu [agents.popeklab.com](https://agents.popeklab.com/) (m.in. senior-architect, python-reviewer, silent-failure-hunter, security-reviewer, code-reviewer, tdd-guide, aqua-combo)
 
-### Sokół (Gemini / Codex)
+### Sokół (Claude Code / Gemini CLI)
 - Research i analiza
 - Szukanie błędów, luk bezpieczeństwa
 - Deep thinking przy skomplikowanych tematach

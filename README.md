@@ -35,8 +35,8 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 
 | Agent | Narzędzie | Rola |
 |-------|-----------|------|
-| **Klaudiusz** | Claude Code CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
-| **Sokół** | Gemini CLI lub Codex CLI | Research, szukanie błędów, planowanie. **Nigdy nie pushuje** (chyba że Orkiestrator wyraźnie poprosi) |
+| **Klaudiusz** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
+| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie. **Nigdy nie pushuje** (chyba że Orkiestrator wyraźnie poprosi) |
 | **Orkiestrator** | Ty | Kopiujesz prompty, podejmujesz decyzje, dajesz zielone światło |
 
 ## Jak to działa
@@ -63,8 +63,8 @@ Cykl się powtarza
 
 ## Wymagania
 
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code)
-- [Gemini CLI](https://github.com/google-gemini/gemini-cli) **lub** [Codex CLI](https://github.com/openai/codex)
+- [Codex CLI](https://github.com/openai/codex)
+- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) **lub** [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 - `bash`, `git`
 - Docker (jeśli projekt używa kontenerów — Klaudiusz robi auto-rebuild po deployu)
 
@@ -86,9 +86,9 @@ Smoketest na końcu instalacji weryfikuje czy wszystkie pliki są na miejscu (ma
 
 | Ścieżka | Co | Z czego |
 |---------|----|---------|
-| `CLAUDE.md` | Instrukcje dla Claude Code (Klaudiusz) | `klaudiusz.md` |
+| `CLAUDE.md` | Instrukcje dla Claude Code (Sokół) | `sokol.md` |
 | `GEMINI.md` | Instrukcje dla Gemini CLI (Sokół) | `sokol.md` |
-| `AGENTS.md` | Instrukcje dla Codex CLI (Sokół) | `sokol.md` (identyczna treść co GEMINI.md) |
+| `AGENTS.md` | Instrukcje dla Codex CLI (Klaudiusz) | `klaudiusz.md` |
 | `agents_catalog.md` | Snapshot 60+ sub-agentów (Sokół wybiera z tego, nie zmyśla) | `agents_catalog.md` |
 | `scripts/notify.sh` | Powiadomienie po deployu (cross-platform popup) | `scripts/notify.sh` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
@@ -122,8 +122,8 @@ bash update-all.sh
 ## Szybki start
 
 1. Otwórz dwa terminale w katalogu projektu
-2. **Terminal 1:** uruchom `claude` → to Klaudiusz
-3. **Terminal 2:** uruchom `gemini` (lub `codex`) → to Sokół
+2. **Terminal 1:** uruchom `codex` → to Klaudiusz
+3. **Terminal 2:** uruchom `claude` (lub `gemini`) → to Sokół
 4. Zacznij od Sokoła — poproś go o przegląd kodu modułu lub odebranie konkretnego issue z `MD/issues_sokol.md`
 
 ## Pełny przykład — od skanu do deployu
@@ -179,8 +179,8 @@ Dodatkowo: **WONTFIX** — issue / plan świadomie odrzucony, zapisany w `MD/mem
 
 | Plik | Opis | Instalowany jako |
 |------|------|------------------|
-| `klaudiusz.md` | Instrukcje dla Claude Code | `CLAUDE.md` |
-| `sokol.md` | Instrukcje dla Gemini/Codex | `GEMINI.md` + `AGENTS.md` |
+| `klaudiusz.md` | Instrukcje dla Codex CLI | `AGENTS.md` |
+| `sokol.md` | Instrukcje dla Claude Code/Gemini | `CLAUDE.md` + `GEMINI.md` |
 | `agents_catalog.md` | Snapshot 60+ sub-agentów (Sokół wybiera z listy, nie zmyśla nazw) | `agents_catalog.md` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
 | `templates/plan_batch.md` | Szablon planu — batch (do 5 powiązanych issues) | `templates/plan_batch.md` |

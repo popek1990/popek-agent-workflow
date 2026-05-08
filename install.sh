@@ -110,6 +110,13 @@ strip_trailing_blanks() {
     '
 }
 
+# Usuń stare jednozdaniowe role z prefiksu projektu.
+# Część repo miała własny opis nad blokiem workflow; po zamianie ról taka linia
+# mogłaby przebić właściwą instrukcję z aktualnego bloku.
+strip_stale_workflow_role_lines() {
+    awk '!/^Jesteś \*\*(Klaudiusz|Sokół)\*\*/ { print }'
+}
+
 # --- Funkcja: podmień / wstaw blok workflow w pliku (idempotentnie, z deduplikacją wsteczną) ---
 #
 # Strategia (deterministyczna, niezależna od odstępów):
@@ -143,12 +150,12 @@ update_file() {
 
     if [ -n "$header_line" ]; then
         if [ "$header_line" -gt 1 ]; then
-            head -n $((header_line - 1)) "$file" | strip_trailing_blanks > "$tmp"
+            head -n $((header_line - 1)) "$file" | strip_trailing_blanks | strip_stale_workflow_role_lines > "$tmp"
         fi
         # header_line == 1 → tmp pozostaje pusty (cały plik to workflow)
     else
         # Brak nagłówka workflow — zachowaj całą dotychczasową treść użytkownika
-        strip_trailing_blanks < "$file" > "$tmp"
+        strip_trailing_blanks < "$file" | strip_stale_workflow_role_lines > "$tmp"
     fi
 
     if [ -s "$tmp" ]; then
@@ -174,11 +181,11 @@ update_file() {
     fi
 }
 
-# --- CLAUDE.md ---
+# --- CLAUDE.md (Claude Code) — używa roli Sokoła ---
 echo ""
-echo -e "  ${FILE} ${BOLD}CLAUDE.md${NC} ${DIM}(Klaudiusz)${NC}"
+echo -e "  ${FILE} ${BOLD}CLAUDE.md${NC} ${DIM}(Sokół — Claude Code)${NC}"
 CLAUDE_MARKER="## Twoja rola"
-CLAUDE_CONTENT="$(cat "$SCRIPT_DIR/klaudiusz.md")"
+CLAUDE_CONTENT="$(cat "$SCRIPT_DIR/sokol.md")"
 
 if [ -f "CLAUDE.md" ]; then
     HAS_WORKFLOW=false
@@ -227,10 +234,10 @@ else
     inc INSTALLED
 fi
 
-# --- AGENTS.md (Codex CLI) — używa tej samej treści Sokoła co GEMINI.md ---
-echo -e "  ${FILE} ${BOLD}AGENTS.md${NC} ${DIM}(Sokół — Codex)${NC}"
+# --- AGENTS.md (Codex CLI) — używa roli Klaudiusza ---
+echo -e "  ${FILE} ${BOLD}AGENTS.md${NC} ${DIM}(Klaudiusz — Codex)${NC}"
 AGENTS_MARKER="## Twoja rola"
-AGENTS_CONTENT="$GEMINI_CONTENT"
+AGENTS_CONTENT="$(cat "$SCRIPT_DIR/klaudiusz.md")"
 
 if [ -f "AGENTS.md" ]; then
     HAS_WORKFLOW=false
@@ -457,20 +464,24 @@ smoke_check "scripts/notify.sh istnieje"             "[ -f scripts/notify.sh ]"
 smoke_check "scripts/notify.sh wykonywalny"          "[ -x scripts/notify.sh ]"
 smoke_check "CLAUDE.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' GEMINI.md 2>/dev/null"
+smoke_check "AGENTS.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' AGENTS.md 2>/dev/null"
 smoke_check "CLAUDE.md istnieje"                    "[ -f CLAUDE.md ]"
 smoke_check "CLAUDE.md zawiera marker workflow"     "grep -qF '## Twoja rola' CLAUDE.md 2>/dev/null"
 smoke_check "CLAUDE.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' CLAUDE.md 2>/dev/null)\" = '1' ]"
-smoke_check "CLAUDE.md zawiera rolę Klaudiusza"     "grep -qF 'Klaudiusz' CLAUDE.md 2>/dev/null"
-smoke_check "CLAUDE.md zawiera auto-deploy"         "grep -qF 'docker compose' CLAUDE.md 2>/dev/null"
-smoke_check "CLAUDE.md zawiera prompt zwrotny"      "grep -qF 'prompt zwrotny' CLAUDE.md 2>/dev/null"
+smoke_check "CLAUDE.md zawiera dokładną rolę Sokoła" "grep -qF 'Jesteś **Sokół**' CLAUDE.md 2>/dev/null"
+smoke_check "CLAUDE.md nie zawiera starej roli Klaudiusza" "! grep -qF 'Jesteś **Klaudiusz**' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md istnieje"                    "[ -f GEMINI.md ]"
 smoke_check "GEMINI.md zawiera marker workflow"     "grep -qF '## Twoja rola' GEMINI.md 2>/dev/null"
 smoke_check "GEMINI.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' GEMINI.md 2>/dev/null)\" = '1' ]"
-smoke_check "GEMINI.md zawiera rolę Sokoła"         "grep -qF 'Sokół' GEMINI.md 2>/dev/null"
+smoke_check "GEMINI.md zawiera dokładną rolę Sokoła" "grep -qF 'Jesteś **Sokół**' GEMINI.md 2>/dev/null"
+smoke_check "GEMINI.md nie zawiera roli Klaudiusza" "! grep -qF 'Jesteś **Klaudiusz**' GEMINI.md 2>/dev/null"
 smoke_check "AGENTS.md istnieje"                    "[ -f AGENTS.md ]"
 smoke_check "AGENTS.md zawiera marker workflow"     "grep -qF '## Twoja rola' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' AGENTS.md 2>/dev/null)\" = '1' ]"
-smoke_check "AGENTS.md zawiera rolę Sokoła"         "grep -qF 'Sokół' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md zawiera dokładną rolę Klaudiusza" "grep -qF 'Jesteś **Klaudiusz**' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md nie zawiera roli Sokoła"      "! grep -qF 'Jesteś **Sokół**' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md zawiera auto-deploy"         "grep -qF 'docker compose' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md zawiera prompt zwrotny"      "grep -qF 'prompt zwrotny' AGENTS.md 2>/dev/null"
 smoke_check "templates/plan_single.md istnieje"     "[ -f templates/plan_single.md ]"
 smoke_check "plan_single zawiera severity"          "grep -qF 'Severity' templates/plan_single.md 2>/dev/null"
 smoke_check "plan_single zawiera źródło"            "grep -qF 'Źródło' templates/plan_single.md 2>/dev/null"

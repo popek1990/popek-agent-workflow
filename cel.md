@@ -4,7 +4,7 @@ Pracuję w terminalu z dwoma agentami AI działającymi na tym samym repo. Ja (o
 
 > **To jest skrócony opis z perspektywy orkiestratora — co robię, co decyduję, co kopiuję.**
 > Pełna referencja techniczna (statusy planu, format checklistów, FAQ): `workflow.md`.
-> Reguły poszczególnych agentów: `klaudiusz.md` (Claude Code), `sokol.md` (Gemini/Codex).
+> Reguły poszczególnych agentów: `klaudiusz.md` (Codex CLI), `sokol.md` (Claude Code/Gemini).
 
 ---
 
@@ -12,8 +12,8 @@ Pracuję w terminalu z dwoma agentami AI działającymi na tym samym repo. Ja (o
 
 | Okno | Agent | Narzędzie |
 |------|-------|-----------|
-| 1 | **Klaudiusz** | Claude Code CLI |
-| 2 | **Sokół** | Gemini lub Codex CLI |
+| 1 | **Klaudiusz** | Codex CLI |
+| 2 | **Sokół** | Claude Code CLI lub Gemini CLI |
 
 Oba okna mają dostęp do tych samych plików (to samo repo).
 
@@ -70,8 +70,8 @@ Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widzia
 
 | Plik | Co opisuje | Komu czyta |
 |------|-----------|------------|
-| `klaudiusz.md` → `CLAUDE.md` | Reguły Klaudiusza | Claude Code w docelowym projekcie |
-| `sokol.md` → `GEMINI.md` / `AGENTS.md` | Reguły Sokoła | Gemini / Codex |
+| `klaudiusz.md` → `AGENTS.md` | Reguły Klaudiusza | Codex CLI w docelowym projekcie |
+| `sokol.md` → `CLAUDE.md` / `GEMINI.md` | Reguły Sokoła | Claude Code / Gemini |
 | `workflow.md` | Pełna referencja procesu + FAQ | Ja (gdy coś się popsuje) |
 | `cel.md` (ten plik) | Skrót dla orkiestratora | Ja, znajomi |
 | `agents_catalog.md` | Snapshot 60+ agentów (Sokół wybiera z tego, nie zmyśla) | Sokół |
