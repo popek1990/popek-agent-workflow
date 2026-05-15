@@ -43,6 +43,8 @@ check ".workflow/config istnieje"           "[ -f .workflow/config ]"
 check "scripts/notify.sh istnieje"          "[ -f scripts/notify.sh ]"
 check "templates/plan_single.md istnieje"   "[ -f templates/plan_single.md ]"
 check "templates/plan_batch.md istnieje"    "[ -f templates/plan_batch.md ]"
+check "update-all.sh składnia bash OK"       "bash -n update-all.sh"
+check "install.sh składnia bash OK"          "bash -n install.sh"
 
 echo ""
 echo "▸ Markery (install.sh wykrywa instalację po nich)"

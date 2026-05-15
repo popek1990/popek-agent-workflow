@@ -21,6 +21,14 @@ inc() { eval "$1=\$(($1 + 1))"; }
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BOX_WIDTH=68
 
+print_project_line() {
+    local name="$1"
+    local color="$2"
+    local message="$3"
+
+    printf "  📦 %b%-8s%b %b%s%b\n" "$BOLD" "$name" "$NC" "$color" "$message" "$NC"
+}
+
 print_box() {
     local title="$1"
     local title_len=${#title}
@@ -90,7 +98,7 @@ for project in "${PROJECTS[@]}"; do
     name=$(basename "$project")
 
     if [ ! -d "$project" ]; then
-        echo -e "  ${YELLOW}⏭️  ${name}${NC} ${DIM}— katalog nie istnieje${NC}"
+        print_project_line "$name" "$YELLOW" "⏭️  katalog nie istnieje"
         RESULTS+=("⏭️  $name — nie istnieje")
         inc TOTAL_SKIP
         echo ""
@@ -132,23 +140,23 @@ for project in "${PROJECTS[@]}"; do
     if echo "$output" | grep -q "Wszystko OK"; then
         RESULTS+=("✅ $name")
         inc TOTAL_OK
-        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${GREEN}✅ ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}${NC}"
+        print_project_line "$name" "$GREEN" "✅ ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}"
     elif echo "$output" | grep -q "pomijam"; then
         RESULTS+=("⏭️  $name — brak workflow, pominięto")
         inc TOTAL_SKIP
-        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${YELLOW}⏭️  pominięto — workflow nie był zainstalowany${NC}"
+        print_project_line "$name" "$YELLOW" "⏭️  pominięto — workflow nie był zainstalowany"
     elif echo "$output" | grep -q "problemów"; then
         RESULTS+=("⚠️  $name — smoketest z uwagami")
         inc TOTAL_FAIL
-        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${YELLOW}⚠️  ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}${NC}"
+        print_project_line "$name" "$YELLOW" "⚠️  ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}"
     elif [ "$install_status" -ne 0 ]; then
         RESULTS+=("❌ $name — install.sh zakończył się błędem")
         inc TOTAL_FAIL
-        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${RED}❌ błąd instalatora, odpal --verbose po szczegóły${NC}"
+        print_project_line "$name" "$RED" "❌ błąd instalatora, odpal --verbose po szczegóły"
     else
         RESULTS+=("✅ $name")
         inc TOTAL_OK
-        echo -e "  📦 ${BOLD}$(printf '%-8s' "$name")${NC} ${GREEN}✅ ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}${NC}"
+        print_project_line "$name" "$GREEN" "✅ ${updated} aktualizacji, ${installed} nowych, ${skipped} bez zmian, smoke ${smoke}"
     fi
 
     $VERBOSE && echo ""
