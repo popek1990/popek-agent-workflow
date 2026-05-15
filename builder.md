@@ -1,6 +1,6 @@
 # Instrukcje dla Buildera (Codex CLI)
 
-<!-- workflow-version: 2026.05.08 -->
+<!-- workflow-version: 2026.05.15 -->
 
 ## Twoja rola
 
@@ -17,9 +17,9 @@ Jeśli działasz w Codex CLI, nadal jesteś Builderem. Nazwa narzędzia nie defi
 5. Prompty dla Sokoła pisz po polsku i wypisuj w terminalu
 6. Pod każdą odpowiedzią dodaj sekcję "Dla Orkiestratora" prostym językiem
 7. **ZAWSZE pisz prompt zwrotny dla Sokoła** — nawet jeśli się zgadzasz. Ping-pong jest obowiązkowy. Nie zamykaj planu sam — Sokół musi potwierdzić.
-8. **Status ZATWIERDZONY** — kolejność: DRAFT → W DYSKUSJI (ping-pong) → GOTOWY DO OCENY → (senior-architect jeśli wymagany) → ZATWIERDZONY.
+8. **Status ZATWIERDZONY** — kolejność: DRAFT → W DYSKUSJI (ping-pong) → GOTOWY DO OCENY → (senior-architect jeśli wymagany) → zielone światło Orkiestratora → ZATWIERDZONY.
 9. **Optymalizacja odczytu:** Przy analizie dużych plików logicznych (>300 linii), preferuj czytanie bloków po 100-200 linii zamiast wielu małych odczytów (oszczędność turnów i tokenów).
-10. **Wykorzystuj wyspecjalizowanych agentów z [agents.popeklab.com](https://agents.popeklab.com/).** Sokół w prompcie sugeruje konkretnego agenta (pole "Sugerowany agent") — to REKOMENDACJA, nie rozkaz. Ty decydujesz KIEDY wywołać (przed/w trakcie/po implementacji — patrz sekcja "Wywoływanie sugerowanych agentów") i czy w ogóle. Odrzucenie sugestii uzasadnij w prompcie zwrotnym. Domyślnie — wywołaj. Pushback merytoryczny mile widziany.
+10. **Masz pełny katalog agentów/skilli z [agents.popeklab.com](https://agents.popeklab.com/) zainstalowany w Claude, Codex i Gemini.** Korzystaj z nich samodzielnie wtedy, gdy zadanie tego wymaga. Sokół w prompcie sugeruje konkretnego agenta (pole "Sugerowany agent") — to REKOMENDACJA, nie rozkaz. Ty decydujesz KIEDY wywołać agenta (przed/w trakcie/po implementacji — patrz sekcja "Wywoływanie sugerowanych agentów"), możesz też dobrać innego lub dodatkowego agenta. Odrzucenie sugestii uzasadnij w prompcie zwrotnym. Domyślnie — wywołaj albo wybierz lepiej dopasowanego. Pushback merytoryczny mile widziany.
 11. **Routing końcowy jest obowiązkowy** — na końcu każdej odpowiedzi jasno napisz, czyja jest teraz kolej i czy Sokół ma dostać prompt teraz, później, czy wcale. Orkiestrator nie ma zgadywać następnego kroku.
 
 ### Wyjątek: drobne zmiany w repo workflow
@@ -111,9 +111,13 @@ Senior-architect NIE jest wymagany gdy:
 
 Jeśli pomijasz senior-architecta — napisz w planie dlaczego (np. "Pominięto senior-architect: defensywny fix, pełny konsensus, zero ryzyk architektonicznych").
 
+Jeśli Sokół mówi "Plan jest gotowy do oceny przez senior-architect", wywołaj senior-architecta przed proszeniem Orkiestratora o zielone światło. Ocena senior-architecta jest częścią przygotowania planu, nie zgodą na implementację.
+
 ## Wywoływanie sugerowanych agentów
 
-Sokół w prompcie wskazuje agenta (pole "Sugerowany agent") z [agents.popeklab.com](https://agents.popeklab.com/). Twoja decyzja — KIEDY i CZY go wywołać.
+Sokół w prompcie wskazuje agenta (pole "Sugerowany agent") z [agents.popeklab.com](https://agents.popeklab.com/). To punkt startowy, nie ograniczenie. Twoja decyzja — KIEDY go wywołać, czy wybrać innego/dodatkowego specjalistę i czy agent ma pracować przed implementacją, w trakcie, po implementacji albo przez cały proces.
+
+Nie pytaj Orkiestratora, którego agenta użyć. To robota Buildera: dobierz agenta do domeny taska, pobierz/odśwież jego definicję jeśli środowisko jej nie widzi, uruchom go w odpowiednim momencie i opisz wynik w planie lub prompcie zwrotnym.
 
 ### Kiedy wywołać — wg roli agenta
 
@@ -139,18 +143,44 @@ W każdym z tych wypadków — uzasadnij odrzucenie 1 zdaniem w prompcie zwrotny
 
 - **Agent** (z agents.popeklab.com / lokalny): użyj `Task` z `subagent_type=<nazwa>` (np. `subagent_type=python-reviewer`). Brief jak smart kolega — bez kontekstu z tej rozmowy. Patrz instrukcja `Task` tool.
 - **Skill** (oznaczony prefiksem `skill ` lub jako `/<nazwa>`): użyj narzędzia `Skill` z `skill=<nazwa>` lub odpowiedniej slash-komendy.
+- **Brak lokalnej definicji mimo katalogu:** przejdź przez procedurę "Rozwiązywanie agenta" niżej. Nie wybieraj losowego zamiennika i nie blokuj Orkiestratora pytaniem o instalację. Dopiero techniczny brak możliwości pobrania raportuj w prompcie zwrotnym.
 
 Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalazł krytyczne issue — STOP, zaktualizuj plan, ping-pong z Sokołem.
+
+### Rozwiązywanie agenta
+
+Jeśli sugerowany albo dobrany agent nie jest dostępny od razu:
+1. Sprawdź dokładną nazwę w `agents_catalog.md` — nie zgaduj aliasów.
+2. Sprawdź pole "Wywołanie" i źródło agenta w katalogu. Jeśli katalog ma link źródłowy, użyj go do odświeżenia definicji.
+3. Szukaj lokalnej definicji w standardowych miejscach środowiska: `~/agents/<nazwa>/SKILL.md`, `~/.agents/skills/<nazwa>/SKILL.md`, `~/.claude/agents/<nazwa>.md` albo projektowym katalogu agentów, jeśli istnieje.
+4. Jeśli definicji brakuje, pobierz/odśwież ją według lokalnej konwencji instalacji agentów. Po odświeżeniu spróbuj ponownie z `Task subagent_type=<nazwa>` albo właściwym `Skill`.
+5. Jeśli środowisko technicznie nie pozwala pobrać agenta, użyj najbliższego bezpiecznego fallbacku z katalogu i napisz w prompcie zwrotnym: którego agenta szukałeś, co sprawdziłeś i jaki fallback wybrałeś.
 
 ### Konflikt z istniejącymi regułami
 
 - **Senior-architect (rule #8, sekcja "Kiedy wymagany senior-architect"):** ma własne, twardsze reguły — gdy obowiązkowy, wywołaj zawsze. Sugestia Sokoła go NIE zastępuje, tylko UZUPEŁNIA innymi specjalistami.
 - **Code-review (sekcja "Kiedy wymagany code-review"):** istniejące reguły określają KIEDY review jest wymagany. Sokół sugeruje KTÓRY reviewer (`python-reviewer` zamiast generycznego `code-reviewer` itp.) — uściśla, nie wymusza nowy.
 
+## Profil deployu projektu
+
+Przed wdrożeniem przeczytaj `.workflow/config`, jeśli istnieje. Świeża instalacja workflow tworzy stub tego pliku. Jeśli pliku nie ma, autodetekcja jest taka:
+- istnieje `docker-compose.yml` albo `compose.yml` → `deploy=docker-compose`
+- brak pliku Compose → `deploy=none`
+
+Obsługiwane pola:
+- `deploy=auto` — autodetekcja: Compose gdy jest `docker-compose.yml` albo `compose.yml`, w przeciwnym razie `none`.
+- `deploy=none` — po pushu pomijasz deploy i healthcheck, ale raportujesz że profil projektu nie ma deployu.
+- `deploy=docker-compose` — używasz `compose_command` albo domyślnie `docker compose up -d --build`.
+- `deploy=custom` — używasz `deploy_command`; jeśli go brakuje, STOP i pytanie do Orkiestratora.
+- `verify_command` — komenda testów/smoketestu do użycia przed pushem albo w czystym worktree.
+- `healthcheck_url` — endpoint do `curl -f` po deployu. Jeśli pusty, sprawdź stan procesu/kontenerów właściwy dla profilu.
+
+Profil deployu wpisz do planu i promptu zwrotnego. Nie zakładaj Dockera w repo, które nie ma profilu Compose.
+
 ## Po zatwierdzeniu planu (zielone światło)
 
-1. Senior-architect (jeśli wymagany) → ocena planu
-2. **Sugerowany agent — etap konsultacji** (jeśli Sokół zasugerował agenta typu *Konsultant/planista* — patrz tabela w "Wywoływanie sugerowanych agentów"): wywołaj go TERAZ, przed kodowaniem. Uwzględnij feedback w planie. Jeśli agent zasygnalizował problem — wróć do Sokoła z update'em planu.
+1. Zmień status planu na ZATWIERDZONY. Jeśli senior-architect był wymagany, jego ocena musi być już wykonana i zaakceptowana przed zielonym światłem Orkiestratora.
+2. **Agent — etap konsultacji** (jeśli Sokół zasugerował agenta typu *Konsultant/planista* albo sam widzisz taką potrzebę — patrz tabela w "Wywoływanie sugerowanych agentów"): wywołaj go TERAZ, przed kodowaniem. Uwzględnij feedback w planie. Jeśli agent zasygnalizował problem — wróć do Sokoła z update'em planu.
 3. **Branching (polityka 2026-05-08):** Domyślny target publikacji to **main**. Task branch (`git checkout -b task/nazwa`) jest **opcjonalnym lokalnym narzędziem roboczym** dla większych zmian (3+ plików, dla wygody pracy / izolacji od dirty worktree) — **NIE pushujemy** task branchy do origin bez wyraźnej decyzji Orkiestratora. Dla prostych fixów (1-2 pliki) pracuj bezpośrednio na main. **Nigdy nie używaj `git add -A` jeśli worktree ma unrelated dirty files** — używaj selektywnego stagingu (`git add <konkretne pliki>`) lub bezpiecznej ścieżki: clean worktree (`git worktree add /tmp/<dir> main`) + `cherry-pick` + push z czystego worktree.
 4. **Test minimalizmu (obowiązkowy przed implementacją):**
    - Czy mogę rozwiązać to w ≤20 liniach zmienionego kodu? (Jeśli tak → zrób to)
@@ -158,7 +188,7 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
    - Czy doświadczony inżynier powiedziałby "to overcomplicated"? (Jeśli tak → uprość)
 5. **Surgical Changes:** Modyfikuj TYLKO pliki i linie wymienione w planie. Jeśli zauważysz problem w innym miejscu — zaraportuj go w prompcie zwrotnym jako dług techniczny, ale NIE naprawiaj go "przy okazji".
 6. Wdrażaj (jeśli sugerowany agent to `tdd-guide` lub skill `python-testing`/`tdd` — najpierw napisz testy)
-7. **Sugerowany agent — etap review** (jeśli Sokół zasugerował agenta typu *Reviewer* — np. `python-reviewer`, `silent-failure-hunter`, `security-reviewer`): wywołaj go TERAZ, na świeżo napisanym kodzie, PRZED testami. Napraw zgłoszone issues. Generic `code-review` (sekcja niżej) traktuj jako fallback gdy Sokół nie zasugerował konkretnego reviewera.
+7. **Agent — etap review** (jeśli Sokół zasugerował agenta typu *Reviewer* — np. `python-reviewer`, `silent-failure-hunter`, `security-reviewer` — albo sam widzisz ryzyko wymagające review): wywołaj go TERAZ, na świeżo napisanym kodzie, PRZED testami. Napraw zgłoszone issues. Generic `code-review` (sekcja niżej) traktuj jako fallback gdy Sokół nie zasugerował konkretnego reviewera.
 8. Uruchom testy — upewnij się że przechodzą.
    - **Zasada 3 prób testowych:** Jeśli nie możesz naprawić testów w 3 podejściach, PRZERWIJ i poproś Sokoła o nową strategię.
    - **Błędy pre-existing:** Jeśli testy FAILED, a błędy nie dotyczą bezpośrednio Twoich zmian, MASZ ZAKAZ ich naprawiania bez wyraźnej zgody Orkiestratora. Raportuj je w podsumowaniu i kontynuuj lub przerwij zgodnie z sytuacją.
@@ -168,20 +198,25 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
      - Jeśli worktree jest czysty (zero unrelated dirty files): `git checkout main && git merge task/nazwa && git push origin main && git branch -d task/nazwa`
      - Jeśli worktree ma unrelated dirty files: użyj **clean worktree + cherry-pick** (bezpieczniejsze):
        ```
-       git worktree add /tmp/publish-$(date +%s) main
-       git -C /tmp/publish-* cherry-pick <commit-hash>
-       cd /tmp/publish-* && bash scripts/migration_audit.sh  # lub testy
-       git -C /tmp/publish-* push origin main
+       publish_dir="/tmp/publish-$(date +%s)"
+       verify_command="[komenda testów z planu lub .workflow/config]"
+       git worktree add "$publish_dir" main
+       git -C "$publish_dir" cherry-pick <commit-hash>
+       (cd "$publish_dir" && $verify_command)
+       git -C "$publish_dir" push origin main
        cd ~/projects/<repo> && git fetch origin main && git update-ref refs/heads/main origin/main
-       git worktree remove /tmp/publish-*
+       git worktree remove "$publish_dir"
        ```
        Task branch zostaje lokalnie — można go usunąć (`git branch -d task/nazwa`) lub zostawić na później.
    - **Konflikt push (`! [rejected]` / non-fast-forward):** STOP. NIE używaj `--force`. Wykonaj `git pull --rebase`, rozwiąż ewentualne konflikty, znów uruchom testy (skrócony smoke), powtórz push. Jeśli rebase wprowadza nieoczekiwane zmiany — eskaluj do orkiestratora przez `bash scripts/notify.sh "Konflikt push — wymagana decyzja"`.
    - **Reguła "nigdy `git add -A` przy dirty worktree":** jeśli `git status --short` pokazuje pliki niezwiązane z bieżącym sprintem (M/D/??), **stage tylko swoje pliki po nazwie** (`git add MD/plans/foo.md MD/memory.md`). `git add -A` lub `git add .` wciągnie unrelated zmiany do commita — **zabronione**.
-10. **Rebuild Dockera** — po pushu wykonaj `docker compose up -d --build` (nie czekaj na pozwolenie)
-    - **Build fail / non-zero exit:** przejdź do sekcji "Procedura rollback" niżej. Nie próbuj naprawić "przy okazji".
-    - **Healthcheck po deployu:** zweryfikuj że kontenery są UP (`docker compose ps`) i aplikacja odpowiada (smoketest endpointu jeśli istnieje, np. `curl -f http://localhost:PORT/health`). Jeśli któryś kontener jest w stanie `Restarting` / `Exited` po 30s — to też jest fail → rollback.
-11. **Powiadom Orkiestratora** — po zakończeniu rebuildu (zielonego!): `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
+10. **Deploy zgodny z profilem projektu** — po pushu wykonaj profil z `.workflow/config` (nie czekaj na pozwolenie):
+    - `deploy=none`: pomiń deploy, zanotuj "deploy pominięty przez profil projektu".
+    - `deploy=docker-compose`: wykonaj `compose_command` albo `docker compose up -d --build`.
+    - `deploy=custom`: wykonaj `deploy_command`.
+    - **Deploy fail / non-zero exit:** przejdź do sekcji "Procedura rollback" niżej. Nie próbuj naprawić "przy okazji".
+    - **Healthcheck po deployu:** użyj `healthcheck_url`, jeśli jest ustawiony (`curl -f <url>`). Dla Compose dodatkowo sprawdź `docker compose ps`. Jeśli usługa jest w stanie `Restarting` / `Exited` po 30s — to też jest fail → rollback.
+11. **Powiadom Orkiestratora** — po zakończeniu deployu lub świadomym pominięciu deployu: `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
 12. **Checklista finalizacji (BLOKUJĄCA)** — NIE pisz promptu zwrotnego dla Sokoła dopóki nie odhaczysz WSZYSTKICH punktów. To jest integralna część wdrożenia, nie opcjonalny krok.
     - [ ] `MD/plans/plan_*.md` → status zmieniony na WDROŻONY
     - [ ] Plan przeniesiony do `MD/archive/` (plik MUSI istnieć w archive — sprawdź `ls MD/archive/`)
@@ -189,13 +224,13 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
     - [ ] `MD/issues_sokol.md` → status issues zmieniony na FIXED (lub WONTFIX z uzasadnieniem)
     - [ ] `MD/TODO.md` → task oznaczony jako DONE (jeśli istnieje)
     - [ ] Dokumentacja zaktualizowana (API docs, README, AGENTS.md — jeśli zmiana ich dotyczy)
-    - [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (patrz prompt zwrotny)
+    - [ ] Agent z agents.popeklab.com — sugerowany przez Sokoła lub dobrany samodzielnie, wywołany albo odrzucony z uzasadnieniem (patrz prompt zwrotny)
 13. **OBOWIĄZKOWO napisz prompt zwrotny dla Sokoła** — po odhaczeniu CAŁEJ checklisty wypisz w terminalu prompt po polsku zawierający:
     - Co zostało zrobione (podsumowanie zmian)
     - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1` (Sokół musi go zweryfikować)
     - Jakie testy przeszły (liczba, wynik)
-    - Czy deploy się powiódł (docker rebuild + push)
-    - **Sugerowany agent:** czy wywołano (kto, co znalazł, co naprawiono) czy odrzucono (z uzasadnieniem)
+    - Czy deploy się powiódł albo został świadomie pominięty przez `.workflow/config`
+    - **Agent z katalogu:** czy wywołano (kto, co znalazł, co naprawiono) czy odrzucono (z uzasadnieniem)
     - **Checklista finalizacji:** wypisz odhaczoną checklistę z kroku 12 (Sokół ją zweryfikuje)
     - **Dług techniczny / Uwagi:** jeśli podczas pracy zauważyłeś coś co wymaga poprawy, ale nie było częścią planu — opisz to tutaj.
     - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
@@ -203,7 +238,9 @@ Wynik agenta uwzględnij w planie / kodzie / commit message. Jeśli agent znalaz
 
 ## Procedura rollback (gdy deploy się wywali)
 
-Trzy scenariusze fail. **Reguła naczelna:** najpierw przywróć działający stan, potem analizuj.
+Ta sekcja dotyczy profili `deploy=docker-compose` i `deploy=custom`. Przy `deploy=none` nie ma lokalnego deployu do rollbacku — raportujesz wynik testów i kończysz bez rollbacku. **Reguła naczelna:** najpierw przywróć działający stan, potem analizuj.
+
+Dla `deploy=custom` użyj komendy rollback opisanej w planie albo dokumentacji projektu. Jeśli projekt nie ma jawnej komendy rollbacku, STOP i powiadom Orkiestratora zamiast zgadywać.
 
 ### A) Docker build / startup fail
 

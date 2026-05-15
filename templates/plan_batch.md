@@ -6,7 +6,8 @@
 **Typ zmiany:** bug fix | security fix | nowa funkcja | refactor | portowanie | optymalizacja
 **Złożoność:** prosty fix (1-2 pliki) | średni (3-5 plików) | duży refactor (6+ plików)
 **Senior-architect wymagany:** TAK / NIE — [uzasadnienie]
-**Sugerowany agent:** [agent z agents.popeklab.com + 1-zdaniowe uzasadnienie + timing. Dla batchy 6+ plików / logiki biznesowej rozważ `aqua-combo` [debata przez cały proces]. Dla domeny Python rozważ `python-reviewer` [reviewer po implementacji]. Jeśli żaden — `brak — [uzasadnienie]`]
+**Sugerowany / użyty agent:** [agent z agents.popeklab.com + 1-zdaniowe uzasadnienie + timing. Dla batchy 6+ plików / logiki biznesowej rozważ `aqua-combo` [debata przez cały proces]. Dla domeny Python rozważ `python-reviewer` [reviewer po implementacji]. Jeśli Builder dobiera innego/dodatkowego agenta — wpisuje tutaj decyzję i powód. Jeśli żaden — `brak — [uzasadnienie]`]
+**Profil deployu:** auto | none | docker-compose | custom — [z `.workflow/config` albo autodetekcji]
 
 ## Źródło
 
@@ -79,20 +80,20 @@ Skąd pochodzi batch: [np. `issues_found.md` batch #1, skan Sokoła z 2025-05-06
 - [ ] Wszystkie issues z batcha zaimplementowane
 - [ ] Testy przechodzą (zielone)
 - [ ] Code-review (jeśli wymagany) bez CRITICAL/HIGH issues
-- [ ] Deploy OK (`docker compose up -d --build`)
+- [ ] Deploy OK albo świadomie pominięty zgodnie z `.workflow/config`
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
 - [ ] [dodatkowe kryteria specyficzne dla tego batcha]
 
 ## Checklista finalizacji (BLOKUJĄCA — odhacz PRZED promptem zwrotnym)
 
-- [ ] Aplikacja działa poprawnie po deploy
+- [ ] Aplikacja działa poprawnie po deploy albo deploy świadomie pominięty przez profil projektu
 - [ ] Ten plik → status zmieniony na WDROŻONY
 - [ ] Ten plik → przeniesiony do `MD/archive/` (MUSI istnieć w archive)
 - [ ] `MD/memory.md` → dopisano do "Zrobione" z linkiem do `MD/archive/` (NIE `MD/plans/`)
 - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
 - [ ] `MD/TODO.md` → taski oznaczone jako DONE
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
-- [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
+- [ ] Agent z agents.popeklab.com — sugerowany przez Sokoła lub dobrany przez Buildera, wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
 - [ ] Prompt zwrotny zawiera "Routing końcowy" — wiadomo czyja jest kolej i czy Sokół dostaje prompt teraz
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego batcha]
 

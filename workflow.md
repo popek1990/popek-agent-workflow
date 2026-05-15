@@ -1,12 +1,13 @@
 # Workflow: Builder + Sokół
 
-<!-- workflow-version: 2026.05.08 -->
+<!-- workflow-version: 2026.05.15 -->
 
 ## Zasady ogólne
 
 - Oba agenty pracują na tym samym repo/katalogu
+- Builder i Sokół mają dostęp do pełnego lokalnego katalogu agentów/skilli z [agents.popeklab.com](https://agents.popeklab.com/); ten zestaw jest zainstalowany w Claude, Codex i Gemini
 - Tylko Builder pushuje na GitHub (chyba że Orkiestrator wyraźnie poprosi Sokoła)
-- Builder nigdy nie rusza kodu bez zielonego światła od Orkiestratora
+- Builder nigdy nie rusza kodu bez zielonego światła od Orkiestratora; potwierdzenie Sokoła oznacza "plan gotowy", nie zgodę na implementację
 - Komunikacja między agentami odbywa się po polsku
 - Pod każdą odpowiedzią — wyjaśnienie prostym językiem dla Orkiestratora
 
@@ -28,7 +29,8 @@ Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Je�
 - Tworzy plany wdrożeń (`MD/plans/plan_nazwa.md`)
 - Pushuje na GitHub
 - Aktualizuje dokumentację (AGENTS.md, README, `MD/TODO.md`)
-- Ma dostęp do **60+ sub-agentów** z katalogu [agents.popeklab.com](https://agents.popeklab.com/) (m.in. senior-architect, python-reviewer, silent-failure-hunter, security-reviewer, code-reviewer, tdd-guide, aqua-combo)
+- Ma dostęp do pełnego katalogu agentów/skilli z [agents.popeklab.com](https://agents.popeklab.com/) (m.in. senior-architect, python-reviewer, silent-failure-hunter, security-reviewer, code-reviewer, tdd-guide, aqua-combo)
+- Sam dobiera, pobiera/odświeża i wywołuje agenta wtedy, gdy task tego wymaga; sugestia Sokoła jest wskazówką, nie blokadą
 
 ### Sokół (Claude Code / Gemini CLI)
 - Research i analiza
@@ -36,7 +38,8 @@ Ten wyjątek NIE dotyczy projektów docelowych ani większych zmian procesu. Je�
 - Deep thinking przy skomplikowanych tematach
 - Proponowanie ulepszeń
 - Tworzenie planów dla nowych funkcji
-- **Sugeruje agenta dla Buildera** w każdym prompcie (wybór z [agents.popeklab.com](https://agents.popeklab.com/) wg domeny zadania) — sugestia jest REKOMENDACJĄ, Builder może odrzucić z uzasadnieniem
+- Ma dostęp do tego samego katalogu agentów/skilli i może sam z nich korzystać przy researchu, planowaniu, review i Blind Audit
+- **Sugeruje agenta dla Buildera** w każdym prompcie (wybór z [agents.popeklab.com](https://agents.popeklab.com/) wg domeny zadania) — sugestia jest REKOMENDACJĄ, Builder może ją odrzucić, zmienić albo dobrać dodatkowego agenta z uzasadnieniem
 - **Domyślny zakres:** czyta kod tylko dla konkretnego issue, nie wchodzi do innych repozytoriów bez polecenia, testy/Dockera/commit/push standardowo zostawia Builderowi. Orkiestrator może jawnie rozszerzyć ten zakres dla Sokoła.
 
 ### Wznowienie pracy ("wracamy do...")
@@ -84,6 +87,7 @@ Sokół pisze prompt dla Buildera (dla pojedynczego issue LUB całego batcha) za
 - **Typ zmiany** — bug fix / security fix / nowa funkcja / refactor / portowanie
 - Opis problemu i propozycję rozwiązania
 - **Strategia testów** — mierzalne kryteria sukcesu (np. "metoda X zwraca Y dla inputu Z")
+- **Sugerowany agent** — wybór z `agents_catalog.md` z krótkim uzasadnieniem; Builder może użyć tej sugestii albo dobrać lepszego agenta samodzielnie
 - Pytanie czy Builder się zgadza (jeśli nie — chce argument)
 - Pytanie o ryzyka w implementacji
 
@@ -127,11 +131,14 @@ Gdy oba agenty potwierdzą plan, Sokół ocenia złożoność:
 
 **Prosty fix** (defensywny, pełny konsensus, brak ryzyk architektonicznych):
 → Sokół pisze: "Plan jest gotowy do implementacji."
+→ Orkiestrator daje zielone światło.
 → Builder zmienia status na ZATWIERDZONY i wdraża.
 
 **Złożona zmiana** (architektura, nowe serwisy, spór, ryzyko średnie+):
 → Sokół pisze: "Plan jest gotowy do oceny przez senior-architect."
-→ Builder wywołuje senior-architecta → jeśli OK: wdraża. Jeśli nie: powrót do ping-pongu.
+→ Builder wywołuje senior-architecta jako ocenę planu.
+→ Jeśli senior-architect zaakceptuje plan, Orkiestrator daje zielone światło.
+→ Builder zmienia status na ZATWIERDZONY i wdraża. Jeśli senior-architect odrzuci plan: powrót do ping-pongu.
 
 ### 5. Implementacja (zasady Karpathy'ego)
 
@@ -146,7 +153,7 @@ Przed i w trakcie implementacji obowiązują:
   - **Zasada 3 prób testowych:** Jeśli testy padną 3 razy pod rząd, Builder przerywa pracę i wraca do Sokoła po nową strategię.
 - Code-review (jeśli wymagany: 3+ pliki, logika biznesowa, nowy pattern)
 - `git commit` + `git push origin main` (automatycznie po zielonych testach). Domyślny target publikacji = **main**. Task branche są opcjonalne i **lokalne** — nie pushujemy ich do origin bez wyraźnej decyzji Orkiestratora. Przy dirty worktree z unrelated zmianami: selektywny staging po nazwie (`git add <pliki>`) lub clean worktree + cherry-pick. Nigdy `git add -A`. Szczegóły: `builder.md` sekcja "Po zatwierdzeniu planu" punkty 3+9.
-- `docker compose up -d --build` (automatycznie po pushu — rebuild i deploy)
+- Deploy zgodny z `.workflow/config` (automatycznie po pushu: `auto`, `none`, `docker-compose` albo `custom`)
 - **Checklista finalizacji (BLOKUJĄCA)** — Builder NIE pisze promptu zwrotnego dopóki nie odhaczy WSZYSTKICH punktów. **Kanoniczna lista:** `builder.md` → sekcja "Po zatwierdzeniu planu" → krok 12. Templates `plan_single.md` / `plan_batch.md` mają tę samą listę jako per-plan checkboxy do odhaczenia.
 
 ### 6a. Prompt zwrotny do Sokoła (obowiązkowy)
@@ -154,7 +161,7 @@ Po odhaczeniu CAŁEJ checklisty Builder **MUSI** wypisać w terminalu prompt po 
 - Co zostało zrobione (podsumowanie zmian)
 - **Dowód wdrożenia:** link do commitu lub wynik `git diff HEAD~1`
 - Jakie testy przeszły (liczba, wynik)
-- Czy deploy się powiódł (docker rebuild + push)
+- Czy deploy się powiódł albo został świadomie pominięty przez `.workflow/config`
 - **Odhaczona checklista finalizacji** (Sokół ją zweryfikuje)
 - **Pytanie:** jaki jest kolejny etap planu / co robimy dalej?
 
@@ -275,12 +282,13 @@ Jeśli po pushbacku Buildera Sokół ponownie proponuje to samo (np. po 2 rundac
 - Quick fix dla Sokoła: przenieść wszystkie `FIXED` / `WONTFIX` do `MD/issues_sokol_archive.md` (zostaje plik tylko z `OPEN` + `IN_PROGRESS`)
 - Aktualne statusy nie giną — w archiwum mają nadal pełną historię z linkiem do planu
 
-### Builder wywołał agenta z `agents_catalog.md` ale agent nie istnieje
+### Builder nie widzi agenta z `agents_catalog.md`
 
-Sokół zasugerował agenta którego nie ma (mimo że miał czytać katalog) lub Builder źle przeparsował.
+Zakładamy, że pełny katalog z [agents.popeklab.com](https://agents.popeklab.com/) jest zainstalowany w Claude, Codex i Gemini. Jeśli Builder mimo to nie widzi agenta:
 - Builder NIE wywołuje "podobnego" agenta na ślepo
-- W prompcie zwrotnym do Sokoła: "Nie znalazłem agenta `X` w `agents_catalog.md`. Sprawdziłem sekcję Y. Możesz zasugerować innego z faktycznie istniejących?"
-- Sokół otwiera katalog (rule #8) i poprawia sugestię
+- Builder najpierw sam sprawdza `agents_catalog.md` i pobiera/odświeża definicję agenta zgodnie z lokalną instalacją
+- Jeśli pobranie się nie uda, raportuje techniczny problem w prompcie zwrotnym: którego agenta szukał, co sprawdził i jaki fallback proponuje
+- Sokół może wtedy wskazać innego agenta z katalogu albo zgodzić się na fallback Buildera
 
 ### Push się wywalił, rollback też się wywalił
 

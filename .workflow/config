@@ -1,0 +1,13 @@
+# Popek Agent Workflow — project profile
+#
+# deploy:
+#   auto           — docker-compose if compose file exists, otherwise none
+#   none           — no local deploy after push
+#   docker-compose — run compose_command after push
+#   custom         — run deploy_command after push
+
+deploy=auto
+compose_command=docker compose up -d --build
+deploy_command=
+verify_command=
+healthcheck_url=

@@ -302,9 +302,9 @@ else
     inc INSTALLED
 fi
 
-# --- agents_catalog.md (lokalny katalog 60 agentów dla Sokoła) ---
-# Sokół nie ma WebFetch — czyta TEN plik zamiast halucynować nazwy z URL.
-echo -e "  ${FILE} ${BOLD}agents_catalog.md${NC} ${DIM}(katalog dla Sokoła)${NC}"
+# --- agents_catalog.md (lokalny katalog agentów/skilli dla Buildera i Sokoła) ---
+# Agenty czytają TEN plik zamiast halucynować nazwy z URL.
+echo -e "  ${FILE} ${BOLD}agents_catalog.md${NC} ${DIM}(katalog dla Buildera i Sokoła)${NC}"
 if [ ! -f "agents_catalog.md" ] || $FORCE; then
     cp "$SCRIPT_DIR/agents_catalog.md" "agents_catalog.md"
     if $FORCE; then
@@ -442,6 +442,18 @@ fi
 # archive/ — katalog na zarchiwizowane plany (po wdrożeniu)
 mkdir -p MD/archive
 
+# --- Profil workflow projektu ---
+echo -e "  ${FILE} ${BOLD}.workflow/config${NC} ${DIM}(profil deployu projektu)${NC}"
+mkdir -p .workflow
+if [ ! -f ".workflow/config" ]; then
+    cp "$SCRIPT_DIR/.workflow/config" ".workflow/config"
+    log_ok ".workflow/config — utworzono"
+    inc INSTALLED
+else
+    log_skip ".workflow/config — już istnieje (zachowuję profil projektu)"
+    inc SKIPPED
+fi
+
 # --- Szablony planów ---
 mkdir -p templates
 
@@ -492,6 +504,7 @@ smoke_check "MD/issues_sokol.md istnieje"                  "[ -f MD/issues_sokol
 smoke_check "MD/memory.md istnieje"                  "[ -f MD/memory.md ]"
 smoke_check "MD/TODO.md istnieje"                    "[ -f MD/TODO.md ]"
 smoke_check "MD/archive/ istnieje"                   "[ -d MD/archive ]"
+smoke_check ".workflow/config istnieje"              "[ -f .workflow/config ]"
 # Strict check tylko dla świeżych instalacji. Legacy pre-existing TODO.md (np. po polsku z customowym formatem)
 # raportujemy inline jako warning powyżej — w smoketest pass'uje gdy plik ma jakąkolwiek strukturę (>5 linii).
 if $TODO_LEGACY; then
@@ -523,7 +536,7 @@ smoke_check "AGENTS.md zawiera marker workflow"     "grep -qF '## Twoja rola' AG
 smoke_check "AGENTS.md ma dokładnie 1 nagłówek '# Instrukcje dla'" "[ \"\$(grep -c '^# Instrukcje dla ' AGENTS.md 2>/dev/null)\" = '1' ]"
 smoke_check "AGENTS.md zawiera dokładną rolę Buildera" "grep -qF 'Jesteś **Builder**' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md nie zawiera roli Sokoła"      "! grep -qF 'Jesteś **Sokół**' AGENTS.md 2>/dev/null"
-smoke_check "AGENTS.md zawiera auto-deploy"         "grep -qF 'docker compose' AGENTS.md 2>/dev/null"
+smoke_check "AGENTS.md zawiera profil deployu"      "grep -qF '.workflow/config' AGENTS.md 2>/dev/null"
 smoke_check "AGENTS.md zawiera prompt zwrotny"      "grep -qF 'prompt zwrotny' AGENTS.md 2>/dev/null"
 smoke_check "templates/plan_single.md istnieje"     "[ -f templates/plan_single.md ]"
 smoke_check "plan_single zawiera severity"          "grep -qF 'Severity' templates/plan_single.md 2>/dev/null"

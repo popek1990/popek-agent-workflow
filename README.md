@@ -29,7 +29,7 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 - Plan zapisany w `MD/plans/plan_*.md` zanim cokolwiek zostanie zaimplementowane
 - Tracking issues w `MD/issues_sokol.md` (OPEN / IN_PROGRESS / FIXED / WONTFIX)
 - Pamięć decyzji w `MD/memory.md` (zrobione + odrzucone z uzasadnieniem)
-- Auto-deploy po zielonych testach (push + docker rebuild + healthcheck)
+- Auto-deploy po zielonych testach (push + profil deployu z `.workflow/config` + healthcheck)
 - Tabelę "Dla Orkiestratora" pod każdą odpowiedzią agenta — proste streszczenie dla człowieka
 - Czytelne podsumowania planów: co działa teraz, co zmieni wdrożenie, jakie jest ryzyko i jaka decyzja jest potrzebna
 - Higienę kontekstu: `/compact` albo nowa sesja dopiero po zamkniętej fazie pracy, nie po każdym małym kroku
@@ -38,9 +38,11 @@ Zamiast jednego agenta AI, który sam pisze i sam ocenia swój kod — masz dwó
 
 | Agent | Narzędzie | Rola |
 |-------|-----------|------|
-| **Builder** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma dostęp do **60+ wyspecjalizowanych sub-agentów** ([agents.popeklab.com](https://agents.popeklab.com/)) |
-| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie i Blind Audit. Domyślnie nie pushuje, ale może to zrobić na wyraźne polecenie Orkiestratora |
+| **Builder** | Codex CLI | Pisze kod, wdraża, pushuje na GitHub. Ma pełny katalog agentów/skilli z [agents.popeklab.com](https://agents.popeklab.com/) i sam wybiera, kiedy ich użyć |
+| **Sokół** | Claude Code CLI lub Gemini CLI | Research, szukanie błędów, planowanie i Blind Audit. Ma ten sam katalog agentów/skilli; domyślnie nie pushuje, ale może to zrobić na wyraźne polecenie Orkiestratora |
 | **Orkiestrator** | Ty | Kopiujesz prompty, podejmujesz decyzje, dajesz zielone światło |
+
+Pełny katalog z [agents.popeklab.com](https://agents.popeklab.com/) jest zainstalowany w Claude, Codex i Gemini. Sokół sugeruje agenta w prompcie, ale Builder sam decyduje, czy użyć tej sugestii, dobrać innego specjalistę, dodać kolejnego albo odświeżyć/pobrać definicję agenta bez angażowania Orkiestratora.
 
 ## Jak to działa
 
@@ -55,7 +57,7 @@ Senior-architect: ocenia plan (warunkowo — przy zmianach architektonicznych)
   ↓
 Ty: dajesz zielone światło "OK, wdrażaj"
   ↓
-Builder: wdraża → testy → auto push + docker rebuild + healthcheck
+Builder: wdraża → testy → auto push + deploy z profilu + healthcheck
   ↓
 Builder: pisze raport zwrotny dla Sokoła (commit, testy, checklista)
   ↓
@@ -70,7 +72,7 @@ Cykl się powtarza
 
 Builder nie zaczyna od kodu. Najpierw tworzy plan w `MD/plans/`, ocenia propozycję Sokoła i pisze prompt zwrotny. Implementacja zaczyna się dopiero po zielonym świetle Orkiestratora.
 
-Po zielonych testach Builder sam robi commit, push, rebuild Dockera i healthcheck. To jest świadome uproszczenie procesu: Orkiestrator zatwierdza wdrożenie raz, a Builder kończy je do końca.
+Po zielonych testach Builder sam robi commit, push, deploy zgodny z `.workflow/config` i healthcheck. To jest świadome uproszczenie procesu: Orkiestrator zatwierdza wdrożenie raz, a Builder kończy je do końca.
 
 ### Sokół ma domyślny zakres, nie absolutne zakazy
 
@@ -105,7 +107,7 @@ Jeśli środowisko wspiera `/compact` (Claude albo Gemini/Sokół), a temat pozo
 - [Codex CLI](https://github.com/openai/codex)
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) **lub** [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 - `bash`, `git`
-- Docker (jeśli projekt używa kontenerów — Builder robi auto-rebuild po deployu)
+- Docker (tylko jeśli `.workflow/config` ma `deploy=docker-compose` albo autodetekcja znajdzie plik Compose)
 
 ## Instalacja
 
@@ -128,7 +130,8 @@ Smoketest na końcu instalacji weryfikuje czy wszystkie pliki są na miejscu (ma
 | `CLAUDE.md` | Instrukcje dla Claude Code (Sokół) | `sokol.md` |
 | `GEMINI.md` | Instrukcje dla Gemini CLI (Sokół) | `sokol.md` |
 | `AGENTS.md` | Instrukcje dla Codex CLI (Builder) | `builder.md` |
-| `agents_catalog.md` | Snapshot 60+ sub-agentów (Sokół wybiera z tego, nie zmyśla) | `agents_catalog.md` |
+| `agents_catalog.md` | Snapshot pełnego katalogu agentów/skilli dla Buildera i Sokoła | `agents_catalog.md` |
+| `.workflow/config` | Profil deployu projektu (`auto`, `none`, `docker-compose`, `custom`) | `.workflow/config` |
 | `scripts/notify.sh` | Powiadomienie po deployu (cross-platform popup) | `scripts/notify.sh` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
 | `templates/plan_batch.md` | Szablon planu — batch (do 5 powiązanych issues) | `templates/plan_batch.md` |
@@ -194,7 +197,7 @@ Gdy Sokół potwierdza gotowość planu, powinien dopisać pod tabelą ludzkie w
 
 **Krok 5 — Ty dajesz zielone światło Builderowi:** *"OK, wdrażaj."*
 
-**Krok 6 — Builder wdraża sam:** wywołuje `security-reviewer` na kodzie, puszcza testy, robi `git push`, `docker compose up -d --build`, healthcheck, aktualizuje `MD/memory.md` + `MD/TODO.md` + przenosi plan do `MD/archive/`. Kończy promptem zwrotnym dla Sokoła z dowodem (link do commitu).
+**Krok 6 — Builder wdraża sam:** wywołuje `security-reviewer` albo innego lepiej dobranego agenta z katalogu, puszcza testy, robi `git push`, wykonuje deploy zgodny z `.workflow/config`, robi healthcheck, aktualizuje `MD/memory.md` + `MD/TODO.md` + przenosi plan do `MD/archive/`. Kończy promptem zwrotnym dla Sokoła z dowodem (link do commitu).
 
 **Krok 7 — Ty kopiujesz raport Buildera do Sokoła.** Sokół robi **Blind Audit** (sprawdza diff, weryfikuje finalizację: plan w archive, memory linkuje do archive, issues FIXED) i wskazuje kolejne issue → wracamy do kroku 2.
 
@@ -222,7 +225,8 @@ Dodatkowo: **WONTFIX** — issue / plan świadomie odrzucony, zapisany w `MD/mem
 |------|------|------------------|
 | `builder.md` | Instrukcje dla Codex CLI | `AGENTS.md` |
 | `sokol.md` | Instrukcje dla Claude Code/Gemini | `CLAUDE.md` + `GEMINI.md` |
-| `agents_catalog.md` | Snapshot 60+ sub-agentów (Sokół wybiera z listy, nie zmyśla nazw) | `agents_catalog.md` |
+| `agents_catalog.md` | Snapshot pełnego katalogu agentów/skilli dla Buildera i Sokoła | `agents_catalog.md` |
+| `.workflow/config` | Domyślny profil deployu projektu | `.workflow/config` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
 | `templates/plan_batch.md` | Szablon planu — batch (do 5 powiązanych issues) | `templates/plan_batch.md` |
 | `scripts/notify.sh` | Cross-platform powiadomienie (po deployu, przy konfliktach) | `scripts/notify.sh` |
@@ -230,6 +234,7 @@ Dodatkowo: **WONTFIX** — issue / plan świadomie odrzucony, zapisany w `MD/mem
 | `cel.md` | Skrót dla orkiestratora — co decyduję, co kopiuję | — (dokumentacja publiczna) |
 | `install.sh` | Skrypt instalacyjny / aktualizacyjny (`--force`) | — (uruchamiany raz) |
 | `update-all.sh` | Aktualizacja workflow we wszystkich projektach naraz | — (lokalny tooling) |
+| `CHANGELOG.md` | Historia zmian workflow | — |
 | `README.md` | Ten plik | — |
 
 ## FAQ — co gdy coś idzie nie tak
@@ -251,8 +256,8 @@ Najczęstsze sytuacje brzegowe — pełne odpowiedzi w `workflow.md` → sekcja 
 **Sokół pisze zbyt technicznie albo wypisuje "czego nie zrobił"**
 → Wklej mu odpowiedź z powrotem i poproś: "Napisz to dla Orkiestratora prostym językiem: o co chodzi, jak działa teraz, co się zmieni, jakie jest ryzyko i jaka decyzja jest potrzebna". Aktualne instrukcje wymagają takiego stylu.
 
-**Sokół zasugerował agenta którego nie ma w `agents_catalog.md`**
-→ Builder nie wywołuje "podobnego" na ślepo. W prompcie zwrotnym pyta Sokoła o poprawioną sugestię z faktycznie istniejących agentów.
+**Builder nie widzi agenta z `agents_catalog.md`**
+→ Builder nie wywołuje "podobnego" na ślepo. Najpierw sam sprawdza katalog i pobiera/odświeża definicję. Jeśli to się nie uda, raportuje problem techniczny i proponuje fallback.
 
 **Push się wywalił, rollback też się wywalił**
 → `docker compose down`, `bash scripts/notify.sh "DEPLOY FAIL — wymagana ręczna interwencja"`, STOP. Bez `git push --force`, bez kasowania commitów. Czekamy na Twoją decyzję.

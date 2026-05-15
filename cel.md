@@ -21,8 +21,8 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 
 ## Role w jednym zdaniu
 
-- **Builder** — pisze kod, robi `git push`, deployuje Dockera. Ma dostęp do **60+ wyspecjalizowanych agentów** z [agents.popeklab.com](https://agents.popeklab.com/) (lokalny katalog: `agents_catalog.md`).
-- **Sokół** — szuka błędów, robi research, krytykuje propozycje. Domyślnie nie pushuje, ale może to zrobić, jeśli wyraźnie poproszę.
+- **Builder** — pisze kod, robi `git push`, wykonuje deploy zgodny z `.workflow/config`. Ma pełny katalog agentów/skilli z [agents.popeklab.com](https://agents.popeklab.com/) i sam wybiera, kiedy ich użyć albo pobrać/odświeżyć.
+- **Sokół** — szuka błędów, robi research, krytykuje propozycje. Ma ten sam katalog agentów/skilli; domyślnie nie pushuje, ale może to zrobić, jeśli wyraźnie poproszę.
 - **Ja** — kopiuję prompty między oknami, decyduję kiedy plan jest gotowy do wdrożenia.
 
 ---
@@ -34,7 +34,7 @@ Oba okna mają dostęp do tych samych plików (to samo repo).
 3. **Daję zielone światło** na implementację, gdy oba agenty zgadzają się co do planu
 4. **Decyduję eskalacje** — gdy ping-pong przekroczy 3 rundy bez konsensusu, lub senior-architect odrzuci plan (patrz `workflow.md` → FAQ)
 
-Po zielonych testach Builder **sam** pushuje, rebuilduje Dockera i robi healthcheck — bez pytania o zgodę. Patrz `builder.md` → "Po zatwierdzeniu planu".
+Po zielonych testach Builder **sam** pushuje, wykonuje deploy zgodny z `.workflow/config` i robi healthcheck — bez pytania o zgodę. Patrz `builder.md` → "Po zatwierdzeniu planu".
 
 ---
 
@@ -58,7 +58,7 @@ Skondensowanie procesu (szczegóły: `workflow.md`):
 3. **Ping-pong** (max 3 rundy) → plan dojrzewa
 4. **Senior-architect** ocenia plan (warunkowo — gdy zmiana architektoniczna lub spór)
 5. **Ja** daję zielone światło → Builder wdraża, woła reviewera (przed testami!), puszcza testy
-6. **Auto-deploy** — git push + docker compose up → healthcheck → notify
+6. **Auto-deploy** — git push + profil deployu → healthcheck → notify
 7. **Builder** pisze raport zwrotny dla Sokoła (diff, testy, finalizacja)
 8. **Sokół** robi Blind Audit + wskazuje kolejne zadanie → wracamy do kroku 1
 
@@ -74,7 +74,8 @@ Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widzia
 | `sokol.md` → `CLAUDE.md` / `GEMINI.md` | Reguły Sokoła | Claude Code / Gemini |
 | `workflow.md` | Pełna referencja procesu + FAQ | Ja (gdy coś się popsuje) |
 | `cel.md` (ten plik) | Skrót dla orkiestratora | Ja, znajomi |
-| `agents_catalog.md` | Snapshot 60+ agentów (Sokół wybiera z tego, nie zmyśla) | Sokół |
+| `agents_catalog.md` | Snapshot agentów/skilli z popeklab.com | Builder i Sokół |
+| `.workflow/config` | Profil deployu projektu | Builder |
 | `templates/plan_single.md`, `plan_batch.md` | Szablon per-plan | Builder |
 | `scripts/notify.sh` | Powiadomienie po deployu | Builder wywołuje |
 

@@ -1,8 +1,10 @@
 # Agents Catalog — popek-agent-workflow
 
-Lokalny katalog agentów dostępnych dla Buildera (Codex CLI) w tym workflow. **Sokół (Claude Code/Gemini) — czytaj TEN plik gdy wybierasz "Sugerowany agent" do promptu.** Nie zmyślaj nazw, nie zgaduj — wybór TYLKO z tej listy.
+Lokalny katalog agentów/skilli z [agents.popeklab.com](https://agents.popeklab.com/) dostępnych w tym workflow dla Buildera i Sokoła. Zakładamy, że pełna pula z linku jest zainstalowana w Claude, Codex i Gemini.
 
-**Liczba agentów:** 60
+**Builder** używa tego katalogu samodzielnie: dobiera, pobiera/odświeża i wywołuje agenta wtedy, gdy wymaga tego task. **Sokół** czyta TEN plik, gdy wybiera "Sugerowany agent" do promptu albo gdy sam potrzebuje agenta do researchu, planowania, review lub Blind Audit. Nie zmyślaj nazw, nie zgaduj — wybór TYLKO z tej listy.
+
+**Liczba agentów w snapshotcie:** 60
 **Źródło:** [agents.popeklab.com](https://agents.popeklab.com/) (snapshot)
 
 ---

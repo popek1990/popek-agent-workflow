@@ -7,7 +7,8 @@
 **Severity:** CRITICAL | HIGH | MEDIUM | LOW
 **Złożoność:** prosty fix (1-2 pliki) | średni (3-5 plików) | duży refactor (6+ plików)
 **Senior-architect wymagany:** TAK / NIE — [uzasadnienie, np. "defensywny fix, pełny konsensus, brak ryzyk architektonicznych"]
-**Sugerowany agent:** [agent z agents.popeklab.com + 1-zdaniowe uzasadnienie + timing, np. "`python-reviewer` [reviewer po implementacji] — fix dotyka logiki kalkulacji, wymaga weryfikacji idiomów Pythona". Jeśli żaden nie pasuje — `brak — [uzasadnienie]`]
+**Sugerowany / użyty agent:** [agent z agents.popeklab.com + 1-zdaniowe uzasadnienie + timing, np. "`python-reviewer` [reviewer po implementacji] — fix dotyka logiki kalkulacji, wymaga weryfikacji idiomów Pythona". Jeśli Builder dobiera innego/dodatkowego agenta — wpisuje tutaj decyzję i powód. Jeśli żaden nie pasuje — `brak — [uzasadnienie]`]
+**Profil deployu:** auto | none | docker-compose | custom — [z `.workflow/config` albo autodetekcji]
 
 ## Źródło
 
@@ -65,20 +66,20 @@ Skąd pochodzi issue: [np. `bledy.md`, skan Sokoła, `issues_found.md` batch #2,
 
 - [ ] Testy przechodzą (zielone)
 - [ ] Code-review (jeśli wymagany) bez CRITICAL/HIGH issues
-- [ ] Deploy OK (`docker compose up -d --build`)
+- [ ] Deploy OK albo świadomie pominięty zgodnie z `.workflow/config`
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
 - [ ] [dodatkowe kryteria specyficzne dla tego planu]
 
 ## Checklista finalizacji (BLOKUJĄCA — odhacz PRZED promptem zwrotnym)
 
-- [ ] Aplikacja działa poprawnie po deploy
+- [ ] Aplikacja działa poprawnie po deploy albo deploy świadomie pominięty przez profil projektu
 - [ ] Ten plik → status zmieniony na WDROŻONY
 - [ ] Ten plik → przeniesiony do `MD/archive/` (MUSI istnieć w archive)
 - [ ] `MD/memory.md` → dopisano do "Zrobione" z linkiem do `MD/archive/` (NIE `MD/plans/`)
 - [ ] `MD/issues_sokol.md` → status FIXED (lub WONTFIX)
 - [ ] `MD/TODO.md` → task oznaczony jako DONE
 - [ ] Dokumentacja zaktualizowana (jeśli potrzeba)
-- [ ] Sugerowany agent (z agents.popeklab.com) — wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
+- [ ] Agent z agents.popeklab.com — sugerowany przez Sokoła lub dobrany przez Buildera, wywołany albo odrzucony z uzasadnieniem (zgłoszone issues naprawione)
 - [ ] Prompt zwrotny zawiera "Routing końcowy" — wiadomo czyja jest kolej i czy Sokół dostaje prompt teraz
 - [ ] [dodatkowe sprawdzenia specyficzne dla tego planu]
 
