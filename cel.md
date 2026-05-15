@@ -58,7 +58,7 @@ Skondensowanie procesu (szczegóły: `workflow.md`):
 3. **Ping-pong** (max 3 rundy) → plan dojrzewa
 4. **Senior-architect** ocenia plan (warunkowo — gdy zmiana architektoniczna lub spór)
 5. **Ja** daję zielone światło → Builder wdraża, woła reviewera (przed testami!), puszcza testy
-6. **Auto-deploy** — git push + profil deployu → healthcheck → notify
+6. **Auto-deploy** — git push + profil deployu → healthcheck → raport
 7. **Builder** pisze raport zwrotny dla Sokoła (diff, testy, finalizacja)
 8. **Sokół** robi Blind Audit + wskazuje kolejne zadanie → wracamy do kroku 1
 
@@ -77,7 +77,6 @@ Po `git push` ja synchronizuję kod (jedno polecenie) tak, żeby oba okna widzia
 | `agents_catalog.md` | Snapshot agentów/skilli z popeklab.com | Builder i Sokół |
 | `.workflow/config` | Profil deployu projektu | Builder |
 | `templates/plan_single.md`, `plan_batch.md` | Szablon per-plan | Builder |
-| `scripts/notify.sh` | Powiadomienie po deployu | Builder wywołuje |
 
 ---
 

@@ -294,7 +294,7 @@ Zakładamy, że pełny katalog z [agents.popeklab.com](https://agents.popeklab.c
 
 Krytyczna sytuacja — opisana w `builder.md` → "Procedura rollback". TLDR:
 - Kontenery zatrzymaj (`docker compose down`)
-- Eskalacja przez `bash scripts/notify.sh "DEPLOY FAIL — rollback fail — wymagana ręczna interwencja"`
+- Eskalacja w odpowiedzi do Orkiestratora: `DEPLOY FAIL — rollback fail — wymagana ręczna interwencja`
 - STOP. NIE próbuj `git push --force`. NIE próbuj kasować commitów. Czekaj na decyzję orkiestratora.
 
 ### Dwa agenty edytują workflow równocześnie (`builder.md`, `sokol.md`, ...)

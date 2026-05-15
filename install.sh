@@ -319,27 +319,6 @@ else
     inc SKIPPED
 fi
 
-# --- scripts/notify.sh — powiadomienie po wdrożeniu (cross-platform popup) ---
-# Builder wywołuje ten skrypt po zielonym rebuildzie i przy konfliktach push/rollback.
-# Bez tego skryptu wszystkie wywołania `bash scripts/notify.sh "..."` z builder.md
-# kończyłyby się "No such file or directory" w docelowym projekcie.
-echo -e "  ${FILE} ${BOLD}scripts/notify.sh${NC} ${DIM}(powiadomienie orkiestratora)${NC}"
-mkdir -p scripts
-if [ ! -f "scripts/notify.sh" ] || $FORCE; then
-    cp "$SCRIPT_DIR/scripts/notify.sh" "scripts/notify.sh"
-    chmod +x "scripts/notify.sh"
-    if $FORCE; then
-        log_update "scripts/notify.sh — zaktualizowano"
-        inc UPDATED
-    else
-        log_ok "scripts/notify.sh — skopiowano"
-        inc INSTALLED
-    fi
-else
-    log_skip "scripts/notify.sh — już istnieje (zachowuję wersję projektu)"
-    inc SKIPPED
-fi
-
 # --- Struktura MD/ ---
 echo -e "  ${FOLDER} ${BOLD}MD/${NC} ${DIM}(struktura dokumentów)${NC}"
 mkdir -p MD/plans
@@ -515,8 +494,6 @@ fi
 smoke_check "agents_catalog.md istnieje"             "[ -f agents_catalog.md ]"
 smoke_check "agents_catalog.md zawiera python-reviewer" "grep -qF 'python-reviewer' agents_catalog.md 2>/dev/null"
 smoke_check "agents_catalog.md zawiera aqua-combo"   "grep -qF 'aqua-combo' agents_catalog.md 2>/dev/null"
-smoke_check "scripts/notify.sh istnieje"             "[ -f scripts/notify.sh ]"
-smoke_check "scripts/notify.sh wykonywalny"          "[ -x scripts/notify.sh ]"
 smoke_check "CLAUDE.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' CLAUDE.md 2>/dev/null"
 smoke_check "GEMINI.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' GEMINI.md 2>/dev/null"
 smoke_check "AGENTS.md ma marker wersji workflow"    "grep -qE 'workflow-version: [0-9]{4}\.[0-9]{2}\.[0-9]{2}' AGENTS.md 2>/dev/null"

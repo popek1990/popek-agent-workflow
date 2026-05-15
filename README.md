@@ -132,7 +132,6 @@ Smoketest na końcu instalacji weryfikuje czy wszystkie pliki są na miejscu (ma
 | `AGENTS.md` | Instrukcje dla Codex CLI (Builder) | `builder.md` |
 | `agents_catalog.md` | Snapshot pełnego katalogu agentów/skilli dla Buildera i Sokoła | `agents_catalog.md` |
 | `.workflow/config` | Profil deployu projektu (`auto`, `none`, `docker-compose`, `custom`) | `.workflow/config` |
-| `scripts/notify.sh` | Powiadomienie po deployu (cross-platform popup) | `scripts/notify.sh` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
 | `templates/plan_batch.md` | Szablon planu — batch (do 5 powiązanych issues) | `templates/plan_batch.md` |
 | `MD/plans/` | Katalog na aktywne plany wdrożeń | (pusty katalog) |
@@ -229,7 +228,6 @@ Dodatkowo: **WONTFIX** — issue / plan świadomie odrzucony, zapisany w `MD/mem
 | `.workflow/config` | Domyślny profil deployu projektu | `.workflow/config` |
 | `templates/plan_single.md` | Szablon planu — pojedynczy issue | `templates/plan_single.md` |
 | `templates/plan_batch.md` | Szablon planu — batch (do 5 powiązanych issues) | `templates/plan_batch.md` |
-| `scripts/notify.sh` | Cross-platform powiadomienie (po deployu, przy konfliktach) | `scripts/notify.sh` |
 | `workflow.md` | Pełna referencja procesu + FAQ | — (referencja, nie kopiowany) |
 | `cel.md` | Skrót dla orkiestratora — co decyduję, co kopiuję | — (dokumentacja publiczna) |
 | `install.sh` | Skrypt instalacyjny / aktualizacyjny (`--force`) | — (uruchamiany raz) |
@@ -260,7 +258,7 @@ Najczęstsze sytuacje brzegowe — pełne odpowiedzi w `workflow.md` → sekcja 
 → Builder nie wywołuje "podobnego" na ślepo. Najpierw sam sprawdza katalog i pobiera/odświeża definicję. Jeśli to się nie uda, raportuje problem techniczny i proponuje fallback.
 
 **Push się wywalił, rollback też się wywalił**
-→ `docker compose down`, `bash scripts/notify.sh "DEPLOY FAIL — wymagana ręczna interwencja"`, STOP. Bez `git push --force`, bez kasowania commitów. Czekamy na Twoją decyzję.
+→ `docker compose down`, eskalacja w odpowiedzi do Orkiestratora: `DEPLOY FAIL — wymagana ręczna interwencja`, STOP. Bez `git push --force`, bez kasowania commitów. Czekamy na Twoją decyzję.
 
 ---
 

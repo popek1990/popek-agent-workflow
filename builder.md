@@ -208,7 +208,7 @@ Profil deployu wpisz do planu i promptu zwrotnego. Nie zakładaj Dockera w repo,
        git worktree remove "$publish_dir"
        ```
        Task branch zostaje lokalnie — można go usunąć (`git branch -d task/nazwa`) lub zostawić na później.
-   - **Konflikt push (`! [rejected]` / non-fast-forward):** STOP. NIE używaj `--force`. Wykonaj `git pull --rebase`, rozwiąż ewentualne konflikty, znów uruchom testy (skrócony smoke), powtórz push. Jeśli rebase wprowadza nieoczekiwane zmiany — eskaluj do orkiestratora przez `bash scripts/notify.sh "Konflikt push — wymagana decyzja"`.
+   - **Konflikt push (`! [rejected]` / non-fast-forward):** STOP. NIE używaj `--force`. Wykonaj `git pull --rebase`, rozwiąż ewentualne konflikty, znów uruchom testy (skrócony smoke), powtórz push. Jeśli rebase wprowadza nieoczekiwane zmiany — przerwij i opisz konflikt Orkiestratorowi w odpowiedzi.
    - **Reguła "nigdy `git add -A` przy dirty worktree":** jeśli `git status --short` pokazuje pliki niezwiązane z bieżącym sprintem (M/D/??), **stage tylko swoje pliki po nazwie** (`git add MD/plans/foo.md MD/memory.md`). `git add -A` lub `git add .` wciągnie unrelated zmiany do commita — **zabronione**.
 10. **Deploy zgodny z profilem projektu** — po pushu wykonaj profil z `.workflow/config` (nie czekaj na pozwolenie):
     - `deploy=none`: pomiń deploy, zanotuj "deploy pominięty przez profil projektu".
@@ -216,7 +216,7 @@ Profil deployu wpisz do planu i promptu zwrotnego. Nie zakładaj Dockera w repo,
     - `deploy=custom`: wykonaj `deploy_command`.
     - **Deploy fail / non-zero exit:** przejdź do sekcji "Procedura rollback" niżej. Nie próbuj naprawić "przy okazji".
     - **Healthcheck po deployu:** użyj `healthcheck_url`, jeśli jest ustawiony (`curl -f <url>`). Dla Compose dodatkowo sprawdź `docker compose ps`. Jeśli usługa jest w stanie `Restarting` / `Exited` po 30s — to też jest fail → rollback.
-11. **Powiadom Orkiestratora** — po zakończeniu deployu lub świadomym pominięciu deployu: `bash scripts/notify.sh "Wdrożenie zakończone — prompt zwrotny gotowy"`
+11. **Zanotuj wynik deployu** — po zakończeniu deployu albo świadomym pominięciu deployu wpisz status do promptu zwrotnego dla Sokoła i Orkiestratora.
 12. **Checklista finalizacji (BLOKUJĄCA)** — NIE pisz promptu zwrotnego dla Sokoła dopóki nie odhaczysz WSZYSTKICH punktów. To jest integralna część wdrożenia, nie opcjonalny krok.
     - [ ] `MD/plans/plan_*.md` → status zmieniony na WDROŻONY
     - [ ] Plan przeniesiony do `MD/archive/` (plik MUSI istnieć w archive — sprawdź `ls MD/archive/`)
@@ -240,7 +240,7 @@ Profil deployu wpisz do planu i promptu zwrotnego. Nie zakładaj Dockera w repo,
 
 Ta sekcja dotyczy profili `deploy=docker-compose` i `deploy=custom`. Przy `deploy=none` nie ma lokalnego deployu do rollbacku — raportujesz wynik testów i kończysz bez rollbacku. **Reguła naczelna:** najpierw przywróć działający stan, potem analizuj.
 
-Dla `deploy=custom` użyj komendy rollback opisanej w planie albo dokumentacji projektu. Jeśli projekt nie ma jawnej komendy rollbacku, STOP i powiadom Orkiestratora zamiast zgadywać.
+Dla `deploy=custom` użyj komendy rollback opisanej w planie albo dokumentacji projektu. Jeśli projekt nie ma jawnej komendy rollbacku, STOP i eskaluj sprawę do Orkiestratora zamiast zgadywać.
 
 ### A) Docker build / startup fail
 
@@ -249,7 +249,7 @@ Dla `deploy=custom` użyj komendy rollback opisanej w planie albo dokumentacji p
 1. **Zatrzymaj** błędne kontenery: `docker compose down`
 2. **Revert commita** który właśnie wypushowałeś: `git revert HEAD --no-edit && git push`
 3. **Rebuild ze stanu sprzed**: `docker compose up -d --build` (teraz powinno przejść — bo to ten sam obraz co działał przedtem)
-4. **Powiadom orkiestratora**: `bash scripts/notify.sh "DEPLOY FAIL — wykonano rollback. Plan: [link do MD/plans/plan_*.md], błąd: [pierwsze 3 linie z docker logs]"`
+4. **Eskaluj do Orkiestratora**: w odpowiedzi podaj `DEPLOY FAIL — wykonano rollback`, link do planu i pierwsze 3 linie błędu z logów.
 5. **Plan zostaje na ZATWIERDZONY** (NIE przesuwaj na WDROŻONY). Dopisz do planu sekcję `## Incydent` z opisem co się wywaliło.
 6. **STOP** — nie próbuj fix-na-zywo. Czekaj na decyzję orkiestratora czy wracamy do planu z poprawką, czy odrzucamy go całkowicie.
 
@@ -259,7 +259,7 @@ Kontenery UP, ale endpoint `/health` zwraca 500 albo aplikacja nie odpowiada.
 
 1. **Sprawdź logi** (max 30 linii): `docker compose logs --tail=30 [serwis]`
 2. **Jeśli błąd jest WYRAŹNIE związany z Twoją zmianą** (np. ImportError z dodanego pliku, missing env var) → revert + push (jak A.2-A.4)
-3. **Jeśli błąd jest niejasny** (kontekst niezwiązany, race condition, side effect z innego serwisu) → revert i tak (zasada "działający stan najpierw"), ale w notyfikacji zaznacz: "Rollback profilaktyczny — root cause niejasny, wymaga analizy z Sokołem"
+3. **Jeśli błąd jest niejasny** (kontekst niezwiązany, race condition, side effect z innego serwisu) → revert i tak (zasada "działający stan najpierw"), ale w raporcie zaznacz: "Rollback profilaktyczny — root cause niejasny, wymaga analizy z Sokołem"
 4. **Plan zostaje na ZATWIERDZONY** + sekcja `## Incydent`
 
 ### C) Konflikt push (`git push` rejected)
@@ -271,7 +271,7 @@ Ktoś inny pushnął na main w międzyczasie (lub stan rozjechany po --force gdz
 3. **Jeśli są konflikty** rozwiąż je (semantycznie, nie syntaktycznie — przeczytaj co zmienił drugi commit)
 4. Uruchom **skrócony smoketest** (kluczowe testy modułu który zmieniłeś) — czy rebase nic nie zepsuł
 5. Powtórz `git push`
-6. **Jeśli rebase wprowadza nieoczywiste zmiany** (np. drugi commit zmienił ten sam plik co Ty, ale w innym miejscu) — STOP, eskaluj: `bash scripts/notify.sh "Konflikt push — wymagana decyzja: [opis konfliktu]"`
+6. **Jeśli rebase wprowadza nieoczywiste zmiany** (np. drugi commit zmienił ten sam plik co Ty, ale w innym miejscu) — STOP, opisz konflikt w odpowiedzi i czekaj na decyzję Orkiestratora.
 
 ### Po rollbacku — jak wrócić do planu
 

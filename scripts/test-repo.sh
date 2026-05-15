@@ -40,7 +40,6 @@ check "install.sh istnieje"                 "[ -f install.sh ]"
 check "CHANGELOG.md istnieje"               "[ -f CHANGELOG.md ]"
 check "agents_catalog.md istnieje"          "[ -f agents_catalog.md ]"
 check ".workflow/config istnieje"           "[ -f .workflow/config ]"
-check "scripts/notify.sh istnieje"          "[ -f scripts/notify.sh ]"
 check "templates/plan_single.md istnieje"   "[ -f templates/plan_single.md ]"
 check "templates/plan_batch.md istnieje"    "[ -f templates/plan_batch.md ]"
 check "update-all.sh składnia bash OK"       "bash -n update-all.sh"
@@ -68,7 +67,7 @@ check "workflow.md ma tę samą wersję"             "[ \"$BV\" = \"$WV\" ] && [
 echo ""
 echo "▸ Referencje plików w builder.md"
 # Pliki/skrypty wywoływane przez Buildera w docelowym projekcie — install.sh musi je dostarczać
-for ref in "scripts/notify.sh" "agents_catalog.md" ".workflow/config"; do
+for ref in "agents_catalog.md" ".workflow/config"; do
     if grep -qF "$ref" builder.md; then
         if [ -f "$ref" ]; then
             ok "builder.md odnosi się do $ref → istnieje w repo"
@@ -93,7 +92,6 @@ done
 echo ""
 echo "▸ install.sh kopiuje wszystkie pliki referencjowane"
 check "install.sh kopiuje agents_catalog.md"   "grep -qF 'agents_catalog.md' install.sh"
-check "install.sh kopiuje scripts/notify.sh"   "grep -qF 'scripts/notify.sh' install.sh"
 check "install.sh tworzy .workflow/config"     "grep -qF '.workflow/config' install.sh"
 check "install.sh kopiuje templates/plan_single.md"  "grep -qF 'plan_single.md' install.sh"
 check "install.sh kopiuje templates/plan_batch.md"   "grep -qF 'plan_batch.md' install.sh"
